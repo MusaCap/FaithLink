@@ -1,0 +1,286 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String    @id @default(cuid())
+  email     String    @unique
+  password  String
+  createdAt DateTime  @default(now())
+  isActive  Boolean   @default(true)
+  updatedAt DateTime  @updatedAt
+  role      Role      @default(MEMBER)
+  careLogs  CareLog[] @relation("CareGiver")
+  member    Member?
+
+  @@map("users")
+}
+
+model Member {
+  id                 String            @id @default(cuid())
+  userId             String?           @unique
+  firstName          String
+  lastName           String
+  email              String            @unique
+  phone              String?
+  dateOfBirth        DateTime?
+  gender             Gender?
+  address            String?
+  maritalStatus      MaritalStatus?
+  spiritualStatus    String?
+  profilePhotoUrl    String?
+  notes              String?
+  isActive           Boolean           @default(true)
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
+  careLogs           CareLog[]
+  eventAttendances   EventAttendance[]
+  groups             GroupMember[]
+  journeyStages      JourneyStage[]
+  familyConnections  MemberFamily[]    @relation("MemberFamily")
+  relatedConnections MemberFamily[]    @relation("RelatedMember")
+  tags               MemberTag[]
+  user               User?             @relation(fields: [userId], references: [id])
+
+  @@map("members")
+}
+
+model Group {
+  id          String        @id @default(cuid())
+  name        String
+  type        GroupType
+  description String?
+  leaderId    String?
+  isActive    Boolean       @default(true)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  events      Event[]
+  files       GroupFile[]
+  members     GroupMember[]
+
+  @@map("groups")
+}
+
+model GroupMember {
+  id       String   @id @default(cuid())
+  memberId String
+  groupId  String
+  joinedAt DateTime @default(now())
+  isActive Boolean  @default(true)
+  group    Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  member   Member   @relation(fields: [memberId], references: [id], onDelete: Cascade)
+
+  @@unique([memberId, groupId])
+  @@map("group_members")
+}
+
+model JourneyTemplate {
+  id            String         @id @default(cuid())
+  name          String
+  description   String?
+  isActive      Boolean        @default(true)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  journeyStages JourneyStage[]
+  milestones    Milestone[]
+
+  @@map("journey_templates")
+}
+
+model Milestone {
+  id            String          @id @default(cuid())
+  templateId    String
+  name          String
+  description   String?
+  sequence      Int
+  journeyStages JourneyStage[]
+  template      JourneyTemplate @relation(fields: [templateId], references: [id], onDelete: Cascade)
+
+  @@unique([templateId, sequence])
+  @@map("milestones")
+}
+
+model JourneyStage {
+  id              String          @id @default(cuid())
+  memberId        String
+  templateId      String
+  milestoneId     String
+  status          StageStatus     @default(NOT_STARTED)
+  autoProgress    Boolean         @default(false)
+  flagForFollowUp Boolean         @default(false)
+  completedAt     DateTime?
+  notes           String?
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  member          Member          @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  milestone       Milestone       @relation(fields: [milestoneId], references: [id], onDelete: Cascade)
+  template        JourneyTemplate @relation(fields: [templateId], references: [id], onDelete: Cascade)
+
+  @@unique([memberId, milestoneId])
+  @@map("journey_stages")
+}
+
+model Event {
+  id           String            @id @default(cuid())
+  title        String
+  description  String?
+  dateTime     DateTime
+  location     String?
+  groupId      String?
+  calendarType CalendarType      @default(ONEOFF)
+  createdBy    String
+  isActive     Boolean           @default(true)
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+  attendances  EventAttendance[]
+  tags         EventTag[]
+  group        Group?            @relation(fields: [groupId], references: [id])
+
+  @@map("events")
+}
+
+model EventAttendance {
+  id          String    @id @default(cuid())
+  eventId     String
+  memberId    String
+  attended    Boolean   @default(false)
+  checkedInAt DateTime?
+  event       Event     @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  member      Member    @relation(fields: [memberId], references: [id], onDelete: Cascade)
+
+  @@unique([eventId, memberId])
+  @@map("event_attendances")
+}
+
+model CareLog {
+  id               String    @id @default(cuid())
+  memberId         String
+  caregiverId      String
+  type             CareType
+  notes            String
+  followUpRequired Boolean   @default(false)
+  confidential     Boolean   @default(false)
+  followUpDate     DateTime?
+  createdAt        DateTime  @default(now())
+  caregiver        User      @relation("CareGiver", fields: [caregiverId], references: [id])
+  member           Member    @relation(fields: [memberId], references: [id], onDelete: Cascade)
+
+  @@map("care_logs")
+}
+
+model Tag {
+  id        String      @id @default(cuid())
+  label     String      @unique
+  category  TagCategory @default(MEMBER)
+  color     String      @default("#7ED321")
+  createdAt DateTime    @default(now())
+  events    EventTag[]
+  members   MemberTag[]
+
+  @@map("tags")
+}
+
+model MemberTag {
+  id       String @id @default(cuid())
+  memberId String
+  tagId    String
+  member   Member @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  tag      Tag    @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@unique([memberId, tagId])
+  @@map("member_tags")
+}
+
+model EventTag {
+  id      String @id @default(cuid())
+  eventId String
+  tagId   String
+  event   Event  @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  tag     Tag    @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@unique([eventId, tagId])
+  @@map("event_tags")
+}
+
+model GroupFile {
+  id         String   @id @default(cuid())
+  groupId    String
+  fileName   String
+  fileUrl    String
+  fileSize   Int
+  mimeType   String
+  uploadedBy String
+  uploadedAt DateTime @default(now())
+  group      Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
+
+  @@map("group_files")
+}
+
+model MemberFamily {
+  id            String @id @default(cuid())
+  memberId      String
+  relatedId     String
+  relationship  String
+  member        Member @relation("MemberFamily", fields: [memberId], references: [id], onDelete: Cascade)
+  relatedMember Member @relation("RelatedMember", fields: [relatedId], references: [id], onDelete: Cascade)
+
+  @@unique([memberId, relatedId])
+  @@map("member_families")
+}
+
+enum Role {
+  ADMIN
+  PASTOR
+  CARE_TEAM
+  GROUP_LEADER
+  MEMBER
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+}
+
+enum MaritalStatus {
+  SINGLE
+  MARRIED
+  DIVORCED
+  WIDOWED
+}
+
+enum GroupType {
+  MINISTRY
+  LIFEGROUP
+  TEAM
+}
+
+enum StageStatus {
+  NOT_STARTED
+  IN_PROGRESS
+  COMPLETED
+}
+
+enum CalendarType {
+  WEEKLY
+  MONTHLY
+  ONEOFF
+}
+
+enum CareType {
+  PRAYER
+  VISIT
+  COUNSELING
+  CALL
+}
+
+enum TagCategory {
+  MEMBER
+  EVENT
+  GROUP
+}

@@ -1,0 +1,84 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  database:
+    image: postgres:15-alpine
+    container_name: faithlink360-db
+    environment:
+      POSTGRES_DB: faithlink360
+      POSTGRES_USER: faithlink_user
+      POSTGRES_PASSWORD: faithlink_password_dev
+      POSTGRES_INITDB_ARGS: "--encoding=UTF-8 --lc-collate=C --lc-ctype=C"
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./src/database/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    networks:
+      - faithlink-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U faithlink_user -d faithlink360"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Backend API (Node.js + Express)
+  backend:
+    build: 
+      context: ./src/backend
+      dockerfile: Dockerfile.dev
+    container_name: faithlink360-api
+    environment:
+      NODE_ENV: development
+      DATABASE_URL: postgresql://faithlink_user:faithlink_password_dev@database:5432/faithlink360
+      JWT_SECRET: your-super-secret-jwt-key-change-in-production-please
+      JWT_REFRESH_SECRET: your-super-secret-refresh-key-change-in-production
+      PORT: 8000
+      FRONTEND_URL: http://localhost:8080
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./src/backend:/app
+      - /app/node_modules
+      - /app/dist
+    depends_on:
+      database:
+        condition: service_healthy
+    networks:
+      - faithlink-network
+    restart: unless-stopped
+    command: npm run dev
+
+  # Frontend (Next.js)
+  frontend:
+    build:
+      context: ./src/frontend
+      dockerfile: Dockerfile.dev
+    container_name: faithlink360-web
+    environment:
+      NODE_ENV: development
+      NEXT_PUBLIC_API_URL: http://localhost:8000
+      NEXT_PUBLIC_APP_URL: http://localhost:8080
+      NEXTAUTH_URL: http://localhost:8080
+      NEXTAUTH_SECRET: your-nextauth-secret-key-change-in-production
+    ports:
+      - "8080:3000"
+    volumes:
+      - ./src/frontend:/app
+      - /app/node_modules
+      - /app/.next
+    depends_on:
+      - backend
+    networks:
+      - faithlink-network
+    restart: unless-stopped
+    command: npm run dev
+
+volumes:
+  postgres_data:
+
+networks:
+  faithlink-network:
+    driver: bridge
