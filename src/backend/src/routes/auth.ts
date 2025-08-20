@@ -1,8 +1,10 @@
 import express from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import { PrismaClient } from '@prisma/client';
 import { z } from 'zod';
+
+// Remove direct PrismaClient import to prevent startup hang
+// PrismaClient will be accessed via req.app.locals.prisma
 
 const router = express.Router();
 
@@ -44,7 +46,7 @@ function generateRefreshToken(userId: string): string {
  */
 router.post('/login', async (req, res) => {
   try {
-    const prisma: PrismaClient = req.app.locals.prisma;
+    const prisma = req.app.locals.prisma;
     
     // Validate request body
     const validation = loginSchema.safeParse(req.body);
@@ -132,7 +134,7 @@ router.post('/login', async (req, res) => {
  */
 router.post('/register', async (req, res) => {
   try {
-    const prisma: PrismaClient = req.app.locals.prisma;
+    const prisma = req.app.locals.prisma;
     
     // Validate request body
     const validation = registerSchema.safeParse(req.body);
@@ -164,7 +166,7 @@ router.post('/register', async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, saltRounds);
 
     // Create user and member profile in transaction
-    const result = await prisma.$transaction(async (tx) => {
+    const result = await prisma.$transaction(async (tx: any) => {
       // Create user account
       const user = await tx.user.create({
         data: {
@@ -298,7 +300,7 @@ router.post('/logout', (req, res) => {
  */
 router.get('/me', async (req, res) => {
   try {
-    const prisma: PrismaClient = req.app.locals.prisma;
+    const prisma = req.app.locals.prisma;
     
     // Extract token from Authorization header
     const authHeader = req.headers.authorization;

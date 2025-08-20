@@ -14,10 +14,10 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 8000;
 
-// Initialize Prisma Client (temporarily disabled to isolate startup hang)
-// const prisma = new PrismaClient({
-//   log: ['error'], // Reduced logging to prevent startup hang
-// });
+// Initialize Prisma Client
+const prisma = new PrismaClient({
+  log: ['error'], // Reduced logging to prevent startup hang
+});
 
 // Security middleware
 app.use(helmet({
@@ -96,21 +96,21 @@ if (process.env.NODE_ENV === 'development') {
   });
 }
 
-// Make Prisma client available to routes (temporarily disabled)
-// app.locals.prisma = prisma;
+// Make Prisma client available to routes
+app.locals.prisma = prisma;
 
 // Health check endpoint (database check temporarily disabled)
 app.get('/health', async (req, res) => {
   try {
-    // Test database connection (temporarily disabled)
-    // await prisma.$queryRaw`SELECT 1`;
+    // Test database connection
+    await prisma.$queryRaw`SELECT 1`;
     
     res.json({
       status: 'OK',
       timestamp: new Date().toISOString(),
       service: 'FaithLink360 API',
       version: '1.0.0',
-      database: 'Skipped', // Temporarily disabled
+      database: 'Connected',
       environment: process.env.NODE_ENV || 'development'
     });
   } catch (error) {
@@ -125,12 +125,12 @@ app.get('/health', async (req, res) => {
 });
 
 // Import API routes
-import authRoutes from './routes/auth';
-// import memberRoutes from './routes/members'; // Temporarily disabled to isolate startup
+import authRoutes from './routes/auth'; // Fixed: removed direct PrismaClient import
+import memberRoutes from './routes/members'; // Re-enabled: startup hang resolved
 
 // API Routes
-app.use('/api/auth', authRoutes);
-// app.use('/api/members', memberRoutes); // Temporarily disabled to isolate startup
+app.use('/api/auth', authRoutes); // Re-enabled with fixed auth routes
+app.use('/api/members', memberRoutes); // Re-enabled: startup hang resolved
 // app.use('/api/groups', groupRoutes);
 // app.use('/api/journeys', journeyRoutes);
 // app.use('/api/events', eventRoutes);
@@ -219,9 +219,9 @@ const gracefulShutdown = async () => {
   console.log('🔄 Graceful shutdown initiated...');
   
   try {
-    // Database disconnect temporarily disabled
-    // await prisma.$disconnect();
-    console.log('📊 Database connection closed (skipped)');
+    // Database disconnect
+    await prisma.$disconnect();
+    console.log('📊 Database connection closed');
     process.exit(0);
   } catch (error) {
     console.error('❌ Error during shutdown:', error);
