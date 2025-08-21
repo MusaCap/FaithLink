@@ -63,19 +63,23 @@ app.use(cors({
   ],
 }));
 
-// Rate limiting
+// Rate limiting (very lenient for development)
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: process.env.NODE_ENV === 'production' ? 100 : 1000, // More lenient in development
+  windowMs: 1 * 60 * 1000, // 1 minute window
+  max: process.env.NODE_ENV === 'production' ? 100 : 10000, // Very lenient in development
   message: {
     error: 'Too many requests from this IP, please try again later.',
-    retryAfter: '15 minutes'
+    retryAfter: '1 minute'
   },
   standardHeaders: true,
   legacyHeaders: false,
+  skip: (req) => process.env.NODE_ENV === 'development', // Skip rate limiting in development
 });
 
-app.use('/api/', limiter);
+// Only apply rate limiting in production
+if (process.env.NODE_ENV === 'production') {
+  app.use('/api/', limiter);
+}
 
 // Body parsing middleware
 app.use(express.json({ 

@@ -1,0 +1,212 @@
+// Test database schema - uses in-memory SQLite for fast testing
+generator client {
+  provider = "prisma-client-js"
+  output   = "../node_modules/.prisma/test-client"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file::memory:?cache=shared"
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  firstName String
+  lastName  String
+  role      UserRole @default(MEMBER)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  groupMemberships GroupMember[]
+  memberJourneys   MemberJourney[]
+  mentorJourneys   MemberJourney[] @relation("MentorJourneys")
+  attendanceRecords AttendanceRecord[]
+
+  @@map("users")
+}
+
+model Group {
+  id          String    @id @default(cuid())
+  name        String    @unique
+  description String?
+  type        GroupType @default(LIFEGROUP)
+  location    String?
+  meetingTime String?
+  isActive    Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  // Relations
+  members           GroupMember[]
+  attendanceSessions AttendanceSession[]
+
+  @@map("groups")
+}
+
+model GroupMember {
+  id      String          @id @default(cuid())
+  groupId String
+  userId  String
+  role    GroupMemberRole @default(MEMBER)
+  joinedAt DateTime       @default(now())
+
+  // Relations
+  group Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([groupId, userId])
+  @@map("group_members")
+}
+
+model JourneyTemplate {
+  id          String     @id @default(cuid())
+  name        String     @unique
+  description String
+  difficulty  Difficulty @default(BEGINNER)
+  isActive    Boolean    @default(true)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  // Relations
+  milestones     Milestone[]
+  memberJourneys MemberJourney[]
+
+  @@map("journey_templates")
+}
+
+model Milestone {
+  id          String  @id @default(cuid())
+  templateId  String
+  name        String
+  description String
+  order       Int
+  isRequired  Boolean @default(true)
+
+  // Relations
+  template JourneyTemplate     @relation(fields: [templateId], references: [id], onDelete: Cascade)
+  progress MilestoneProgress[]
+
+  @@unique([templateId, order])
+  @@map("milestones")
+}
+
+model MemberJourney {
+  id         String        @id @default(cuid())
+  memberId   String
+  templateId String
+  mentorId   String?
+  status     JourneyStatus @default(ACTIVE)
+  startDate  DateTime      @default(now())
+  endDate    DateTime?
+  notes      String?
+
+  // Relations
+  member   User              @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  template JourneyTemplate   @relation(fields: [templateId], references: [id], onDelete: Cascade)
+  mentor   User?             @relation("MentorJourneys", fields: [mentorId], references: [id])
+  progress MilestoneProgress[]
+
+  @@unique([memberId, templateId])
+  @@map("member_journeys")
+}
+
+model MilestoneProgress {
+  id           String           @id @default(cuid())
+  journeyId    String
+  milestoneId  String
+  status       MilestoneStatus  @default(NOT_STARTED)
+  startedAt    DateTime?
+  completedAt  DateTime?
+  submittedAt  DateTime?
+  approvedAt   DateTime?
+  submission   String?
+  feedback     String?
+
+  // Relations
+  journey   MemberJourney @relation(fields: [journeyId], references: [id], onDelete: Cascade)
+  milestone Milestone     @relation(fields: [milestoneId], references: [id], onDelete: Cascade)
+
+  @@unique([journeyId, milestoneId])
+  @@map("milestone_progress")
+}
+
+model AttendanceSession {
+  id        String   @id @default(cuid())
+  groupId   String
+  date      DateTime
+  notes     String?
+  createdAt DateTime @default(now())
+
+  // Relations
+  group   Group              @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  records AttendanceRecord[]
+
+  @@map("attendance_sessions")
+}
+
+model AttendanceRecord {
+  id        String           @id @default(cuid())
+  sessionId String
+  userId    String
+  status    AttendanceStatus
+  notes     String?
+
+  // Relations
+  session AttendanceSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  user    User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([sessionId, userId])
+  @@map("attendance_records")
+}
+
+// Enums
+enum UserRole {
+  ADMIN
+  PASTOR
+  GROUP_LEADER
+  MEMBER
+}
+
+enum GroupType {
+  LIFEGROUP
+  MINISTRY
+  TEAM
+  COMMITTEE
+}
+
+enum GroupMemberRole {
+  LEADER
+  CO_LEADER
+  MEMBER
+}
+
+enum Difficulty {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+}
+
+enum JourneyStatus {
+  ACTIVE
+  COMPLETED
+  PAUSED
+  CANCELLED
+}
+
+enum MilestoneStatus {
+  NOT_STARTED
+  IN_PROGRESS
+  SUBMITTED
+  APPROVED
+  COMPLETED
+}
+
+enum AttendanceStatus {
+  PRESENT
+  ABSENT
+  LATE
+  EXCUSED
+}

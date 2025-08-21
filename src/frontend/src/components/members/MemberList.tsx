@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import Link from 'next/link';
 import { 
   Users, 
@@ -43,18 +43,12 @@ export default function MemberList({
   const [totalMembers, setTotalMembers] = useState(0);
   const membersPerPage = 20;
 
-  // Load members
-  useEffect(() => {
-    loadMembers();
-  }, [searchQuery, sortBy, sortOrder, currentPage, searchFilters]);
-
-  const loadMembers = async () => {
+  const loadMembers = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
       
       const filters: MemberSearchFilters = {
-        ...searchFilters,
         query: searchQuery,
         sortBy,
         sortOrder,
@@ -70,7 +64,12 @@ export default function MemberList({
     } finally {
       setLoading(false);
     }
-  };
+  }, [searchQuery, sortBy, sortOrder, currentPage]);
+
+  // Load members with stable dependencies
+  useEffect(() => {
+    loadMembers();
+  }, [searchQuery, sortBy, sortOrder, currentPage]);
 
   const handleSearch = (query: string) => {
     setSearchQuery(query);

@@ -1,7 +1,8 @@
 'use client';
 
-import React from 'react'
+import React, { useEffect } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { 
   Users, 
   Heart, 
@@ -12,16 +13,7 @@ import {
   ArrowRight,
   CheckCircle 
 } from 'lucide-react'
-import OnboardingTooltips from '../components/onboarding/OnboardingTooltips'
-import OnboardingPrompt from '../components/onboarding/OnboardingPrompt'
-import { useOnboarding } from '../hooks/useOnboarding'
-import MobileNavigation from '../components/navigation/MobileNavigation'
-import { 
-  MobileStatsCard, 
-  MobileFeaturesGrid, 
-  MobileQuickActions, 
-  MobileBottomNavigation 
-} from '../components/mobile/MobileCards'
+import { useAuth } from '../contexts/AuthContext'
 
 const features = [
   {
@@ -82,72 +74,72 @@ const quickStats = [
 ]
 
 export default function HomePage() {
-  const {
-    isOnboardingVisible,
-    shouldShowOnboardingPrompt,
-    startOnboarding,
-    completeOnboarding,
-    skipOnboarding
-  } = useOnboarding();
-
+  const { isAuthenticated, isLoading } = useAuth();
+  const router = useRouter();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
+
+  // Redirect authenticated users to dashboard
+  useEffect(() => {
+    if (!isLoading && isAuthenticated) {
+      router.push('/dashboard');
+    }
+  }, [isAuthenticated, isLoading, router]);
+
+  // Show loading while checking auth
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-50 to-secondary-50">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto mb-4"></div>
+          <p className="text-neutral-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Don't render anything if user is authenticated (will redirect)
+  if (isAuthenticated) {
+    return null;
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary-50 to-secondary-50">
-      {/* Onboarding Components */}
-      <OnboardingPrompt
-        isVisible={shouldShowOnboardingPrompt}
-        onStart={startOnboarding}
-        onDismiss={skipOnboarding}
-      />
-      
-      <OnboardingTooltips
-        isVisible={isOnboardingVisible}
-        onComplete={completeOnboarding}
-        onSkip={skipOnboarding}
-      />
-
       {/* Header */}
       <header className="bg-white shadow-sm border-b border-neutral-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-6">
             <div className="flex items-center">
               <div className="flex-shrink-0">
-                <h1 className="text-2xl font-bold text-gradient">FaithLink360</h1>
+                <div className="flex items-center">
+                  <Heart className="w-8 h-8 text-primary-600 mr-2" />
+                  <h1 className="text-2xl font-bold text-gradient">FaithLink360</h1>
+                </div>
               </div>
             </div>
-            <nav className="main-nav hidden md:flex space-x-8">
-              <Link href="/dashboard" className="nav-link">
-                Dashboard
+            <nav className="hidden md:flex space-x-8">
+              <Link href="#features" className="text-neutral-600 hover:text-primary-600 transition-colors">
+                Features
               </Link>
-              <Link href="/members" className="nav-link">
-                Members
+              <Link href="#pricing" className="text-neutral-600 hover:text-primary-600 transition-colors">
+                Pricing
               </Link>
-              <Link href="/groups" className="nav-link">
-                Groups
+              <Link href="#demo" className="text-neutral-600 hover:text-primary-600 transition-colors">
+                Demo
               </Link>
-              <Link href="/events" className="nav-link">
-                Events
-              </Link>
-              <Link href="/reports" className="nav-link">
-                Reports
+              <Link href="#contact" className="text-neutral-600 hover:text-primary-600 transition-colors">
+                Contact
               </Link>
             </nav>
             <div className="flex items-center space-x-4">
-              <div className="hidden md:flex items-center space-x-4">
-                <Link href="/login" className="btn btn-secondary">
-                  Sign In
-                </Link>
-                <Link href="/register" className="btn btn-primary">
-                  Get Started
-                </Link>
-              </div>
-              
-              <MobileNavigation
-                isOpen={isMobileMenuOpen}
-                onToggle={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                onClose={() => setIsMobileMenuOpen(false)}
-              />
+              <Link href="/demo" className="px-4 py-2 text-sm font-medium text-neutral-700 hover:text-primary-600 transition-colors">
+                Try Demo
+              </Link>
+              <Link href="/login" className="px-4 py-2 text-sm font-medium text-neutral-700 hover:text-primary-600 transition-colors">
+                Sign In
+              </Link>
+              <Link href="/register" className="px-4 py-2 text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 rounded-md transition-colors">
+                Get Started
+              </Link>
             </div>
           </div>
         </div>
@@ -178,35 +170,34 @@ export default function HomePage() {
         </div>
       </div>
 
-      {/* Mobile Quick Actions & Stats */}
-      <div className="md:hidden bg-white py-8">
-        <div className="max-w-7xl mx-auto px-4">
-          <MobileQuickActions />
-          <MobileStatsCard stats={quickStats.map(stat => ({
-            name: stat.name,
-            value: stat.value,
-            change: stat.change ? { type: 'increase', value: stat.change } : undefined
-          }))} />
-        </div>
-      </div>
-
-      {/* Quick Stats */}
+      {/* Success Stories / Social Proof */}
       <div className="bg-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="dashboard-stats hidden md:grid grid-cols-2 md:grid-cols-4 gap-8">
-            {quickStats.map((stat) => (
-              <div key={stat.name} className="text-center">
-                <div className="text-3xl font-bold text-primary-600 mb-2">
-                  {stat.value}
-                </div>
-                <div className="text-sm font-medium text-neutral-900 mb-1">
-                  {stat.name}
-                </div>
-                <div className="text-xs text-secondary-600">
-                  {stat.change}
-                </div>
-              </div>
-            ))}
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-neutral-900 mb-4">
+              Trusted by Churches Worldwide
+            </h2>
+            <p className="text-lg text-neutral-600">
+              Join hundreds of churches strengthening their communities with FaithLink360
+            </p>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+            <div>
+              <div className="text-3xl font-bold text-primary-600 mb-2">500+</div>
+              <div className="text-sm font-medium text-neutral-900">Churches</div>
+            </div>
+            <div>
+              <div className="text-3xl font-bold text-primary-600 mb-2">50k+</div>
+              <div className="text-sm font-medium text-neutral-900">Members</div>
+            </div>
+            <div>
+              <div className="text-3xl font-bold text-primary-600 mb-2">98%</div>
+              <div className="text-sm font-medium text-neutral-900">Satisfaction</div>
+            </div>
+            <div>
+              <div className="text-3xl font-bold text-primary-600 mb-2">24/7</div>
+              <div className="text-sm font-medium text-neutral-900">Support</div>
+            </div>
           </div>
         </div>
       </div>
@@ -223,14 +214,8 @@ export default function HomePage() {
             </p>
           </div>
 
-          {/* Mobile Features Grid */}
-          <MobileFeaturesGrid features={features.map(feature => ({
-            ...feature,
-            color: 'bg-blue-500'
-          }))} />
-
-          {/* Desktop Features Grid */}
-          <div className="features-grid hidden md:grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+          {/* Features Grid */}
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
             {features.map((feature) => {
               const IconComponent = feature.icon
               return (
@@ -318,8 +303,6 @@ export default function HomePage() {
         </div>
       </footer>
 
-      {/* Mobile Bottom Navigation */}
-      <MobileBottomNavigation />
     </div>
   )
 }

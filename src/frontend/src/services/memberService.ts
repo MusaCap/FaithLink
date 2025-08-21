@@ -11,6 +11,11 @@ import {
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
 class MemberService {
+  private requestCache = new Map<string, { data: any; timestamp: number }>();
+  private pendingRequests = new Map<string, Promise<any>>();
+  private readonly CACHE_DURATION = 30000; // 30 seconds
+  private readonly MAX_RETRIES = 2;
+
   private async fetchWithAuth(url: string, options: RequestInit = {}) {
     const token = localStorage.getItem('authToken');
     
@@ -20,17 +25,45 @@ class MemberService {
       ...options.headers,
     };
 
-    const response = await fetch(`${API_BASE_URL}${url}`, {
-      ...options,
-      headers,
-    });
+    let attempts = 0;
+    while (attempts <= this.MAX_RETRIES) {
+      try {
+        const response = await fetch(`${API_BASE_URL}${url}`, {
+          ...options,
+          headers,
+        });
 
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({ message: response.statusText }));
-      throw new Error(errorData.message || `HTTP ${response.status}: ${response.statusText}`);
+        if (!response.ok) {
+          if (response.status === 429 && attempts < this.MAX_RETRIES) {
+            // Rate limited - wait and retry
+            await new Promise(resolve => setTimeout(resolve, 1000 * (attempts + 1)));
+            attempts++;
+            continue;
+          }
+          
+          const errorData = await response.json().catch(() => ({ message: response.statusText }));
+          throw new Error(errorData.message || `HTTP ${response.status}: ${response.statusText}`);
+        }
+
+        return response.json();
+      } catch (error) {
+        if (attempts < this.MAX_RETRIES && (error as Error).message.includes('fetch')) {
+          attempts++;
+          await new Promise(resolve => setTimeout(resolve, 1000 * attempts));
+          continue;
+        }
+        throw error;
+      }
     }
+  }
 
-    return response.json();
+  private getCacheKey(url: string, options: RequestInit = {}): string {
+    return `${url}-${JSON.stringify(options.body || {})}`;
+  }
+
+  private isValidCache(cacheKey: string): boolean {
+    const cached = this.requestCache.get(cacheKey);
+    return cached ? (Date.now() - cached.timestamp) < this.CACHE_DURATION : false;
   }
 
   // Member CRUD Operations
@@ -60,7 +93,30 @@ class MemberService {
     }
 
     const url = `/api/members${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
-    return this.fetchWithAuth(url);
+    const cacheKey = this.getCacheKey(url);
+    
+    // Check cache first
+    if (this.isValidCache(cacheKey)) {
+      return this.requestCache.get(cacheKey)!.data;
+    }
+    
+    // Check if request is already pending
+    if (this.pendingRequests.has(cacheKey)) {
+      return this.pendingRequests.get(cacheKey)!;
+    }
+    
+    // Make new request
+    const request = this.fetchWithAuth(url).then(data => {
+      this.requestCache.set(cacheKey, { data, timestamp: Date.now() });
+      this.pendingRequests.delete(cacheKey);
+      return data;
+    }).catch(error => {
+      this.pendingRequests.delete(cacheKey);
+      throw error;
+    });
+    
+    this.pendingRequests.set(cacheKey, request);
+    return request;
   }
 
   async getMember(id: string): Promise<Member> {
