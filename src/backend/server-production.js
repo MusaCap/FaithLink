@@ -89,17 +89,77 @@ app.get('/health', (req, res) => {
 // AUTHENTICATION ENDPOINTS
 // ========================================
 
+// In-memory session storage (in production, use Redis or database)
+const activeSessions = new Map();
+
 app.post('/api/auth/login', (req, res) => {
-  console.log('🔐 Login attempt');
+  console.log('🔐 Login attempt for:', req.body.email);
   const { email, password } = req.body;
   
-  const user = productionSeed.members.find(m => m.email === email) || {
-    id: 'user-admin',
-    email: email,
-    firstName: 'Admin',
-    lastName: 'User',
-    role: 'admin'
-  };
+  // Find user in production seed data
+  let user = productionSeed.members.find(m => m.email === email);
+  
+  // If not found in seed data, create new user for demo purposes
+  if (!user) {
+    console.log('🆕 Creating new user for:', email);
+    const newUserId = `mbr-${Date.now()}`;
+    const emailParts = email.split('@')[0].split('.');
+    const firstName = emailParts[0] ? emailParts[0].charAt(0).toUpperCase() + emailParts[0].slice(1) : 'New';
+    const lastName = emailParts[1] ? emailParts[1].charAt(0).toUpperCase() + emailParts[1].slice(1) : 'User';
+    
+    user = {
+      id: newUserId,
+      firstName: firstName,
+      lastName: lastName,
+      email: email,
+      role: 'member', // Default role for new users
+      status: 'active',
+      joinDate: new Date().toISOString().split('T')[0],
+      phone: '+1-555-0000',
+      address: {
+        street: '',
+        city: '',
+        state: '',
+        zipCode: ''
+      },
+      demographics: {
+        dateOfBirth: null,
+        gender: 'unknown',
+        maritalStatus: 'unknown'
+      },
+      ministry: {
+        roles: [],
+        skills: [],
+        availability: []
+      },
+      attendance: {
+        totalServices: 0,
+        averageMonthly: 0,
+        lastAttended: null
+      },
+      giving: {
+        totalLifetime: 0,
+        averageMonthly: 0,
+        lastGift: null
+      }
+    };
+    
+    // Add to seed data for future reference
+    productionSeed.members.push(user);
+  }
+  
+  // Create session token
+  const token = `faithlink-token-${user.id}-${Date.now()}`;
+  
+  // Store session
+  activeSessions.set(token, {
+    userId: user.id,
+    user: user,
+    loginTime: new Date().toISOString(),
+    lastActivity: new Date().toISOString()
+  });
+  
+  console.log('✅ Login successful for:', user.firstName, user.lastName, '(' + user.role + ')');
   
   res.json({
     success: true,
@@ -107,20 +167,56 @@ app.post('/api/auth/login', (req, res) => {
       id: user.id,
       email: user.email,
       name: `${user.firstName} ${user.lastName}`,
-      role: user.role
+      firstName: user.firstName,
+      lastName: user.lastName,
+      role: user.role || 'member',
+      status: user.status,
+      joinDate: user.joinDate
     },
-    token: `mock-jwt-token-${user.role}-${user.id}`
+    token: token
   });
 });
 
 app.get('/api/auth/me', (req, res) => {
   console.log('👤 User info requested');
+  
+  // Extract token from Authorization header
+  const authHeader = req.headers.authorization;
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return res.status(401).json({ 
+      error: 'No token provided',
+      message: 'Authorization header missing or invalid format'
+    });
+  }
+  
+  const token = authHeader.split(' ')[1];
+  const session = activeSessions.get(token);
+  
+  if (!session) {
+    return res.status(401).json({ 
+      error: 'Invalid token',
+      message: 'Token not found or expired'
+    });
+  }
+  
+  // Update last activity
+  session.lastActivity = new Date().toISOString();
+  activeSessions.set(token, session);
+  
+  const user = session.user;
+  console.log('✅ Returning user info for:', user.firstName, user.lastName, '(' + user.role + ')');
+  
   res.json({
-    id: 'user-admin',
-    email: 'admin@faithlink360.org',
-    name: 'Admin User',
-    role: 'admin',
-    permissions: ['read', 'write', 'admin']
+    id: user.id,
+    email: user.email,
+    name: `${user.firstName} ${user.lastName}`,
+    firstName: user.firstName,
+    lastName: user.lastName,
+    role: user.role || 'member',
+    status: user.status,
+    joinDate: user.joinDate,
+    permissions: user.role === 'pastor' ? ['read', 'write', 'admin'] : 
+                user.role === 'leader' ? ['read', 'write'] : ['read']
   });
 });
 
@@ -3498,7 +3594,7 @@ app.get('/api/settings/users/:userId', (req, res) => {
 // ==========================================
 
 app.post('/api/auth/register', (req, res) => {
-  console.log('🔐 User registration requested:', req.body);
+  console.log('🔐 User registration requested:', req.body.email);
   const { email, password, firstName, lastName } = req.body;
   
   if (!email || !password) {
@@ -3508,24 +3604,84 @@ app.post('/api/auth/register', (req, res) => {
     });
   }
   
+  // Check if user already exists
+  const existingUser = productionSeed.members.find(m => m.email === email);
+  if (existingUser) {
+    return res.status(400).json({
+      success: false,
+      message: 'User with this email already exists'
+    });
+  }
+  
+  // Create new user with full member profile
+  const newUserId = `mbr-${Date.now()}`;
   const user = {
-    id: `usr-${Date.now()}`,
-    email,
-    firstName: firstName || '',
-    lastName: lastName || '',
-    role: 'member',
-    isVerified: false,
-    createdAt: new Date().toISOString()
+    id: newUserId,
+    firstName: firstName || 'New',
+    lastName: lastName || 'User',
+    email: email,
+    role: 'member', // Default role for registered users
+    status: 'active',
+    joinDate: new Date().toISOString().split('T')[0],
+    phone: '+1-555-0000',
+    address: {
+      street: '',
+      city: '',
+      state: '',
+      zipCode: ''
+    },
+    demographics: {
+      dateOfBirth: null,
+      gender: 'unknown',
+      maritalStatus: 'unknown'
+    },
+    ministry: {
+      roles: [],
+      skills: [],
+      availability: []
+    },
+    attendance: {
+      totalServices: 0,
+      averageMonthly: 0,
+      lastAttended: null
+    },
+    giving: {
+      totalLifetime: 0,
+      averageMonthly: 0,
+      lastGift: null
+    }
   };
   
-  const token = `reg_token_${user.id}_${Date.now()}`;
+  // Add to seed data
+  productionSeed.members.push(user);
+  
+  // Create session token
+  const token = `faithlink-token-${user.id}-${Date.now()}`;
+  
+  // Store session
+  activeSessions.set(token, {
+    userId: user.id,
+    user: user,
+    loginTime: new Date().toISOString(),
+    lastActivity: new Date().toISOString()
+  });
+  
+  console.log('✅ Registration successful for:', user.firstName, user.lastName);
   
   res.status(201).json({
     success: true,
-    message: 'User registered successfully. Please check email for verification.',
-    user,
-    token,
-    requiresVerification: true
+    message: 'User registered successfully',
+    user: {
+      id: user.id,
+      email: user.email,
+      name: `${user.firstName} ${user.lastName}`,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      role: user.role,
+      status: user.status,
+      joinDate: user.joinDate
+    },
+    token: token
   });
 });
 
@@ -3544,6 +3700,18 @@ app.post('/api/auth/refresh', (req, res) => {
 
 app.post('/api/auth/logout', (req, res) => {
   console.log('🔐 User logout requested');
+  
+  // Extract token from Authorization header
+  const authHeader = req.headers.authorization;
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    const token = authHeader.split(' ')[1];
+    const session = activeSessions.get(token);
+    
+    if (session) {
+      console.log('✅ Clearing session for:', session.user.firstName, session.user.lastName);
+      activeSessions.delete(token);
+    }
+  }
   
   res.json({
     success: true,
