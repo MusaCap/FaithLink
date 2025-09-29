@@ -637,6 +637,84 @@ router.put('/:id', authenticateToken, async (req: any, res: Response) => {
   }
 });
 
+// GET /api/journeys/member-journeys - List member journeys with pagination and filtering
+router.get('/member-journeys', authenticateToken, async (req: any, res: Response) => {
+  try {
+    const prisma: PrismaClient = req.app.locals.prisma;
+    
+    const {
+      page = 1,
+      limit = 10,
+      memberId,
+      templateId,
+      status,
+      sortBy = 'startedAt',
+      sortOrder = 'desc'
+    } = req.query;
+
+    const offset = (parseInt(page as string) - 1) * parseInt(limit as string);
+    
+    // Build where clause
+    const where: any = {};
+    if (memberId) where.memberId = memberId;
+    if (templateId) where.templateId = templateId;
+    if (status) where.status = status;
+
+    const [journeys, total] = await Promise.all([
+      prisma.journeyStage.findMany({
+        where,
+        skip: offset,
+        take: parseInt(limit as string),
+        orderBy: {
+          [sortBy as string]: sortOrder
+        },
+        include: {
+          member: {
+            select: {
+              id: true,
+              firstName: true,
+              lastName: true,
+              email: true
+            }
+          },
+          template: {
+            select: {
+              id: true,
+              name: true,
+              description: true
+            }
+          },
+          milestone: {
+            select: {
+              id: true,
+              name: true,
+              sequence: true
+            }
+          }
+        }
+      }),
+      prisma.journeyStage.count({ where })
+    ]);
+
+    res.json({
+      journeys,
+      pagination: {
+        page: parseInt(page as string),
+        limit: parseInt(limit as string),
+        total,
+        pages: Math.ceil(total / parseInt(limit as string))
+      }
+    });
+
+  } catch (error) {
+    console.error('Error fetching member journeys:', error);
+    res.status(500).json({
+      error: 'Internal server error',
+      message: 'Failed to fetch member journeys'
+    });
+  }
+});
+
 // GET /api/journeys/stats - Get journey statistics (dashboard)
 router.get('/stats', authenticateToken, async (req: any, res: Response) => {
   try {
