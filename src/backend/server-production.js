@@ -427,8 +427,13 @@ app.get('/api/auth/me', (req, res) => {
     role: user.role || 'member',
     status: user.status,
     joinDate: user.joinDate,
+    churchId: user.churchId,          // Add missing church context
+    churchName: user.churchName,      // Add missing church context
+    isNewUser: user.isNewUser,        // Add missing new user flag
     permissions: user.role === 'pastor' ? ['read', 'write', 'admin'] : 
-                user.role === 'leader' ? ['read', 'write'] : ['read']
+                user.role === 'leader' ? ['read', 'write'] : ['read'],
+    createdAt: new Date(),
+    lastLoginAt: new Date()
   });
 });
 
@@ -1543,10 +1548,18 @@ app.get('/api/events/:id', (req, res) => {
 
 app.post('/api/events', (req, res) => {
   console.log('📅 New event creation requested');
+  console.log('📋 Request body:', JSON.stringify(req.body, null, 2));
+  console.log('🔑 Auth header:', req.headers.authorization ? 'Present' : 'Missing');
+  
   const { title, description, startDate, endDate, location, category, maxCapacity, price, requiresRegistration, isPublic } = req.body;
   
   if (!title || !startDate) {
-    return res.status(400).json({ error: 'Event title and start date are required' });
+    console.log('❌ Validation failed: Missing required fields');
+    return res.status(400).json({ 
+      error: 'Event title and start date are required',
+      received: { title, startDate },
+      success: false
+    });
   }
 
   // Get current user's church from session
@@ -1586,9 +1599,23 @@ app.post('/api/events', (req, res) => {
     tags: [category || 'Service']
   };
   
-  productionSeed.events.push(newEvent);
-  
-  res.status(201).json(newEvent);
+  try {
+    productionSeed.events.push(newEvent);
+    console.log('✅ Event created successfully:', newEvent.id, 'for church:', userChurchId);
+    
+    res.status(201).json({
+      success: true,
+      message: 'Event created successfully',
+      event: newEvent
+    });
+  } catch (error) {
+    console.error('❌ Error creating event:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to create event',
+      message: error.message
+    });
+  }
 });
 
 app.put('/api/events/:id', (req, res) => {
@@ -3986,6 +4013,7 @@ app.get('/api/settings/users/:userId', (req, res) => {
 
 app.post('/api/auth/register', (req, res) => {
   console.log('🔐 User registration requested:', req.body.email);
+  console.log('📋 Registration payload:', JSON.stringify(req.body, null, 2));
   const { email, password, firstName, lastName, churchChoice, selectedChurchId, newChurchName, joinCode } = req.body;
   
   if (!email || !password) {
@@ -4124,6 +4152,8 @@ app.post('/api/auth/register', (req, res) => {
   
   // Add to seed data
   productionSeed.members.push(user);
+  console.log('👤 User added to members:', user.id, user.firstName, user.lastName);
+  console.log('🏛️ Church assignment:', user.churchId, '-', user.churchName);
   
   // Create session token
   const token = `faithlink-token-${user.id}-${Date.now()}`;
@@ -4137,6 +4167,7 @@ app.post('/api/auth/register', (req, res) => {
   });
   
   console.log('✅ Registration successful for:', user.firstName, user.lastName);
+  console.log('🔑 Session token created:', token.substring(0, 20) + '...');
   
   res.status(201).json({
     success: true,
@@ -4149,7 +4180,14 @@ app.post('/api/auth/register', (req, res) => {
       lastName: user.lastName,
       role: user.role,
       status: user.status,
-      joinDate: user.joinDate
+      joinDate: user.joinDate,
+      churchId: user.churchId,      // Include church context
+      churchName: user.churchName,  // Include church context
+      isNewUser: user.isNewUser,    // Include new user flag
+      permissions: user.role === 'pastor' ? ['read', 'write', 'admin'] : 
+                  user.role === 'leader' ? ['read', 'write'] : ['read'],
+      createdAt: new Date(),
+      lastLoginAt: new Date()
     },
     token: token
   });
