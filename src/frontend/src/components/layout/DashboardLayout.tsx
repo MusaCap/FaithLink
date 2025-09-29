@@ -132,6 +132,18 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
 
           {/* User profile and logout */}
           <div className="px-4 py-4 border-t border-neutral-200">
+            {/* Church Info */}
+            {user?.churchName && (
+              <div className="mb-3 p-2 bg-blue-50 rounded-md">
+                <div className="text-xs font-medium text-blue-800">
+                  🏛️ {user.churchName}
+                </div>
+                <div className="text-xs text-blue-600">
+                  {user.isNewUser ? 'New Church' : 'Demo Church'}
+                </div>
+              </div>
+            )}
+            
             <div className="flex items-center mb-4">
               <div className="w-8 h-8 bg-primary-100 rounded-full flex items-center justify-center">
                 <User className="w-4 h-4 text-primary-600" />
@@ -171,6 +183,11 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
             <div className="text-sm text-neutral-500">
               Welcome back, {user?.firstName}!
             </div>
+            {user?.churchName && (
+              <div className="hidden sm:block text-sm text-neutral-400">
+                • {user.churchName}
+              </div>
+            )}
           </div>
         </div>
 
