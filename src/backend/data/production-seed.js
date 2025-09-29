@@ -2,6 +2,80 @@
 // This provides realistic data for comprehensive testing and demonstration
 
 const productionSeedData = {
+  // Available Churches for Discovery
+  churches: [
+    {
+      id: 'church-main',
+      name: 'First Community Church',
+      description: 'A welcoming community focused on faith, fellowship, and service',
+      location: 'Springfield, IL',
+      denomination: 'Non-denominational',
+      size: '250-500 members',
+      founded: '1985',
+      website: 'https://firstcommunity.org',
+      logo: '/images/churches/first-community.png',
+      memberCount: 3,
+      isPublic: true,
+      joinCode: 'WELCOME2024'
+    },
+    {
+      id: 'church-grace',
+      name: 'Grace Baptist Church',
+      description: 'Traditional Baptist church with contemporary worship',
+      location: 'Springfield, IL',
+      denomination: 'Baptist',
+      size: '100-250 members',
+      founded: '1962',
+      website: 'https://gracebaptist.org',
+      logo: '/images/churches/grace-baptist.png',
+      memberCount: 0,
+      isPublic: true,
+      joinCode: 'GRACE123'
+    },
+    {
+      id: 'church-unity',
+      name: 'Unity Methodist Church',
+      description: 'Progressive Methodist community serving all people',
+      location: 'Springfield, IL',
+      denomination: 'Methodist',
+      size: '50-100 members',
+      founded: '1978',
+      website: 'https://unitymethodist.org',
+      logo: '/images/churches/unity-methodist.png',
+      memberCount: 0,
+      isPublic: true,
+      joinCode: 'UNITY456'
+    },
+    {
+      id: 'church-hope',
+      name: 'New Hope Christian Center',
+      description: 'Modern Pentecostal church with vibrant worship',
+      location: 'Springfield, IL',
+      denomination: 'Pentecostal',
+      size: '500+ members',
+      founded: '1995',
+      website: 'https://newhopecenter.org',
+      logo: '/images/churches/new-hope.png',
+      memberCount: 0,
+      isPublic: true,
+      joinCode: 'HOPE789'
+    },
+    {
+      id: 'church-saints',
+      name: 'All Saints Catholic Church',
+      description: 'Traditional Catholic parish with rich history',
+      location: 'Springfield, IL',
+      denomination: 'Catholic',
+      size: '1000+ members',
+      founded: '1923',
+      website: 'https://allsaintscatholic.org',
+      logo: '/images/churches/all-saints.png',
+      memberCount: 0,
+      isPublic: true,
+      joinCode: 'SAINTS2024'
+    }
+  ],
+
   // Church Members (150 members)
   members: [
     {

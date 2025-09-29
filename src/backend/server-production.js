@@ -158,6 +158,62 @@ app.get('/api/bug-reports', (req, res) => {
 });
 
 // ========================================
+// CHURCH DISCOVERY ENDPOINTS
+// ========================================
+
+app.get('/api/churches', (req, res) => {
+  console.log('🏛️ Church discovery requested');
+  const { search, denomination, location } = req.query;
+  
+  let churches = productionSeed.churches.filter(c => c.isPublic);
+  
+  // Apply search filter
+  if (search) {
+    const searchTerm = search.toLowerCase();
+    churches = churches.filter(c => 
+      c.name.toLowerCase().includes(searchTerm) ||
+      c.description.toLowerCase().includes(searchTerm) ||
+      c.denomination.toLowerCase().includes(searchTerm) ||
+      c.location.toLowerCase().includes(searchTerm)
+    );
+  }
+  
+  // Apply denomination filter
+  if (denomination && denomination !== 'all') {
+    churches = churches.filter(c => c.denomination.toLowerCase() === denomination.toLowerCase());
+  }
+  
+  // Apply location filter
+  if (location) {
+    churches = churches.filter(c => c.location.toLowerCase().includes(location.toLowerCase()));
+  }
+  
+  res.json({
+    success: true,
+    churches: churches,
+    total: churches.length,
+    message: churches.length === 0 ? 'No churches found matching your criteria' : undefined
+  });
+});
+
+app.get('/api/churches/:id', (req, res) => {
+  console.log('🏛️ Church details requested:', req.params.id);
+  const church = productionSeed.churches.find(c => c.id === req.params.id);
+  
+  if (!church) {
+    return res.status(404).json({
+      success: false,
+      message: 'Church not found'
+    });
+  }
+  
+  res.json({
+    success: true,
+    church: church
+  });
+});
+
+// ========================================
 // AUTHENTICATION ENDPOINTS
 // ========================================
 
@@ -3736,7 +3792,7 @@ app.get('/api/settings/users/:userId', (req, res) => {
 
 app.post('/api/auth/register', (req, res) => {
   console.log('🔐 User registration requested:', req.body.email);
-  const { email, password, firstName, lastName } = req.body;
+  const { email, password, firstName, lastName, churchChoice, selectedChurchId, newChurchName, joinCode } = req.body;
   
   if (!email || !password) {
     return res.status(400).json({
@@ -3754,6 +3810,82 @@ app.post('/api/auth/register', (req, res) => {
     });
   }
   
+  // Handle church selection or creation
+  let churchId, churchName;
+  
+  if (churchChoice === 'join' && selectedChurchId) {
+    // User wants to join an existing church
+    const selectedChurch = productionSeed.churches.find(c => c.id === selectedChurchId);
+    if (!selectedChurch) {
+      return res.status(400).json({
+        success: false,
+        message: 'Selected church not found'
+      });
+    }
+    
+    // Validate join code if provided
+    if (joinCode && selectedChurch.joinCode !== joinCode) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid join code for this church'
+      });
+    }
+    
+    churchId = selectedChurch.id;
+    churchName = selectedChurch.name;
+    
+    // Increment member count for existing church
+    selectedChurch.memberCount += 1;
+    
+    console.log('✅ User joining existing church:', churchName);
+    
+  } else if (churchChoice === 'create' && newChurchName) {
+    // User wants to create a new church
+    churchId = `church-${Date.now()}`;
+    churchName = newChurchName;
+    
+    // Add new church to churches list
+    const newChurch = {
+      id: churchId,
+      name: churchName,
+      description: `A new church community started by ${firstName} ${lastName}`,
+      location: 'Location not specified',
+      denomination: 'Non-denominational',
+      size: '1-50 members',
+      founded: new Date().getFullYear().toString(),
+      website: '',
+      logo: '/images/churches/default.png',
+      memberCount: 1,
+      isPublic: true,
+      joinCode: `JOIN${Math.random().toString(36).substr(2, 4).toUpperCase()}`
+    };
+    
+    productionSeed.churches.push(newChurch);
+    console.log('✅ User creating new church:', churchName, 'with join code:', newChurch.joinCode);
+    
+  } else {
+    // Default fallback - create individual church
+    churchId = `church-${Date.now()}`;
+    churchName = `${firstName}'s Church Community`;
+    
+    const defaultChurch = {
+      id: churchId,
+      name: churchName,
+      description: `Personal church community for ${firstName} ${lastName}`,
+      location: 'Location not specified',
+      denomination: 'Non-denominational',
+      size: '1-50 members',
+      founded: new Date().getFullYear().toString(),
+      website: '',
+      logo: '/images/churches/default.png',
+      memberCount: 1,
+      isPublic: false, // Private by default
+      joinCode: `${firstName.toUpperCase()}${Math.random().toString(36).substr(2, 3)}`
+    };
+    
+    productionSeed.churches.push(defaultChurch);
+  }
+
   // Create new user with full member profile
   const newUserId = `mbr-${Date.now()}`;
   const user = {
@@ -3764,6 +3896,8 @@ app.post('/api/auth/register', (req, res) => {
     role: 'member', // Default role for registered users
     status: 'active',
     joinDate: new Date().toISOString().split('T')[0],
+    churchId: churchId,
+    churchName: churchName,
     phone: '+1-555-0000',
     address: {
       street: '',
@@ -3790,7 +3924,8 @@ app.post('/api/auth/register', (req, res) => {
       totalLifetime: 0,
       averageMonthly: 0,
       lastGift: null
-    }
+    },
+    isNewUser: churchChoice === 'create' || !churchChoice // Only flag as new if creating church
   };
   
   // Add to seed data

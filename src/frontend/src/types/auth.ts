@@ -39,6 +39,10 @@ export interface RegisterRequest {
   lastName: string;
   churchName?: string;
   role?: 'admin' | 'member';
+  churchChoice?: 'join' | 'create';
+  selectedChurchId?: string;
+  newChurchName?: string;
+  joinCode?: string;
 }
 
 export interface AuthResponse {

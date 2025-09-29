@@ -5,8 +5,10 @@ import Link from 'next/link';
 import { useAuth } from '../../contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import { Eye, EyeOff, Loader2, Heart, Users } from 'lucide-react';
+import ChurchSelection from '../../components/auth/ChurchSelection';
 
 export default function RegisterPage() {
+  const [currentStep, setCurrentStep] = useState<'basic' | 'church'>('basic');
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -16,6 +18,14 @@ export default function RegisterPage() {
     churchName: '',
     role: 'admin' as 'admin' | 'member',
   });
+  const [churchSelection, setChurchSelection] = useState<{
+    churchChoice: 'join' | 'create';
+    selectedChurchId?: string;
+    selectedChurchName?: string;
+    newChurchName?: string;
+    joinCode?: string;
+  } | null>(null);
+  
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const { register, isLoading, error, clearError } = useAuth();
@@ -28,7 +38,7 @@ export default function RegisterPage() {
     }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleBasicFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     clearError();
     
@@ -36,20 +46,55 @@ export default function RegisterPage() {
       return;
     }
 
+    // Move to church selection step
+    setCurrentStep('church');
+  };
+
+  const handleChurchSelection = (selection: {
+    churchChoice: 'join' | 'create';
+    selectedChurchId?: string;
+    selectedChurchName?: string;
+    newChurchName?: string;
+    joinCode?: string;
+  }) => {
+    setChurchSelection(selection);
+    completeRegistration(selection);
+  };
+
+  const completeRegistration = async (selection: {
+    churchChoice: 'join' | 'create';
+    selectedChurchId?: string;
+    selectedChurchName?: string;
+    newChurchName?: string;
+    joinCode?: string;
+  }) => {
     try {
       await register({
         email: formData.email,
         password: formData.password,
         firstName: formData.firstName,
         lastName: formData.lastName,
-        churchName: formData.churchName || undefined,
-        role: formData.role,
+        churchChoice: selection.churchChoice,
+        selectedChurchId: selection.selectedChurchId,
+        newChurchName: selection.newChurchName,
+        joinCode: selection.joinCode,
       });
       router.push('/dashboard');
     } catch (err) {
       // Error handled by AuthContext
     }
   };
+
+  if (currentStep === 'church') {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-primary-50 to-secondary-50 py-12 px-4 sm:px-6 lg:px-8">
+        <ChurchSelection 
+          onSelection={handleChurchSelection}
+          onBack={() => setCurrentStep('basic')}
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary-50 to-secondary-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
@@ -69,7 +114,7 @@ export default function RegisterPage() {
         </div>
 
         {/* Registration Form */}
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+        <form className="mt-8 space-y-6" onSubmit={handleBasicFormSubmit}>
           {error && (
             <div className="bg-red-50 border border-red-200 rounded-md p-4">
               <div className="text-sm text-red-700">{error}</div>
