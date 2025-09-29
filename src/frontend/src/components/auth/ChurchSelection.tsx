@@ -43,19 +43,18 @@ export default function ChurchSelection({ onSelection, onBack }: ChurchSelection
 
   useEffect(() => {
     fetchChurches();
-  }, [searchTerm, selectedDenomination]);
+  }, []);
 
   const fetchChurches = async () => {
     try {
-      const params = new URLSearchParams();
-      if (searchTerm) params.append('search', searchTerm);
-      if (selectedDenomination !== 'all') params.append('denomination', selectedDenomination);
-      
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/churches?${params}`);
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/churches`);
       const data = await response.json();
       
-      if (data.success) {
+      if (data.success && data.churches.length > 0) {
         setChurches(data.churches);
+        // Auto-select the first (and only) church for joining
+        const demoChurch = data.churches[0];
+        setSelectedChurch(demoChurch);
       }
     } catch (error) {
       console.error('Failed to fetch churches:', error);
@@ -88,187 +87,118 @@ export default function ChurchSelection({ onSelection, onBack }: ChurchSelection
   const canContinue = 
     (churchChoice === 'join' && selectedChurch) ||
     (churchChoice === 'create' && newChurchName.trim().length >= 3);
+  
+  // Auto-select demo church when joining
+  const demoChurch = churches.length > 0 ? churches[0] : null;
 
   return (
     <div className="max-w-4xl mx-auto p-6">
       <div className="text-center mb-8">
         <h1 className="text-3xl font-bold text-gray-800 mb-2">Choose Your Church Community</h1>
-        <p className="text-gray-600">Join an existing church or start your own community</p>
+        <p className="text-gray-600">Join our demo church to see how FaithLink360 works, or start your own</p>
       </div>
 
-      {/* Church Choice Toggle */}
-      <div className="bg-gray-100 p-1 rounded-lg mb-6 flex">
-        <button
+      {/* Simplified Church Choice */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+        {/* Join Demo Church Option */}
+        <div 
+          className={`border-2 rounded-lg p-6 cursor-pointer transition-all ${
+            churchChoice === 'join' 
+              ? 'border-blue-500 bg-blue-50' 
+              : 'border-gray-200 hover:border-gray-300'
+          }`}
           onClick={() => setChurchChoice('join')}
-          className={`flex-1 py-3 px-4 rounded-md font-medium transition-colors ${
-            churchChoice === 'join'
-              ? 'bg-white text-blue-600 shadow-sm'
-              : 'text-gray-600 hover:text-gray-800'
-          }`}
         >
-          🏛️ Join Existing Church
-        </button>
-        <button
+          <div className="text-center">
+            <div className="text-4xl mb-4">🏛️</div>
+            <h3 className="text-xl font-semibold mb-2">Join Demo Church</h3>
+            <p className="text-gray-600 mb-4">
+              Join First Community Church to see how FaithLink360 works with real community data, events, and member activities.
+            </p>
+            <div className="bg-blue-100 p-3 rounded-lg text-sm">
+              <p><strong>First Community Church</strong></p>
+              <p>3 demo members • Sample data included</p>
+              <p>Perfect for exploring features</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Create New Church Option */}
+        <div 
+          className={`border-2 rounded-lg p-6 cursor-pointer transition-all ${
+            churchChoice === 'create' 
+              ? 'border-green-500 bg-green-50' 
+              : 'border-gray-200 hover:border-gray-300'
+          }`}
           onClick={() => setChurchChoice('create')}
-          className={`flex-1 py-3 px-4 rounded-md font-medium transition-colors ${
-            churchChoice === 'create'
-              ? 'bg-white text-blue-600 shadow-sm'
-              : 'text-gray-600 hover:text-gray-800'
-          }`}
         >
-          ✨ Start New Church
-        </button>
+          <div className="text-center">
+            <div className="text-4xl mb-4">✨</div>
+            <h3 className="text-xl font-semibold mb-2">Create New Church</h3>
+            <p className="text-gray-600 mb-4">
+              Start your own church community from scratch. You'll be the administrator and can invite others to join.
+            </p>
+            <div className="bg-green-100 p-3 rounded-lg text-sm">
+              <p><strong>Your Own Community</strong></p>
+              <p>Clean slate • Full customization</p>
+              <p>Perfect for real church deployment</p>
+            </div>
+          </div>
+        </div>
       </div>
 
       {churchChoice === 'join' ? (
         <div className="space-y-6">
-          {/* Search and Filters */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-              <input
-                type="text"
-                placeholder="Search churches by name, location, or denomination..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
+          {/* Auto-select Demo Church */}
+          {loading ? (
+            <div className="text-center py-8">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto"></div>
+              <p className="mt-2 text-gray-600">Loading demo church...</p>
             </div>
-            
-            <select
-              value={selectedDenomination}
-              onChange={(e) => setSelectedDenomination(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              {denominations.map(denom => (
-                <option key={denom} value={denom}>
-                  {denom === 'all' ? 'All Denominations' : denom.charAt(0).toUpperCase() + denom.slice(1)}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* Churches List */}
-          <div className="space-y-4">
-            {loading ? (
-              <div className="text-center py-8">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto"></div>
-                <p className="mt-2 text-gray-600">Finding churches...</p>
-              </div>
-            ) : churches.length === 0 ? (
-              <div className="text-center py-8">
-                <p className="text-gray-600">No churches found matching your criteria.</p>
-                <button
-                  onClick={() => setChurchChoice('create')}
-                  className="mt-2 text-blue-600 hover:text-blue-700 font-medium"
-                >
-                  Start your own church instead →
-                </button>
-              </div>
-            ) : (
-              churches.map((church) => (
-                <div
-                  key={church.id}
-                  className={`border rounded-lg p-4 transition-all cursor-pointer ${
-                    selectedChurch?.id === church.id
-                      ? 'border-blue-500 bg-blue-50'
-                      : 'border-gray-200 hover:border-gray-300'
-                  }`}
-                  onClick={() => handleChurchSelect(church)}
-                >
-                  <div className="flex justify-between items-start">
-                    <div className="flex-1">
-                      <div className="flex items-center space-x-3">
-                        <h3 className="text-lg font-semibold text-gray-800">{church.name}</h3>
-                        <span className="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded-full">
-                          {church.denomination}
-                        </span>
-                      </div>
-                      
-                      <div className="mt-2 grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-gray-600">
-                        <div className="flex items-center space-x-1">
-                          <MapPin className="w-4 h-4" />
-                          <span>{church.location}</span>
-                        </div>
-                        <div className="flex items-center space-x-1">
-                          <Users className="w-4 h-4" />
-                          <span>{church.size}</span>
-                        </div>
-                        <div className="flex items-center space-x-1">
-                          <Calendar className="w-4 h-4" />
-                          <span>Since {church.founded}</span>
-                        </div>
-                        {church.website && (
-                          <div className="flex items-center space-x-1">
-                            <Globe className="w-4 h-4" />
-                            <span>Website</span>
-                          </div>
-                        )}
-                      </div>
-
-                      {expandedChurch === church.id && (
-                        <div className="mt-3 pt-3 border-t border-gray-200">
-                          <p className="text-gray-700 mb-3">{church.description}</p>
-                          <div className="text-sm text-gray-600">
-                            <p><strong>Current Members:</strong> {church.memberCount}</p>
-                            {church.website && (
-                              <p><strong>Website:</strong> 
-                                <a href={church.website} target="_blank" rel="noopener noreferrer" 
-                                   className="text-blue-600 hover:text-blue-700 ml-1">
-                                  {church.website}
-                                </a>
-                              </p>
-                            )}
-                          </div>
-                        </div>
-                      )}
-                    </div>
-
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setExpandedChurch(expandedChurch === church.id ? null : church.id);
-                      }}
-                      className="ml-4 p-1 hover:bg-gray-100 rounded"
-                    >
-                      {expandedChurch === church.id ? 
-                        <ChevronUp className="w-5 h-5 text-gray-400" /> : 
-                        <ChevronDown className="w-5 h-5 text-gray-400" />
-                      }
-                    </button>
+          ) : churches.length > 0 ? (
+            <div className="bg-blue-50 p-6 rounded-lg">
+              <div className="text-center">
+                <h3 className="text-xl font-semibold text-blue-800 mb-3">
+                  🏛️ Ready to Join First Community Church
+                </h3>
+                <p className="text-blue-700 mb-4">
+                  You'll join our demo church with 3 sample members and see how FaithLink360 works with real community data.
+                </p>
+                
+                <div className="bg-white p-4 rounded-lg shadow-sm max-w-md mx-auto">
+                  <h4 className="font-medium text-gray-800 mb-2">First Community Church</h4>
+                  <div className="text-sm text-gray-600 space-y-1">
+                    <p>📍 Springfield, IL</p>
+                    <p>⛪ Non-denominational</p>
+                    <p>👥 3 demo members (Pastor, Leader, Member)</p>
+                    <p>📅 Sample events and activities</p>
+                    <p>🌱 Journey templates and member tracking</p>
                   </div>
                 </div>
-              ))
-            )}
-          </div>
-
-          {/* Join Code Input */}
-          {selectedChurch && (
-            <div className="bg-blue-50 p-4 rounded-lg">
-              <div className="flex items-center justify-between mb-2">
-                <h4 className="font-medium text-blue-800">Selected: {selectedChurch.name}</h4>
-                <button
-                  onClick={() => setShowJoinCodeInput(!showJoinCodeInput)}
-                  className="text-sm text-blue-600 hover:text-blue-700"
-                >
-                  {showJoinCodeInput ? 'Hide' : 'Have a'} join code?
-                </button>
-              </div>
-              
-              {showJoinCodeInput && (
-                <div className="mt-3">
+                
+                <div className="mt-4">
+                  <p className="text-sm text-blue-600">
+                    Optional: Enter demo join code <strong>DEMO2024</strong> or continue without it
+                  </p>
                   <input
                     type="text"
-                    placeholder="Enter join code (optional)"
+                    placeholder="Enter DEMO2024 (optional)"
                     value={joinCode}
                     onChange={(e) => setJoinCode(e.target.value.toUpperCase())}
-                    className="w-full px-3 py-2 border border-blue-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="mt-2 px-3 py-2 border border-blue-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
-                  <p className="mt-1 text-xs text-blue-600">
-                    Join codes are provided by church administrators for easier joining
-                  </p>
                 </div>
-              )}
+              </div>
+            </div>
+          ) : (
+            <div className="text-center py-8">
+              <p className="text-gray-600">Demo church not available. Please create your own church instead.</p>
+              <button
+                onClick={() => setChurchChoice('create')}
+                className="mt-2 text-blue-600 hover:text-blue-700 font-medium"
+              >
+                Create New Church →
+              </button>
             </div>
           )}
         </div>
