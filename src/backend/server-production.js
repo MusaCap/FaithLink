@@ -530,13 +530,20 @@ app.get('/api/members/search/suggestions', (req, res) => {
   console.log('👥 Member search suggestions for:', req.query.q);
   const { q } = req.query;
   
-  const suggestions = [
-    { id: 'mbr-001', name: 'John Smith', email: 'john@example.com' },
-    { id: 'mbr-002', name: 'Sarah Johnson', email: 'sarah@example.com' },
-    { id: 'mbr-003', name: 'Mike Davis', email: 'mike@example.com' }
-  ].filter(member => 
-    q ? member.name.toLowerCase().includes(q.toLowerCase()) : true
+  const { userChurchId } = getUserChurchContext(req);
+  
+  // Filter members by user's church first
+  const churchMembers = productionSeed.members.filter(member => 
+    member.churchId === userChurchId || !member.churchId
   );
+  
+  const suggestions = churchMembers.map(member => ({
+    id: member.id,
+    name: `${member.firstName} ${member.lastName}`,
+    email: member.email
+  })).filter(member => 
+    q ? member.name.toLowerCase().includes(q.toLowerCase()) : true
+  ).slice(0, 10); // Limit to 10 suggestions
   
   res.json({ suggestions, total: suggestions.length });
 });
