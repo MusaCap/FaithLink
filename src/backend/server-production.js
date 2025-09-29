@@ -9,19 +9,23 @@ console.log('🚀 Starting FaithLink360 Backend with Production Data...');
 console.log(`📡 Server URL: http://localhost:${PORT}`);
 console.log(`🌐 Binding to: ${HOST}:${PORT}`);
 
-// Middleware - CORS configuration for frontend integration
+// Middleware - Enhanced CORS configuration for production deployment
 app.use(cors({
   origin: function(origin, callback) {
+    console.log('🔍 CORS request from origin:', origin);
+    
     // Allow requests with no origin (like mobile apps, curl, etc.)
     if (!origin) return callback(null, true);
     
     // Allow localhost and 127.0.0.1 on any port for development
     if (origin.match(/^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/)) {
+      console.log('✅ CORS: Allowing localhost origin');
       return callback(null, true);
     }
     
-    // Allow Netlify, Vercel, and other deployment platforms
-    if (origin.match(/^https?:\/\/.+\.(netlify\.app|vercel\.app|render\.com)$/)) {
+    // Allow Netlify, Vercel, and other deployment platforms (more permissive)
+    if (origin.match(/^https?:\/\/.+\.(netlify\.app|vercel\.app|render\.com|herokuapp\.com)$/)) {
+      console.log('✅ CORS: Allowing deployment platform origin');
       return callback(null, true);
     }
     
@@ -31,18 +35,43 @@ app.use(cors({
       'http://localhost:3001',
       'https://faithlink360.netlify.app',
       'https://keen-crepe-2b8e4f.netlify.app',
-      'https://subtle-semifreddo-ed7b4b.netlify.app' // Actual deployed Netlify URL
+      'https://subtle-semifreddo-ed7b4b.netlify.app' // Current Netlify deployment
     ];
+    
     if (allowedOrigins.includes(origin)) {
+      console.log('✅ CORS: Allowing specific origin');
       return callback(null, true);
     }
     
+    console.log('❌ CORS: Origin not allowed:', origin);
     callback(new Error('Not allowed by CORS'));
   },
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'HEAD', 'PATCH'],
+  allowedHeaders: [
+    'Content-Type', 
+    'Authorization', 
+    'X-Requested-With', 
+    'Accept', 
+    'Origin',
+    'Access-Control-Request-Method',
+    'Access-Control-Request-Headers'
+  ],
+  exposedHeaders: ['Content-Length', 'X-Kuma-Revision'],
+  maxAge: 86400, // 24 hours
+  optionsSuccessStatus: 200 // For legacy browser support
 }));
+
+// Explicit OPTIONS handler for preflight requests
+app.options('*', (req, res) => {
+  console.log('🔄 Handling preflight OPTIONS request for:', req.path);
+  res.header('Access-Control-Allow-Origin', req.headers.origin || '*');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, HEAD, PATCH');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, Accept, Origin');
+  res.header('Access-Control-Allow-Credentials', 'true');
+  res.header('Access-Control-Max-Age', '86400');
+  res.sendStatus(200);
+});
 app.use(express.json());
 
 // Enhanced logging middleware
@@ -75,13 +104,32 @@ const authenticateToken = (req, res, next) => {
 // ========================================
 
 app.get('/health', (req, res) => {
-  console.log('🏥 Health check requested');
+  console.log('🏥 Health check requested from:', req.headers.origin);
   res.status(200).json({
     status: 'healthy',
     timestamp: new Date().toISOString(),
     uptime: process.uptime(),
     environment: 'production',
-    version: '1.0.0'
+    version: '1.0.0',
+    cors: {
+      origin: req.headers.origin,
+      userAgent: req.headers['user-agent'],
+      allowedOrigin: req.headers.origin ? 'detected' : 'no origin header'
+    }
+  });
+});
+
+// CORS diagnostic endpoint
+app.get('/api/cors-test', (req, res) => {
+  console.log('🔍 CORS test requested from:', req.headers.origin);
+  res.json({
+    message: 'CORS is working correctly!',
+    origin: req.headers.origin,
+    timestamp: new Date().toISOString(),
+    headers: {
+      'access-control-allow-origin': res.get('Access-Control-Allow-Origin'),
+      'access-control-allow-credentials': res.get('Access-Control-Allow-Credentials')
+    }
   });
 });
 
