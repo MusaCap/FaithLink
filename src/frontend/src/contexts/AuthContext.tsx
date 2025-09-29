@@ -72,13 +72,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // Check for existing session on app load
     const checkAuth = async () => {
       try {
-        const token = localStorage.getItem('authToken');
+        const token = localStorage.getItem('auth_token');
         if (token) {
           const user = await authService.getCurrentUser();
           dispatch({ type: 'LOGIN_SUCCESS', payload: user });
         }
       } catch (error) {
-        localStorage.removeItem('authToken');
+        localStorage.removeItem('auth_token');
       } finally {
         dispatch({ type: 'SET_LOADING', payload: false });
       }
@@ -91,7 +91,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     dispatch({ type: 'LOGIN_START' });
     try {
       const response = await authService.login(credentials);
-      localStorage.setItem('authToken', response.token);
+      localStorage.setItem('auth_token', response.token);
       dispatch({ type: 'LOGIN_SUCCESS', payload: response.user });
     } catch (error) {
       dispatch({ 
@@ -105,7 +105,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     dispatch({ type: 'LOGIN_START' });
     try {
       const response = await authService.register(data);
-      localStorage.setItem('authToken', response.token);
+      localStorage.setItem('auth_token', response.token);
       dispatch({ type: 'LOGIN_SUCCESS', payload: response.user });
     } catch (error) {
       dispatch({ 

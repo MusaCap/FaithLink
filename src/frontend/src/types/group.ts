@@ -7,7 +7,8 @@ export interface Group {
   leaderId: string;
   leaderName: string;
   coLeaderIds?: string[];
-  memberIds: string[];
+  memberIds?: string[];
+  currentMembers?: number;
   maxMembers?: number;
   meetingSchedule?: MeetingSchedule;
   location?: string;

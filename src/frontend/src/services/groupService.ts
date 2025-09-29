@@ -19,7 +19,7 @@ class GroupService {
   private readonly MAX_RETRIES = 2;
 
   private async fetchWithAuth(url: string, options: RequestInit = {}) {
-    const token = localStorage.getItem('authToken');
+    const token = localStorage.getItem('auth_token');
     
     const headers = {
       'Content-Type': 'application/json',
@@ -137,7 +137,9 @@ class GroupService {
 
   // Group Members
   async getGroupMembers(groupId: string): Promise<GroupMember[]> {
-    return this.fetchWithAuth(`/api/groups/${groupId}/members`);
+    const response = await this.fetchWithAuth(`/api/groups/${groupId}/members`);
+    // Backend returns {groupId, groupName, members, totalMembers}, extract members array
+    return response.members || [];
   }
 
   async addGroupMember(groupId: string, memberId: string, role: 'member' | 'co_leader' = 'member'): Promise<GroupMember> {
@@ -213,7 +215,7 @@ class GroupService {
       if (filters.status?.length) queryParams.append('status', filters.status.join(','));
     }
 
-    const token = localStorage.getItem('authToken');
+    const token = localStorage.getItem('auth_token');
     const response = await fetch(`${API_BASE_URL}/api/groups/export${queryParams.toString() ? `?${queryParams.toString()}` : ''}`, {
       headers: {
         ...(token && { Authorization: `Bearer ${token}` }),

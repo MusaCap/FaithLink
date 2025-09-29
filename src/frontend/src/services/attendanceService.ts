@@ -7,7 +7,7 @@ import {
   AttendanceStats 
 } from '../types/attendance';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
 // Cache for API responses
 const cache = new Map<string, { data: any; timestamp: number; ttl: number }>();
@@ -68,7 +68,7 @@ class AttendanceService {
     cacheKey?: string,
     cacheTTL: number = CACHE_TTL
   ): Promise<T> {
-    let lastError: Error;
+    let lastError: Error = new Error('Unknown error occurred');
     
     // Retry logic
     for (let attempt = 1; attempt <= 3; attempt++) {
@@ -121,7 +121,7 @@ class AttendanceService {
     
     const cacheKey = `attendance_sessions_${params.toString()}`;
     return this.request<AttendanceResponse>(
-      `/attendance?${params.toString()}`, 
+      `/api/attendance?${params.toString()}`, 
       { method: 'GET' },
       cacheKey
     );
@@ -131,7 +131,7 @@ class AttendanceService {
   async getAttendanceSession(sessionId: string): Promise<AttendanceSession> {
     const cacheKey = `attendance_session_${sessionId}`;
     return this.request<AttendanceSession>(
-      `/attendance/${sessionId}`, 
+      `/api/attendance/${sessionId}`, 
       { method: 'GET' },
       cacheKey
     );
@@ -140,7 +140,7 @@ class AttendanceService {
   // Create a new attendance session
   async createAttendanceSession(data: AttendanceCreateRequest): Promise<AttendanceSession> {
     const result = await this.request<AttendanceSession>(
-      '/attendance', 
+      '/api/attendance', 
       {
         method: 'POST',
         body: JSON.stringify(data),
@@ -156,7 +156,7 @@ class AttendanceService {
   // Update an attendance session
   async updateAttendanceSession(data: AttendanceUpdateRequest): Promise<AttendanceSession> {
     const result = await this.request<AttendanceSession>(
-      `/attendance/${data.id}`, 
+      `/api/attendance/${data.id}`, 
       {
         method: 'PUT',
         body: JSON.stringify(data),
@@ -172,7 +172,7 @@ class AttendanceService {
   // Delete an attendance session
   async deleteAttendanceSession(sessionId: string): Promise<void> {
     await this.request<void>(
-      `/attendance/${sessionId}`, 
+      `/api/attendance/${sessionId}`, 
       { method: 'DELETE' }
     );
     
@@ -189,7 +189,7 @@ class AttendanceService {
     
     const cacheKey = `attendance_stats_${params.toString()}`;
     return this.request<AttendanceStats>(
-      `/attendance/stats?${params.toString()}`, 
+      `/api/attendance/stats?${params.toString()}`, 
       { method: 'GET' },
       cacheKey,
       60000 // Cache stats for 1 minute
@@ -208,7 +208,7 @@ class AttendanceService {
     
     params.append('format', format);
     
-    const response = await fetch(`${API_BASE_URL}/attendance/export?${params.toString()}`, {
+    const response = await fetch(`${API_BASE_URL}/api/attendance/export?${params.toString()}`, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem('auth_token')}`,
       },
@@ -224,7 +224,7 @@ class AttendanceService {
   // Bulk update attendance records
   async bulkUpdateAttendance(sessionId: string, updates: { memberId: string; status: string; notes?: string }[]): Promise<AttendanceSession> {
     const result = await this.request<AttendanceSession>(
-      `/attendance/${sessionId}/bulk-update`, 
+      `/api/attendance/${sessionId}/bulk-update`, 
       {
         method: 'POST',
         body: JSON.stringify({ updates }),

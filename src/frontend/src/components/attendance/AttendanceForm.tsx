@@ -47,10 +47,21 @@ export default function AttendanceForm({ groupId }: AttendanceFormProps) {
   }>({});
 
   useEffect(() => {
-    loadGroupData();
+    if (groupId && groupId !== 'undefined') {
+      loadGroupData();
+    } else {
+      setError('Invalid group ID provided');
+      setLoading(false);
+    }
   }, [groupId]);
 
   const loadGroupData = async () => {
+    if (!groupId || groupId === 'undefined') {
+      setError('No group ID provided');
+      setLoading(false);
+      return;
+    }
+
     try {
       setLoading(true);
       setError(null);

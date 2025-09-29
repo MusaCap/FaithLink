@@ -16,7 +16,9 @@ import {
   LogOut,
   User,
   Home,
-  UserPlus
+  UserPlus,
+  Target,
+  BookOpen
 } from 'lucide-react';
 
 interface DashboardLayoutProps {
@@ -76,7 +78,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   const navigationItems = getNavigationItems();
 
   return (
-    <div className="min-h-screen bg-neutral-50">
+    <div className="flex h-screen bg-neutral-50">
       {/* Mobile sidebar backdrop */}
       {isSidebarOpen && (
         <div
@@ -86,7 +88,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
       )}
 
       {/* Sidebar */}
-      <div className={`fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0 ${
+      <div className={`fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out lg:relative lg:translate-x-0 lg:flex lg:flex-col ${
         isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
       }`}>
         <div className="flex flex-col h-full">
@@ -155,28 +157,28 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
       </div>
 
       {/* Main content */}
-      <div className="lg:pl-64">
+      <div className="flex flex-col flex-1 overflow-hidden">
         {/* Top bar */}
-        <div className="sticky top-0 z-30 bg-white border-b border-neutral-200">
-          <div className="flex items-center justify-between h-16 px-6">
-            <button
-              onClick={() => setIsSidebarOpen(true)}
-              className="lg:hidden p-2 rounded-md text-neutral-400 hover:text-neutral-500"
-            >
-              <Menu className="w-5 h-5" />
-            </button>
-            
-            <div className="flex items-center space-x-4">
-              <div className="text-sm text-neutral-500">
-                Welcome back, {user?.firstName}!
-              </div>
+        <div className="flex items-center justify-between h-16 px-4 sm:px-6 lg:px-8 bg-white border-b border-neutral-200">
+          <button
+            onClick={() => setIsSidebarOpen(true)}
+            className="lg:hidden p-2 rounded-md text-neutral-400 hover:text-neutral-500"
+          >
+            <Menu className="w-5 h-5" />
+          </button>
+          
+          <div className="flex items-center space-x-4">
+            <div className="text-sm text-neutral-500">
+              Welcome back, {user?.firstName}!
             </div>
           </div>
         </div>
 
         {/* Page content */}
-        <main className="flex-1 p-6">
-          {children}
+        <main className="flex-1 overflow-auto p-6">
+          <div className="max-w-7xl mx-auto">
+            {children}
+          </div>
         </main>
       </div>
     </div>

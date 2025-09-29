@@ -29,7 +29,12 @@ export const setupTestDatabase = async () => {
     
     // Create users
     for (const user of testData.users) {
-      await prisma.user.create({ data: user });
+      await prisma.user.create({ 
+        data: {
+          ...user,
+          password: 'hashedPassword123' // Required field
+        }
+      });
     }
     
     // Create groups
@@ -39,7 +44,12 @@ export const setupTestDatabase = async () => {
     
     // Create group members
     for (const member of testData.groupMembers) {
-      await prisma.groupMember.create({ data: member });
+      await prisma.groupMember.create({ 
+        data: {
+          ...member,
+          memberId: member.userId // Fix field name mapping
+        }
+      });
     }
     
     // Create journey templates
@@ -49,27 +59,54 @@ export const setupTestDatabase = async () => {
     
     // Create milestones
     for (const milestone of testData.milestones) {
-      await prisma.milestone.create({ data: milestone });
+      await prisma.milestone.create({ 
+        data: {
+          ...milestone,
+          sequence: milestone.order // Fix field name mapping
+        }
+      });
     }
     
-    // Create member journeys
-    for (const journey of testData.memberJourneys) {
-      await prisma.memberJourney.create({ data: journey });
+    // Create journey stages (replaces memberJourneys)
+    for (const journey of testData.memberJourneys || []) {
+      await prisma.journeyStage.create({ 
+        data: {
+          id: journey.id,
+          templateId: journey.templateId,
+          memberId: journey.memberId,
+          milestoneId: testData.milestones[0]?.id || 'default-milestone-id', // Required field
+          status: 'IN_PROGRESS' // Valid StageStatus enum value
+        }
+      });
     }
     
-    // Create milestone progress
-    for (const progress of testData.milestoneProgress) {
-      await prisma.milestoneProgress.create({ data: progress });
+    // Create events (replaces attendance sessions)
+    for (const session of testData.attendanceSessions || []) {
+      await prisma.event.create({ 
+        data: {
+          id: session.id,
+          title: 'Test Event',
+          description: session.notes || 'Test event description',
+          location: 'Test Location',
+          dateTime: session.date || new Date(),
+          calendarType: 'ONEOFF',
+          groupId: session.groupId,
+          createdBy: testData.users[0]?.id || 'default-user-id' // Required field
+        }
+      });
     }
     
-    // Create attendance sessions
-    for (const session of testData.attendanceSessions) {
-      await prisma.attendanceSession.create({ data: session });
-    }
-    
-    // Create attendance records
-    for (const record of testData.attendanceRecords) {
-      await prisma.attendanceRecord.create({ data: record });
+    // Create event attendance (replaces attendance records)
+    for (const record of testData.attendanceRecords || []) {
+      await prisma.eventAttendance.create({ 
+        data: {
+          id: record.id,
+          eventId: record.sessionId,
+          memberId: record.userId, // Fix property name
+          attended: record.status === 'PRESENT', // Convert status to boolean
+          checkedInAt: new Date()
+        }
+      });
     }
     
     console.log('✅ Test database seeded successfully');
@@ -85,10 +122,9 @@ export const cleanupTestDatabase = async () => {
   
   try {
     // Delete in reverse order of dependencies
-    await prisma.attendanceRecord.deleteMany();
-    await prisma.attendanceSession.deleteMany();
-    await prisma.milestoneProgress.deleteMany();
-    await prisma.memberJourney.deleteMany();
+    await prisma.eventAttendance.deleteMany();
+    await prisma.event.deleteMany();
+    await prisma.journeyStage.deleteMany();
     await prisma.milestone.deleteMany();
     await prisma.journeyTemplate.deleteMany();
     await prisma.groupMember.deleteMany();
@@ -126,6 +162,7 @@ export const createTestUser = async (overrides: any = {}) => {
       firstName: 'Test',
       lastName: 'User',
       role: 'MEMBER',
+      password: 'hashedPassword123',
       ...overrides
     }
   });

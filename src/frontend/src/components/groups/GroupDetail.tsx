@@ -21,8 +21,12 @@ import {
   Settings,
   Trash2,
   Crown,
-  Shield
+  Shield,
+  FileText,
+  MessageCircle
 } from 'lucide-react';
+import GroupFiles from './GroupFiles';
+import GroupMessages from './GroupMessages';
 
 interface GroupDetailProps {
   groupId: string;
@@ -38,6 +42,7 @@ export default function GroupDetail({ groupId }: GroupDetailProps) {
   const [error, setError] = useState<string | null>(null);
   const [showAddMember, setShowAddMember] = useState(false);
   const [selectedMemberId, setSelectedMemberId] = useState('');
+  const [activeTab, setActiveTab] = useState('members');
 
   useEffect(() => {
     loadGroupData();
@@ -183,7 +188,7 @@ export default function GroupDetail({ groupId }: GroupDetailProps) {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-sm">
               <div className="flex items-center text-neutral-600">
                 <Users className="w-4 h-4 mr-2" />
-                {group.memberIds.length} members
+                {group.memberIds?.length || group.currentMembers || 0} members
                 {group.maxMembers && ` / ${group.maxMembers} max`}
               </div>
               <div className="flex items-center text-neutral-600">
@@ -280,32 +285,74 @@ export default function GroupDetail({ groupId }: GroupDetailProps) {
         </div>
       )}
 
-      {/* Members */}
+      {/* Tabbed Content */}
       <div className="bg-white rounded-lg shadow-sm border border-neutral-200">
-        <div className="p-6 border-b border-neutral-200">
-          <div className="flex items-center justify-between">
-            <h3 className="text-lg font-medium text-neutral-900">Members ({groupMembers.length})</h3>
-            {canManageGroup && (
-              <button
-                onClick={() => setShowAddMember(true)}
-                className="inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700"
-              >
-                <UserPlus className="w-4 h-4 mr-2" />
-                Add Member
-              </button>
-            )}
-          </div>
+        {/* Tab Navigation */}
+        <div className="border-b border-neutral-200">
+          <nav className="flex space-x-8 px-6" aria-label="Tabs">
+            <button
+              onClick={() => setActiveTab('members')}
+              className={`py-4 px-1 border-b-2 font-medium text-sm ${
+                activeTab === 'members'
+                  ? 'border-primary-500 text-primary-600'
+                  : 'border-transparent text-neutral-500 hover:text-neutral-700 hover:border-neutral-300'
+              }`}
+            >
+              <Users className="w-4 h-4 inline mr-2" />
+              Members ({groupMembers.length})
+            </button>
+            <button
+              onClick={() => setActiveTab('files')}
+              className={`py-4 px-1 border-b-2 font-medium text-sm ${
+                activeTab === 'files'
+                  ? 'border-primary-500 text-primary-600'
+                  : 'border-transparent text-neutral-500 hover:text-neutral-700 hover:border-neutral-300'
+              }`}
+            >
+              <FileText className="w-4 h-4 inline mr-2" />
+              Files
+            </button>
+            <button
+              onClick={() => setActiveTab('messages')}
+              className={`py-4 px-1 border-b-2 font-medium text-sm ${
+                activeTab === 'messages'
+                  ? 'border-primary-500 text-primary-600'
+                  : 'border-transparent text-neutral-500 hover:text-neutral-700 hover:border-neutral-300'
+              }`}
+            >
+              <MessageCircle className="w-4 h-4 inline mr-2" />
+              Messages
+            </button>
+          </nav>
         </div>
 
-        {/* Add Member Modal */}
-        {showAddMember && (
-          <div className="p-6 border-b border-neutral-200 bg-neutral-50">
-            <div className="flex items-center space-x-3">
-              <select
-                className="flex-1 px-3 py-2 border border-neutral-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
-                value={selectedMemberId}
-                onChange={(e) => setSelectedMemberId(e.target.value)}
-              >
+        {/* Tab Content */}
+        {activeTab === 'members' && (
+          <>
+            <div className="p-6 border-b border-neutral-200">
+              <div className="flex items-center justify-between">
+                <h3 className="text-lg font-medium text-neutral-900">Members ({groupMembers.length})</h3>
+                {canManageGroup && (
+                  <button
+                    onClick={() => setShowAddMember(true)}
+                    className="inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700"
+                  >
+                    <UserPlus className="w-4 h-4 mr-2" />
+                    Add Member
+                  </button>
+                )}
+              </div>
+            </div>
+
+            {/* Add Member Modal */}
+            {showAddMember && (
+              <div className="p-6 border-b border-neutral-200 bg-neutral-50">
+                <div className="flex items-center space-x-3">
+                  <select
+                    className="flex-1 px-3 py-2 border border-neutral-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    value={selectedMemberId}
+                    onChange={(e) => setSelectedMemberId(e.target.value)}
+                  >
                 <option value="">Select a member to add</option>
                 {availableMembers.map((member) => (
                   <option key={member.id} value={member.id}>
@@ -405,6 +452,20 @@ export default function GroupDetail({ groupId }: GroupDetailProps) {
             </div>
           )}
         </div>
+          </>
+        )}
+
+        {/* Files Tab */}
+        {activeTab === 'files' && (
+          <GroupFiles groupId={groupId} />
+        )}
+
+        {/* Messages Tab */}
+        {activeTab === 'messages' && (
+          <div className="h-96">
+            <GroupMessages groupId={groupId} />
+          </div>
+        )}
       </div>
     </div>
   );

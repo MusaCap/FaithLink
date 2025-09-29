@@ -14,7 +14,7 @@ model User {
   createdAt DateTime  @default(now())
   isActive  Boolean   @default(true)
   updatedAt DateTime  @updatedAt
-  role      Role      @default(MEMBER)
+  role      String    @default("MEMBER")
   careLogs  CareLog[] @relation("CareGiver")
   member    Member?
 
@@ -29,9 +29,9 @@ model Member {
   email              String            @unique
   phone              String?
   dateOfBirth        DateTime?
-  gender             Gender?
+  gender             String?
   address            String?
-  maritalStatus      MaritalStatus?
+  maritalStatus      String?
   spiritualStatus    String?
   profilePhotoUrl    String?
   notes              String?
@@ -53,7 +53,7 @@ model Member {
 model Group {
   id          String        @id @default(cuid())
   name        String
-  type        GroupType
+  type        String
   description String?
   leaderId    String?
   isActive    Boolean       @default(true)
@@ -110,7 +110,7 @@ model JourneyStage {
   memberId        String
   templateId      String
   milestoneId     String
-  status          StageStatus     @default(NOT_STARTED)
+  status          String          @default("NOT_STARTED")
   autoProgress    Boolean         @default(false)
   flagForFollowUp Boolean         @default(false)
   completedAt     DateTime?
@@ -132,7 +132,7 @@ model Event {
   dateTime     DateTime
   location     String?
   groupId      String?
-  calendarType CalendarType      @default(ONEOFF)
+  calendarType String            @default("ONEOFF")
   createdBy    String
   isActive     Boolean           @default(true)
   createdAt    DateTime          @default(now())
@@ -161,7 +161,7 @@ model CareLog {
   id               String    @id @default(cuid())
   memberId         String
   caregiverId      String
-  type             CareType
+  type             String
   notes            String
   followUpRequired Boolean   @default(false)
   confidential     Boolean   @default(false)
@@ -176,7 +176,7 @@ model CareLog {
 model Tag {
   id        String      @id @default(cuid())
   label     String      @unique
-  category  TagCategory @default(MEMBER)
+  category  String      @default("MEMBER")
   color     String      @default("#7ED321")
   createdAt DateTime    @default(now())
   events    EventTag[]
@@ -233,54 +233,3 @@ model MemberFamily {
   @@map("member_families")
 }
 
-enum Role {
-  ADMIN
-  PASTOR
-  CARE_TEAM
-  GROUP_LEADER
-  MEMBER
-}
-
-enum Gender {
-  MALE
-  FEMALE
-  OTHER
-}
-
-enum MaritalStatus {
-  SINGLE
-  MARRIED
-  DIVORCED
-  WIDOWED
-}
-
-enum GroupType {
-  MINISTRY
-  LIFEGROUP
-  TEAM
-}
-
-enum StageStatus {
-  NOT_STARTED
-  IN_PROGRESS
-  COMPLETED
-}
-
-enum CalendarType {
-  WEEKLY
-  MONTHLY
-  ONEOFF
-}
-
-enum CareType {
-  PRAYER
-  VISIT
-  COUNSELING
-  CALL
-}
-
-enum TagCategory {
-  MEMBER
-  EVENT
-  GROUP
-}

@@ -4,7 +4,7 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
 class AuthService {
   private async fetchWithAuth(url: string, options: RequestInit = {}) {
-    const token = localStorage.getItem('authToken');
+    const token = localStorage.getItem('auth_token');
     
     const headers = {
       'Content-Type': 'application/json',
@@ -26,10 +26,28 @@ class AuthService {
   }
 
   async login(credentials: LoginRequest): Promise<AuthResponse> {
-    return this.fetchWithAuth('/api/auth/login', {
+    const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
       method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
       body: JSON.stringify(credentials),
     });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({ message: response.statusText }));
+      throw new Error(errorData.message || `Login failed: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    
+    // Store the token if login successful
+    if (data.token) {
+      localStorage.setItem('auth_token', data.token);
+      localStorage.setItem('user', JSON.stringify(data.user));
+    }
+    
+    return data;
   }
 
   async register(data: RegisterRequest): Promise<AuthResponse> {
@@ -50,9 +68,19 @@ class AuthService {
   }
 
   async logout(): Promise<void> {
-    await this.fetchWithAuth('/api/auth/logout', {
-      method: 'POST',
-    });
+    // Clear local storage
+    localStorage.removeItem('auth_token');
+    localStorage.removeItem('user');
+    
+    // Optional: Call backend logout if endpoint exists
+    try {
+      await this.fetchWithAuth('/api/auth/logout', {
+        method: 'POST',
+      });
+    } catch (error) {
+      // Logout locally even if backend call fails
+      console.log('Backend logout failed, but local logout successful');
+    }
   }
 
   async forgotPassword(email: string): Promise<{ message: string }> {
@@ -70,7 +98,7 @@ class AuthService {
   }
 
   isTokenValid(): boolean {
-    const token = localStorage.getItem('authToken');
+    const token = localStorage.getItem('auth_token');
     if (!token) return false;
 
     try {

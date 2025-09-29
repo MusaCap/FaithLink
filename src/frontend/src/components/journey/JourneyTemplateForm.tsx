@@ -178,7 +178,7 @@ export default function JourneyTemplateForm({ template, onSave, onCancel }: Jour
     try {
       const templateData = {
         ...formData,
-        name: formData.name.trim(),
+        title: formData.name.trim(), // Backend expects 'title' not 'name'
         description: formData.description.trim() || '',
         milestones: milestones.map((milestone, index) => ({
           ...milestone,

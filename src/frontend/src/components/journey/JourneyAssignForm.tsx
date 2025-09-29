@@ -173,7 +173,7 @@ export default function JourneyAssignForm() {
     router.back();
   };
 
-  const selectedTemplate_data = templates.find(t => t.id === selectedTemplate);
+  const selectedTemplate_data = templates?.find(t => t.id === selectedTemplate);
   const filteredMembers = getFilteredMembers();
 
   if (loading) {

@@ -361,13 +361,13 @@ export default function MemberList({
                     {member.profilePhoto ? (
                       <img
                         src={member.profilePhoto}
-                        alt={`${member.firstName} ${member.lastName}`}
+                        alt={`${member.firstName || 'First'} ${member.lastName || 'Last'}`}
                         className="h-12 w-12 rounded-full object-cover"
                       />
                     ) : (
                       <div className="h-12 w-12 rounded-full bg-gray-300 flex items-center justify-center">
                         <span className="text-gray-600 font-medium">
-                          {member.firstName.charAt(0)}{member.lastName.charAt(0)}
+                          {member.firstName?.charAt(0) || 'F'}{member.lastName?.charAt(0) || 'L'}
                         </span>
                       </div>
                     )}
@@ -380,7 +380,7 @@ export default function MemberList({
                         href={`/members/${member.id}`}
                         className="text-lg font-semibold text-gray-900 hover:text-blue-600"
                       >
-                        {member.firstName} {member.lastName}
+                        {member.firstName || 'First'} {member.lastName || 'Last'}
                       </Link>
                       <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(member.membershipStatus)}`}>
                         {member.membershipStatus}

@@ -299,7 +299,7 @@ export default function GroupList() {
               <div className="space-y-2 mb-4">
                 <div className="flex items-center text-sm text-neutral-600">
                   <Users className="w-4 h-4 mr-2" />
-                  {group.memberIds.length} members
+                  {group.memberIds?.length || 0} members
                   {group.maxMembers && (
                     <span className="text-neutral-400"> / {group.maxMembers} max</span>
                   )}

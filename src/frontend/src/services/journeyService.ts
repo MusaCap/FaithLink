@@ -14,7 +14,7 @@ import {
   JourneyStats
 } from '../types/journey';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
 // Cache for API responses
 const cache = new Map<string, { data: any; timestamp: number; ttl: number }>();
@@ -30,57 +30,37 @@ class JourneyService {
     cacheKey?: string,
     cacheTTL: number = CACHE_TTL
   ): Promise<T> {
-    // Check cache first
-    if (cacheKey && options.method === 'GET') {
-      const cached = cache.get(cacheKey);
-      if (cached && Date.now() - cached.timestamp < cached.ttl) {
-        return cached.data;
-      }
-    }
-
-    // Deduplicate requests
-    const requestKey = `${options.method || 'GET'}_${endpoint}_${JSON.stringify(options.body)}`;
-    if (pendingRequests.has(requestKey)) {
-      return pendingRequests.get(requestKey);
-    }
-
     const url = `${API_BASE_URL}${endpoint}`;
     const token = localStorage.getItem('auth_token');
     
+    const defaultHeaders = {
+      'Content-Type': 'application/json',
+      ...(token && { Authorization: `Bearer ${token}` }),
+    };
+
     const requestOptions: RequestInit = {
       ...options,
       headers: {
-        'Content-Type': 'application/json',
-        ...(token && { Authorization: `Bearer ${token}` }),
+        ...defaultHeaders,
         ...options.headers,
       },
     };
 
-    const requestPromise = this.makeRequest<T>(url, requestOptions, cacheKey, cacheTTL);
-    
-    // Store pending request
-    pendingRequests.set(requestKey, requestPromise);
-    
-    // Clean up pending request after completion
-    requestPromise.finally(() => {
-      pendingRequests.delete(requestKey);
-    });
+    // Check cache first
+    if (cacheKey && options.method === 'GET') {
+      const cached = cache.get(cacheKey);
+      if (cached && Date.now() - cached.timestamp < cached.ttl) {
+        console.log(`Cache hit for ${cacheKey}`);
+        return cached.data;
+      }
+    }
 
-    return requestPromise;
-  }
-
-  private async makeRequest<T>(
-    url: string, 
-    options: RequestInit,
-    cacheKey?: string,
-    cacheTTL: number = CACHE_TTL
-  ): Promise<T> {
-    let lastError: Error;
+    let lastError: Error = new Error('Request failed');
     
     // Retry logic
     for (let attempt = 1; attempt <= 3; attempt++) {
       try {
-        const response = await fetch(url, options);
+        const response = await fetch(url, requestOptions);
         
         if (!response.ok) {
           if (response.status === 429) {
@@ -132,7 +112,7 @@ class JourneyService {
     
     const cacheKey = `journey_templates_${params.toString()}`;
     return this.request<JourneyTemplateResponse>(
-      `/journeys/templates?${params.toString()}`, 
+      `/api/journey-templates?${params.toString()}`, 
       { method: 'GET' },
       cacheKey
     );
@@ -141,7 +121,7 @@ class JourneyService {
   async getJourneyTemplate(templateId: string): Promise<JourneyTemplate> {
     const cacheKey = `journey_template_${templateId}`;
     return this.request<JourneyTemplate>(
-      `/journeys/templates/${templateId}`, 
+      `/api/journey-templates/${templateId}`, 
       { method: 'GET' },
       cacheKey
     );
@@ -149,7 +129,7 @@ class JourneyService {
 
   async createJourneyTemplate(data: JourneyTemplateCreateRequest): Promise<JourneyTemplate> {
     const result = await this.request<JourneyTemplate>(
-      '/journeys/templates', 
+      '/api/journey-templates', 
       {
         method: 'POST',
         body: JSON.stringify(data),
@@ -164,7 +144,7 @@ class JourneyService {
 
   async updateJourneyTemplate(data: JourneyTemplateUpdateRequest): Promise<JourneyTemplate> {
     const result = await this.request<JourneyTemplate>(
-      `/journeys/templates/${data.id}`, 
+      `/api/journey-templates/${data.id}`, 
       {
         method: 'PUT',
         body: JSON.stringify(data),
@@ -180,7 +160,7 @@ class JourneyService {
 
   async deleteJourneyTemplate(templateId: string): Promise<void> {
     await this.request<void>(
-      `/journeys/templates/${templateId}`, 
+      `/api/journey-templates/${templateId}`, 
       { method: 'DELETE' }
     );
     
@@ -191,7 +171,7 @@ class JourneyService {
 
   async duplicateJourneyTemplate(templateId: string, newName: string): Promise<JourneyTemplate> {
     const result = await this.request<JourneyTemplate>(
-      `/journeys/templates/${templateId}/duplicate`, 
+      `/api/journey-templates/${templateId}/duplicate`, 
       {
         method: 'POST',
         body: JSON.stringify({ name: newName }),
@@ -323,7 +303,7 @@ class JourneyService {
 
     const token = localStorage.getItem('auth_token');
     const response = await fetch(
-      `${API_BASE_URL}/journeys/milestone-progress/${data.milestoneProgressId}/submit`,
+      `${API_BASE_URL}/api/journeys/milestone-progress/${data.milestoneProgressId}/submit`,
       {
         method: 'POST',
         headers: {
@@ -434,7 +414,7 @@ class JourneyService {
 
   // Export Functions
   async exportJourneyTemplate(templateId: string, format: 'json' | 'pdf' = 'json'): Promise<Blob> {
-    const response = await fetch(`${API_BASE_URL}/journeys/templates/${templateId}/export?format=${format}`, {
+    const response = await fetch(`${API_BASE_URL}/api/journey-templates/${templateId}/export?format=${format}`, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem('auth_token')}`,
       },

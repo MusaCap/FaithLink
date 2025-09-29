@@ -7,12 +7,23 @@ import dotenv from 'dotenv';
 import { PrismaClient } from '@prisma/client';
 import 'express-async-errors';
 
+// Debug: Catch unhandled rejections
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('🚨 Unhandled Rejection at:', promise, 'reason:', reason);
+  process.exit(1);
+});
+
+process.on('uncaughtException', (error) => {
+  console.error('🚨 Uncaught Exception:', error);
+  process.exit(1);
+});
+
 // Load environment variables
 dotenv.config();
 
 // Initialize Express app
 const app = express();
-const PORT = process.env.PORT || 8000;
+const PORT = process.env.PORT || 5000;
 
 // Initialize Prisma Client
 const prisma = new PrismaClient({
@@ -131,14 +142,20 @@ app.get('/health', async (req, res) => {
 // Import API routes
 import authRoutes from './routes/auth'; // Fixed: removed direct PrismaClient import
 import memberRoutes from './routes/members'; // Re-enabled: startup hang resolved
+import groupRoutes from './routes/groups'; // Groups API implementation
+import journeyRoutes from './routes/journeys'; // Journey Templates API implementation
+import attendanceRoutes from './routes/attendance'; // Attendance API implementation
+import eventRoutes from './routes/events'; // Events API implementation
+import careRoutes from './routes/care'; // Care Logs API implementation
 
 // API Routes
 app.use('/api/auth', authRoutes); // Re-enabled with fixed auth routes
 app.use('/api/members', memberRoutes); // Re-enabled: startup hang resolved
-// app.use('/api/groups', groupRoutes);
-// app.use('/api/journeys', journeyRoutes);
-// app.use('/api/events', eventRoutes);
-// app.use('/api/care', careRoutes);
+app.use('/api/groups', groupRoutes); // Groups API with full CRUD operations
+app.use('/api/journeys', journeyRoutes); // Journey Templates API with full CRUD operations
+app.use('/api/attendance', attendanceRoutes); // Attendance API with session and member tracking
+app.use('/api/events', eventRoutes); // Events API with full CRUD and registration system
+app.use('/api/care', careRoutes); // Care Logs API with pastoral care tracking
 
 // Placeholder API endpoints for initial testing
 app.get('/api/test', (req, res) => {
@@ -213,28 +230,24 @@ app.use((err: any, req: express.Request, res: express.Response, next: express.Ne
   // Default server error
   res.status(err.status || 500).json({
     error: 'Internal server error',
-    message: process.env.NODE_ENV === 'development' ? err.message : 'Something went wrong',
+    message: 'Something went wrong',
     timestamp: new Date().toISOString()
   });
 });
 
-// Graceful shutdown handlers
-const gracefulShutdown = async () => {
-  console.log('🔄 Graceful shutdown initiated...');
-  
-  try {
-    // Database disconnect
-    await prisma.$disconnect();
-    console.log('📊 Database connection closed');
-    process.exit(0);
-  } catch (error) {
-    console.error('❌ Error during shutdown:', error);
-    process.exit(1);
-  }
-};
+// Graceful shutdown - DISABLED FOR DEBUG
+// const gracefulShutdown = (signal: string) => {
+//   console.log(`🔄 Graceful shutdown initiated...`);
+//   server.close(() => {
+//     console.log('📊 Database connection closed');
+//     prisma.$disconnect();
+//     process.exit(0);
+//   });
+// };
 
-process.on('SIGINT', gracefulShutdown);
-process.on('SIGTERM', gracefulShutdown);
+// process.on('SIGINT', gracefulShutdown);
+// process.on('SIGTERM', gracefulShutdown);
+// Graceful shutdown handlers disabled for debugging
 
 // Start the server
 const server = app.listen(PORT, () => {

@@ -294,7 +294,7 @@ export default function MemberJourneyList() {
 
       {/* Journeys List */}
       <div className="bg-white rounded-lg shadow-sm border border-neutral-200">
-        {journeys.length === 0 ? (
+        {!journeys || journeys.length === 0 ? (
           <div className="text-center py-12">
             <BookOpen className="w-12 h-12 text-neutral-400 mx-auto mb-4" />
             <h4 className="text-lg font-medium text-neutral-900 mb-2">
@@ -318,7 +318,7 @@ export default function MemberJourneyList() {
           </div>
         ) : (
           <div className="divide-y divide-neutral-200">
-            {journeys.map((journey) => (
+            {journeys && journeys.map((journey) => (
               <div key={journey.id} className="p-6 hover:bg-neutral-50">
                 <div className="flex items-start justify-between">
                   <div className="flex-1">

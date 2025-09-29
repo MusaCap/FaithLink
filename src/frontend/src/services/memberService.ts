@@ -16,29 +16,27 @@ class MemberService {
   private readonly CACHE_DURATION = 30000; // 30 seconds
   private readonly MAX_RETRIES = 2;
 
-  private async fetchWithAuth(url: string, options: RequestInit = {}) {
-    const token = localStorage.getItem('authToken');
+  private async fetchWithAuth(endpoint: string, options: RequestInit = {}): Promise<any> {
+    const token = localStorage.getItem('auth_token');
+    const fullUrl = endpoint.startsWith('http') ? endpoint : `http://localhost:8000${endpoint}`;
     
-    const headers = {
-      'Content-Type': 'application/json',
-      ...(token && { Authorization: `Bearer ${token}` }),
-      ...options.headers,
-    };
-
     let attempts = 0;
     while (attempts <= this.MAX_RETRIES) {
       try {
-        const response = await fetch(`${API_BASE_URL}${url}`, {
+        const response = await fetch(fullUrl, {
           ...options,
-          headers,
+          headers: {
+            'Content-Type': 'application/json',
+            ...(token && { Authorization: `Bearer ${token}` }),
+            ...options.headers,
+          },
         });
 
         if (!response.ok) {
-          if (response.status === 429 && attempts < this.MAX_RETRIES) {
-            // Rate limited - wait and retry
-            await new Promise(resolve => setTimeout(resolve, 1000 * (attempts + 1)));
-            attempts++;
-            continue;
+          if (response.status === 401) {
+            localStorage.removeItem('auth_token');
+            window.location.href = '/login';
+            return;
           }
           
           const errorData = await response.json().catch(() => ({ message: response.statusText }));
@@ -175,7 +173,7 @@ class MemberService {
 
   // Member Profile Photo
   async uploadProfilePhoto(memberId: string, file: File): Promise<{ photoUrl: string }> {
-    const token = localStorage.getItem('authToken');
+    const token = localStorage.getItem('auth_token');
     const formData = new FormData();
     formData.append('photo', file);
 
@@ -210,7 +208,7 @@ class MemberService {
       if (filters.membershipStatus?.length) queryParams.append('status', filters.membershipStatus.join(','));
     }
 
-    const token = localStorage.getItem('authToken');
+    const token = localStorage.getItem('auth_token');
     const response = await fetch(`${API_BASE_URL}/api/members/export${queryParams.toString() ? `?${queryParams.toString()}` : ''}`, {
       headers: {
         ...(token && { Authorization: `Bearer ${token}` }),

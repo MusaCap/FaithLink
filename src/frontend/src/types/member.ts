@@ -4,6 +4,7 @@ export interface Member {
   lastName: string;
   email: string;
   phone?: string;
+  role?: 'admin' | 'pastor' | 'group_leader' | 'member';
   dateOfBirth?: Date;
   address?: {
     street?: string;
