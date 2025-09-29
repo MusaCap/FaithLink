@@ -372,7 +372,22 @@ app.get('/api/members', (req, res) => {
   console.log('👥 Members list requested');
   const { page = 1, limit = 50, search, role, status } = req.query;
   
-  let filteredMembers = productionSeed.members;
+  // Get current user's church from session for filtering
+  const authHeader = req.headers.authorization;
+  let userChurchId = 'church-main'; // Default to demo church
+  
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    const token = authHeader.split(' ')[1];
+    const session = activeSessions.get(token);
+    if (session && session.user.churchId) {
+      userChurchId = session.user.churchId;
+    }
+  }
+  
+  // Filter members by user's church
+  let filteredMembers = productionSeed.members.filter(member => 
+    member.churchId === userChurchId || !member.churchId
+  );
   
   if (search) {
     const searchTerm = search.toLowerCase();
@@ -626,7 +641,22 @@ app.get('/api/groups', (req, res) => {
   console.log('👨‍👩‍👧‍👦 Groups list requested');
   const { page = 1, limit = 20, category, status } = req.query;
   
-  let filteredGroups = productionSeed.groups;
+  // Get current user's church from session for filtering
+  const authHeader = req.headers.authorization;
+  let userChurchId = 'church-main'; // Default to demo church
+  
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    const token = authHeader.split(' ')[1];
+    const session = activeSessions.get(token);
+    if (session && session.user.churchId) {
+      userChurchId = session.user.churchId;
+    }
+  }
+  
+  // Filter groups by user's church
+  let filteredGroups = productionSeed.groups.filter(group => 
+    group.churchId === userChurchId || !group.churchId
+  );
   
   if (category && category !== 'all') {
     filteredGroups = filteredGroups.filter(group => group.category === category);
@@ -778,14 +808,31 @@ app.post('/api/groups', (req, res) => {
   if (!name) {
     return res.status(400).json({ error: 'Group name is required' });
   }
+
+  // Get current user's church from session
+  const authHeader = req.headers.authorization;
+  let userChurchId = 'church-main'; // Default to demo church
+  let leaderId = 'user-admin';
+  let leaderName = 'Admin User';
+  
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    const token = authHeader.split(' ')[1];
+    const session = activeSessions.get(token);
+    if (session && session.user) {
+      userChurchId = session.user.churchId || 'church-main';
+      leaderId = session.user.id;
+      leaderName = `${session.user.firstName} ${session.user.lastName}`;
+    }
+  }
   
   const newGroup = {
     id: `group-${Date.now()}`,
     name,
     description: description || '',
     category: category || 'General',
-    leaderId: req.user?.id || 'user-admin',
-    leaderName: req.user?.name || 'Admin User',
+    leaderId,
+    leaderName,
+    churchId: userChurchId, // Assign to user's church
     currentMembers: 1,
     maxMembers: maxMembers || 50,
     meetingSchedule: {
@@ -797,7 +844,7 @@ app.post('/api/groups', (req, res) => {
     isPrivate: isPrivate || false,
     createdAt: new Date().toISOString(),
     tags: [category || 'General'],
-    memberIds: [req.user?.id || 'user-admin']
+    memberIds: [leaderId]
   };
   
   // Add to in-memory storage (in production, this would be saved to database)
@@ -1213,7 +1260,22 @@ app.get('/api/events', (req, res) => {
   console.log('📅 Events list requested');
   const { page = 1, limit = 20, category, status, upcoming } = req.query;
   
-  let filteredEvents = productionSeed.events;
+  // Get current user's church from session for filtering
+  const authHeader = req.headers.authorization;
+  let userChurchId = 'church-main'; // Default to demo church
+  
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    const token = authHeader.split(' ')[1];
+    const session = activeSessions.get(token);
+    if (session && session.user.churchId) {
+      userChurchId = session.user.churchId;
+    }
+  }
+  
+  // Filter events by user's church
+  let filteredEvents = productionSeed.events.filter(event => 
+    event.churchId === userChurchId || !event.churchId
+  );
   
   if (upcoming === 'true') {
     const now = new Date();
@@ -1397,6 +1459,22 @@ app.post('/api/events', (req, res) => {
   if (!title || !startDate) {
     return res.status(400).json({ error: 'Event title and start date are required' });
   }
+
+  // Get current user's church from session
+  const authHeader = req.headers.authorization;
+  let userChurchId = 'church-main'; // Default to demo church
+  let organizerId = 'user-admin';
+  let organizerName = 'Admin User';
+  
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    const token = authHeader.split(' ')[1];
+    const session = activeSessions.get(token);
+    if (session && session.user) {
+      userChurchId = session.user.churchId || 'church-main';
+      organizerId = session.user.id;
+      organizerName = `${session.user.firstName} ${session.user.lastName}`;
+    }
+  }
   
   const newEvent = {
     id: `event-${Date.now()}`,
@@ -1406,8 +1484,9 @@ app.post('/api/events', (req, res) => {
     endDate: endDate || startDate,
     location: location || 'Church Building',
     category: category || 'Service',
-    organizerId: req.user?.id || 'user-admin',
-    organizerName: req.user?.name || 'Admin User',
+    organizerId,
+    organizerName,
+    churchId: userChurchId, // Assign to user's church
     maxCapacity: maxCapacity || 100,
     registrationCount: 0,
     price: price || 0,
@@ -1731,8 +1810,26 @@ app.post('/api/journeys', (req, res) => {
 // Journey Templates CRUD
 app.get('/api/journey-templates', (req, res) => {
   console.log('📋 Journey templates list requested');
+  
+  // Get current user's church from session for filtering
+  const authHeader = req.headers.authorization;
+  let userChurchId = 'church-main'; // Default to demo church
+  
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    const token = authHeader.split(' ')[1];
+    const session = activeSessions.get(token);
+    if (session && session.user.churchId) {
+      userChurchId = session.user.churchId;
+    }
+  }
+  
+  // Filter journey templates by user's church
+  const filteredTemplates = productionSeed.journeyTemplates.filter(template => 
+    template.churchId === userChurchId || !template.churchId
+  );
+  
   res.json({
-    templates: productionSeed.journeyTemplates,
+    templates: filteredTemplates,
     total: productionSeed.journeyTemplates.length
   });
 });
