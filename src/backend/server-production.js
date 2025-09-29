@@ -20,8 +20,18 @@ app.use(cors({
       return callback(null, true);
     }
     
+    // Allow Netlify, Vercel, and other deployment platforms
+    if (origin.match(/^https?:\/\/.+\.(netlify\.app|vercel\.app|render\.com)$/)) {
+      return callback(null, true);
+    }
+    
     // Allow specific origins
-    const allowedOrigins = ['http://localhost:3000', 'http://localhost:3001'];
+    const allowedOrigins = [
+      'http://localhost:3000', 
+      'http://localhost:3001',
+      'https://faithlink360.netlify.app',
+      'https://keen-crepe-2b8e4f.netlify.app' // Add your actual Netlify URL here
+    ];
     if (allowedOrigins.includes(origin)) {
       return callback(null, true);
     }
