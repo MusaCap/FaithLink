@@ -188,6 +188,10 @@ app.post('/api/auth/login', (req, res) => {
     const firstName = emailParts[0] ? emailParts[0].charAt(0).toUpperCase() + emailParts[0].slice(1) : 'New';
     const lastName = emailParts[1] ? emailParts[1].charAt(0).toUpperCase() + emailParts[1].slice(1) : 'User';
     
+    // Create unique church for new user (in production, they would join existing church)
+    const churchId = `church-${Date.now()}`;
+    const churchName = `${firstName}'s Church Community`;
+    
     user = {
       id: newUserId,
       firstName: firstName,
@@ -196,6 +200,8 @@ app.post('/api/auth/login', (req, res) => {
       role: 'member', // Default role for new users
       status: 'active',
       joinDate: new Date().toISOString().split('T')[0],
+      churchId: churchId, // Unique church for each new user
+      churchName: churchName,
       phone: '+1-555-0000',
       address: {
         street: '',
@@ -222,7 +228,8 @@ app.post('/api/auth/login', (req, res) => {
         totalLifetime: 0,
         averageMonthly: 0,
         lastGift: null
-      }
+      },
+      isNewUser: true // Flag to show onboarding
     };
     
     // Add to seed data for future reference
@@ -2928,24 +2935,62 @@ app.get('/api/reports/dashboard', (req, res) => {
   console.log('📊 Dashboard reports requested');
   const { range = 'last30days' } = req.query;
   
+  // Get current user from session
+  const authHeader = req.headers.authorization;
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return res.status(401).json({ error: 'Authentication required' });
+  }
+  
+  const token = authHeader.split(' ')[1];
+  const session = activeSessions.get(token);
+  
+  if (!session) {
+    return res.status(401).json({ error: 'Invalid session' });
+  }
+  
+  const currentUser = session.user;
+  console.log('📊 Dashboard for user:', currentUser.firstName, currentUser.lastName, '- Church:', currentUser.churchName || 'Default');
+  
+  // Filter data by user's church (or show personal data for new users)
+  const isNewUser = currentUser.isNewUser || false;
+  const userChurchId = currentUser.churchId || 'church-main';
+  
+  let churchMembers, churchGroups, churchEvents;
+  
+  if (isNewUser) {
+    // New user gets minimal, personalized data
+    churchMembers = [currentUser]; // Only show themselves
+    churchGroups = []; // No groups yet
+    churchEvents = []; // No events yet
+  } else {
+    // Return data for their specific church
+    churchMembers = productionSeed.members.filter(m => m.churchId === userChurchId);
+    churchGroups = productionSeed.groups.filter(g => g.churchId === userChurchId || !g.churchId);
+    churchEvents = productionSeed.events.filter(e => e.churchId === userChurchId || !e.churchId);
+  }
+  
   const stats = {
-    totalMembers: productionSeed.members.length,
-    activeGroups: productionSeed.groups.filter(g => g.status === 'active').length,
-    upcomingEvents: productionSeed.events.filter(e => new Date(e.startDate) > new Date()).length,
-    activePrayerRequests: productionSeed.prayerRequests?.filter(r => r.status === 'active').length || 0,
-    memberGrowth: 12.5,
-    attendanceGrowth: 8.3,
-    engagementScore: 87.2,
-    avgAttendance: 245,
+    totalMembers: churchMembers.length,
+    activeGroups: churchGroups.filter(g => g.status === 'active').length,
+    upcomingEvents: churchEvents.filter(e => new Date(e.startDate) > new Date()).length,
+    activePrayerRequests: 0, // New users have no prayer requests initially
+    memberGrowth: isNewUser ? 0 : 12.5,
+    attendanceGrowth: isNewUser ? 0 : 8.3,
+    engagementScore: isNewUser ? 0 : 87.2,
+    avgAttendance: isNewUser ? 0 : Math.min(245, churchMembers.length * 0.8),
     
-    // Additional dashboard data
-    recentActivity: [
+    // Personalized activity based on user type
+    recentActivity: isNewUser ? [
+      { type: 'member_joined', message: `Welcome ${currentUser.firstName}! You've joined ${currentUser.churchName}`, timestamp: new Date().toISOString() },
+      { type: 'onboarding', message: 'Complete your profile to get started', timestamp: new Date().toISOString() },
+      { type: 'explore', message: 'Explore groups and events to connect with others', timestamp: new Date().toISOString() }
+    ] : [
       { type: 'member_joined', message: 'New member Sarah Martinez joined', timestamp: new Date().toISOString() },
       { type: 'event_registered', message: '12 new registrations for Community Service Day', timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString() },
       { type: 'prayer_request', message: 'New prayer request for healing', timestamp: new Date(Date.now() - 4 * 60 * 60 * 1000).toISOString() }
     ],
     
-    upcomingEventsDetailed: productionSeed.events
+    upcomingEventsDetailed: churchEvents
       .filter(e => new Date(e.startDate) > new Date())
       .slice(0, 5)
       .map(e => ({
@@ -2957,17 +3002,32 @@ app.get('/api/reports/dashboard', (req, res) => {
       })),
       
     memberStats: {
-      newThisMonth: productionSeed.members.filter(m => 
+      newThisMonth: churchMembers.filter(m => 
         new Date(m.joinDate) > new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
       ).length,
-      activeMembers: productionSeed.members.filter(m => m.status === 'active').length,
-      leaders: productionSeed.members.filter(m => m.role === 'leader' || m.role === 'pastor').length
+      activeMembers: churchMembers.filter(m => m.status === 'active').length,
+      leaders: churchMembers.filter(m => m.role === 'leader' || m.role === 'pastor').length
     },
     
     groupStats: {
-      totalGroups: productionSeed.groups.length,
-      avgGroupSize: Math.round(productionSeed.groups.reduce((sum, g) => sum + (g.currentMembers || 0), 0) / productionSeed.groups.length),
-      largestGroup: Math.max(...productionSeed.groups.map(g => g.currentMembers || 0))
+      totalGroups: churchGroups.length,
+      avgGroupSize: churchGroups.length > 0 ? Math.round(churchGroups.reduce((sum, g) => sum + (g.currentMembers || 0), 0) / churchGroups.length) : 0,
+      largestGroup: churchGroups.length > 0 ? Math.max(...churchGroups.map(g => g.currentMembers || 0)) : 0
+    },
+    
+    // Add church context and new user flags
+    churchInfo: {
+      id: userChurchId,
+      name: currentUser.churchName || 'First Community Church',
+      isNewUser: isNewUser
+    },
+    
+    // Personal user context
+    userContext: {
+      firstName: currentUser.firstName,
+      role: currentUser.role,
+      joinDate: currentUser.joinDate,
+      isNewUser: isNewUser
     }
   };
   

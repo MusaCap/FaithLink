@@ -61,7 +61,8 @@ class DashboardService {
       this.cache = data;
       this.cacheExpiry = Date.now() + this.CACHE_DURATION;
 
-      return data.quickStats;
+      // Return stats from the correct data structure
+      return data.data || data.quickStats;
     } catch (error) {
       console.error('Failed to fetch dashboard stats:', error);
       // Return fallback stats if API calls fail
@@ -78,7 +79,7 @@ class DashboardService {
     try {
       // Use cached data if available
       if (this.cache && Date.now() < this.cacheExpiry) {
-        return this.cache.recentActivity || [];
+        return this.cache.data?.recentActivity || this.cache.recentActivity || [];
       }
 
       const token = localStorage.getItem('auth_token') || 'mock_token_admin';
@@ -99,7 +100,7 @@ class DashboardService {
       this.cache = data;
       this.cacheExpiry = Date.now() + this.CACHE_DURATION;
 
-      return data.recentActivity || [];
+      return data.data?.recentActivity || data.recentActivity || [];
     } catch (error) {
       console.error('Failed to fetch recent activity:', error);
       // Return fallback activities
@@ -119,7 +120,7 @@ class DashboardService {
     try {
       // Use cached data if available
       if (this.cache && Date.now() < this.cacheExpiry) {
-        return this.cache.upcomingEvents || [];
+        return this.cache.data?.upcomingEventsDetailed || this.cache.upcomingEvents || [];
       }
 
       const token = localStorage.getItem('auth_token') || 'mock_token_admin';
@@ -140,7 +141,7 @@ class DashboardService {
       this.cache = data;
       this.cacheExpiry = Date.now() + this.CACHE_DURATION;
 
-      return data.upcomingEvents || [];
+      return data.data?.upcomingEventsDetailed || data.upcomingEvents || [];
     } catch (error) {
       console.error('Failed to fetch upcoming events:', error);
       return [];

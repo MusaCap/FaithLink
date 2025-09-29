@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { 
   Heart, 
@@ -11,8 +11,36 @@ import {
   Clock,
   User
 } from 'lucide-react';
+import { useAuth } from '../../contexts/AuthContext';
+import NewUserWelcome from '../onboarding/NewUserWelcome';
 
 export default function MemberDashboard() {
+  const { user } = useAuth();
+  const [showOnboarding, setShowOnboarding] = useState(false);
+  
+  // Check if user is new and should see onboarding
+  useEffect(() => {
+    // Check localStorage for onboarding completion
+    const hasSeenOnboarding = localStorage.getItem(`onboarding_completed_${user?.id}`);
+    
+    if (user && !hasSeenOnboarding) {
+      // Check if user joined recently (within last 24 hours) or has isNewUser flag
+      const joinDate = new Date(user.joinDate || Date.now());
+      const daysSinceJoin = (Date.now() - joinDate.getTime()) / (1000 * 60 * 60 * 24);
+      
+      if (daysSinceJoin < 1) {
+        setShowOnboarding(true);
+      }
+    }
+  }, [user]);
+  
+  const handleOnboardingComplete = () => {
+    setShowOnboarding(false);
+    if (user) {
+      localStorage.setItem(`onboarding_completed_${user.id}`, 'true');
+    }
+  };
+  
   const upcomingEvents = [
     { name: 'Sunday Worship Service', date: 'Sunday, 9:00 AM', location: 'Main Sanctuary' },
     { name: 'Bible Study Group', date: 'Wednesday, 7:00 PM', location: 'Room 201' },
@@ -32,14 +60,26 @@ export default function MemberDashboard() {
   ];
 
   return (
-    <div className="space-y-6">
-      {/* Welcome Header */}
-      <div className="bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg p-6 text-white">
-        <h1 className="text-2xl font-bold mb-2">Welcome to Your Faith Journey</h1>
-        <p className="text-blue-100">
-          Stay connected with your church community and track your spiritual growth
-        </p>
-      </div>
+    <>
+      {/* New User Onboarding Modal */}
+      <NewUserWelcome 
+        isVisible={showOnboarding} 
+        onComplete={handleOnboardingComplete} 
+      />
+      
+      <div className="space-y-6">
+        {/* Welcome Header */}
+        <div className="bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg p-6 text-white">
+          <h1 className="text-2xl font-bold mb-2">
+            Welcome {user?.firstName ? `${user.firstName}` : 'to Your Faith Journey'}
+          </h1>
+          <p className="text-blue-100">
+            {user?.churchName 
+              ? `Stay connected with ${user.churchName} and track your spiritual growth`
+              : 'Stay connected with your church community and track your spiritual growth'
+            }
+          </p>
+        </div>
 
       {/* Main Content Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -179,6 +219,7 @@ export default function MemberDashboard() {
           </div>
         </div>
       </div>
-    </div>
+      </div>
+    </>
   );
 }

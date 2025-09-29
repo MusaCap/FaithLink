@@ -3,9 +3,13 @@ export interface User {
   email: string;
   firstName: string;
   lastName: string;
-  role: 'admin' | 'pastor' | 'group_leader' | 'member';
+  role: 'admin' | 'pastor' | 'group_leader' | 'member' | 'leader';
   profilePhoto?: string;
-  churchId: string;
+  churchId?: string;
+  churchName?: string;
+  joinDate?: string;
+  status?: string;
+  isNewUser?: boolean;
   permissions: Permission[];
   createdAt: Date;
   lastLoginAt?: Date;

@@ -14,6 +14,8 @@ const productionSeedData = {
       role: 'pastor',
       status: 'active',
       joinDate: '2020-03-15',
+      churchId: 'church-main',
+      churchName: 'First Community Church',
       address: {
         street: '123 Faith Avenue',
         city: 'Springfield',
@@ -51,6 +53,8 @@ const productionSeedData = {
       role: 'member',
       status: 'active',
       joinDate: '2021-06-10',
+      churchId: 'church-main',
+      churchName: 'First Community Church',
       address: {
         street: '456 Grace Street',
         city: 'Springfield', 
@@ -88,6 +92,8 @@ const productionSeedData = {
       role: 'leader',
       status: 'active',
       joinDate: '2019-09-25',
+      churchId: 'church-main',
+      churchName: 'First Community Church',
       address: {
         street: '789 Hope Lane',
         city: 'Springfield',
