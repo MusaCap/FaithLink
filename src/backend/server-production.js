@@ -220,6 +220,26 @@ app.get('/api/churches/:id', (req, res) => {
 // In-memory session storage (in production, use Redis or database)
 const activeSessions = new Map();
 
+// Helper function to get user's church context from session
+function getUserChurchContext(req) {
+  const authHeader = req.headers.authorization;
+  let userChurchId = 'church-main'; // Default to demo church
+  let userId = 'user-admin';
+  let userName = 'Admin User';
+  
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    const token = authHeader.split(' ')[1];
+    const session = activeSessions.get(token);
+    if (session && session.user) {
+      userChurchId = session.user.churchId || 'church-main';
+      userId = session.user.id;
+      userName = `${session.user.firstName} ${session.user.lastName}`;
+    }
+  }
+  
+  return { userChurchId, userId, userName };
+}
+
 app.post('/api/auth/login', (req, res) => {
   console.log('🔐 Login attempt for:', req.body.email);
   const { email, password } = req.body;
@@ -431,9 +451,16 @@ app.get('/api/members', (req, res) => {
 app.get('/api/members/stats', (req, res) => {
   console.log('👥 Member statistics requested');
   
-  const totalMembers = productionSeed.members.length;
-  const activeMembers = productionSeed.members.filter(m => m.status === 'active').length;
-  const newMembersThisMonth = productionSeed.members.filter(m => {
+  const { userChurchId } = getUserChurchContext(req);
+  
+  // Filter members by user's church
+  const churchMembers = productionSeed.members.filter(member => 
+    member.churchId === userChurchId || !member.churchId
+  );
+  
+  const totalMembers = churchMembers.length;
+  const activeMembers = churchMembers.filter(m => m.status === 'active').length;
+  const newMembersThisMonth = churchMembers.filter(m => {
     const joinDate = new Date(m.joinDate);
     const thisMonth = new Date();
     return joinDate.getMonth() === thisMonth.getMonth() && joinDate.getFullYear() === thisMonth.getFullYear();
@@ -689,9 +716,16 @@ app.get('/api/groups', (req, res) => {
 app.get('/api/groups/stats', (req, res) => {
   console.log('👨‍👩‍👧‍👦 Group statistics requested');
   
-  const totalGroups = productionSeed.groups.length;
-  const activeGroups = productionSeed.groups.filter(g => g.status === 'active').length;
-  const avgGroupSize = Math.round(productionSeed.groups.reduce((sum, g) => sum + (g.currentMembers || 0), 0) / totalGroups);
+  const { userChurchId } = getUserChurchContext(req);
+  
+  // Filter groups by user's church
+  const churchGroups = productionSeed.groups.filter(group => 
+    group.churchId === userChurchId || !group.churchId
+  );
+  
+  const totalGroups = churchGroups.length;
+  const activeGroups = churchGroups.filter(g => g.status === 'active').length;
+  const avgGroupSize = totalGroups > 0 ? Math.round(churchGroups.reduce((sum, g) => sum + (g.currentMembers || 0), 0) / totalGroups) : 0;
   
   res.json({
     stats: {
@@ -699,17 +733,17 @@ app.get('/api/groups/stats', (req, res) => {
       activeGroups,
       inactiveGroups: totalGroups - activeGroups,
       averageGroupSize: avgGroupSize,
-      largestGroupSize: Math.max(...productionSeed.groups.map(g => g.currentMembers || 0)),
-      smallestGroupSize: Math.min(...productionSeed.groups.map(g => g.currentMembers || 0)),
-      totalMembers: productionSeed.groups.reduce((sum, g) => sum + (g.currentMembers || 0), 0),
+      largestGroupSize: churchGroups.length > 0 ? Math.max(...churchGroups.map(g => g.currentMembers || 0)) : 0,
+      smallestGroupSize: churchGroups.length > 0 ? Math.min(...churchGroups.map(g => g.currentMembers || 0)) : 0,
+      totalMembers: churchGroups.reduce((sum, g) => sum + (g.currentMembers || 0), 0),
       groupGrowthRate: 15.2
     },
     categories: {
-      'small-group': productionSeed.groups.filter(g => g.category === 'small-group').length,
-      'ministry': productionSeed.groups.filter(g => g.category === 'ministry').length,
-      'bible-study': productionSeed.groups.filter(g => g.category === 'bible-study').length,
-      'youth': productionSeed.groups.filter(g => g.category === 'youth').length,
-      'other': productionSeed.groups.filter(g => !['small-group', 'ministry', 'bible-study', 'youth'].includes(g.category)).length
+      'small-group': churchGroups.filter(g => g.category === 'small-group').length,
+      'ministry': churchGroups.filter(g => g.category === 'ministry').length,
+      'bible-study': churchGroups.filter(g => g.category === 'bible-study').length,
+      'youth': churchGroups.filter(g => g.category === 'youth').length,
+      'other': churchGroups.filter(g => !['small-group', 'ministry', 'bible-study', 'youth'].includes(g.category)).length
     },
     meetingFrequency: {
       weekly: Math.floor(totalGroups * 0.6),
@@ -1635,7 +1669,15 @@ app.post('/api/events/:id/check-in', (req, res) => {
 
 app.get('/api/journeys', (req, res) => {
   console.log('🌟 Journeys list requested');
-  const memberJourneys = productionSeed.journeyTemplates.map(template => ({
+  
+  const { userChurchId } = getUserChurchContext(req);
+  
+  // Filter journey templates by user's church
+  const churchJourneyTemplates = productionSeed.journeyTemplates.filter(template => 
+    template.churchId === userChurchId || !template.churchId
+  );
+  
+  const memberJourneys = churchJourneyTemplates.map(template => ({
     id: `journey-${template.id}`,
     templateId: template.id,
     memberId: 'member-sample',

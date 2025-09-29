@@ -151,6 +151,7 @@ const productionSeedData = {
       category: 'bible_study',
       leaderId: 'mbr-002',
       leaderName: 'Sarah Martinez',
+      churchId: 'church-main',
       meetingTime: 'Wednesday 7:00 PM',
       location: 'Conference Room A',
       capacity: 20,
