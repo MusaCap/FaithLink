@@ -9,6 +9,7 @@ const productionSeedData = {
       firstName: 'David',
       lastName: 'Johnson',
       email: 'david.johnson@faithlink360.org',
+      password: 'pastor123', // Demo password for testing
       phone: '+1-555-0101',
       role: 'pastor',
       status: 'active',
@@ -45,6 +46,7 @@ const productionSeedData = {
       firstName: 'Sarah',
       lastName: 'Martinez',
       email: 'sarah.martinez@email.com',
+      password: 'member123', // Demo password for testing
       phone: '+1-555-0102',
       role: 'member',
       status: 'active',
@@ -81,6 +83,7 @@ const productionSeedData = {
       firstName: 'Michael',
       lastName: 'Thompson', 
       email: 'michael.thompson@email.com',
+      password: 'leader123', // Demo password for testing
       phone: '+1-555-0103',
       role: 'leader',
       status: 'active',

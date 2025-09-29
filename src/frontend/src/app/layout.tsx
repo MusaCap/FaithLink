@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
 import { AuthProvider } from '../contexts/AuthContext'
+import BugReportButton from '../components/BugReportButton'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -62,6 +63,9 @@ export default function RootLayout({ children }: RootLayoutProps) {
             
             {/* Toast notifications container */}
             <div id="toast-root" />
+            
+            {/* Bug Report Button - only show in production/testing */}
+            <BugReportButton />
           </div>
         </AuthProvider>
         

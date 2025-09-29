@@ -86,6 +86,78 @@ app.get('/health', (req, res) => {
 });
 
 // ========================================
+// BUG REPORTING SYSTEM
+// ========================================
+
+// In-memory bug reports storage (in production, use database)
+const bugReports = [];
+
+app.post('/api/bug-report', (req, res) => {
+  console.log('🐛 Bug report submitted');
+  const { 
+    title, 
+    description, 
+    steps, 
+    expectedBehavior, 
+    actualBehavior, 
+    browserInfo, 
+    userEmail, 
+    severity = 'medium',
+    category = 'general' 
+  } = req.body;
+  
+  if (!title || !description) {
+    return res.status(400).json({
+      success: false,
+      message: 'Title and description are required'
+    });
+  }
+  
+  const bugReport = {
+    id: `bug-${Date.now()}`,
+    title,
+    description,
+    steps: steps || '',
+    expectedBehavior: expectedBehavior || '',
+    actualBehavior: actualBehavior || '',
+    browserInfo: browserInfo || navigator.userAgent,
+    userEmail: userEmail || 'anonymous',
+    severity, // low, medium, high, critical
+    category, // general, authentication, ui, performance, data
+    status: 'open',
+    submittedAt: new Date().toISOString(),
+    url: req.headers.referer || 'unknown'
+  };
+  
+  bugReports.push(bugReport);
+  
+  console.log('✅ Bug report saved:', bugReport.id, '-', bugReport.title);
+  
+  res.status(201).json({
+    success: true,
+    message: 'Bug report submitted successfully',
+    reportId: bugReport.id,
+    thankYou: 'Thank you for helping us improve FaithLink360!'
+  });
+});
+
+app.get('/api/bug-reports', (req, res) => {
+  console.log('🐛 Bug reports requested');
+  
+  res.json({
+    reports: bugReports,
+    count: bugReports.length,
+    summary: {
+      open: bugReports.filter(r => r.status === 'open').length,
+      inProgress: bugReports.filter(r => r.status === 'in-progress').length,
+      resolved: bugReports.filter(r => r.status === 'resolved').length,
+      critical: bugReports.filter(r => r.severity === 'critical').length,
+      high: bugReports.filter(r => r.severity === 'high').length
+    }
+  });
+});
+
+// ========================================
 // AUTHENTICATION ENDPOINTS
 // ========================================
 
@@ -98,6 +170,15 @@ app.post('/api/auth/login', (req, res) => {
   
   // Find user in production seed data
   let user = productionSeed.members.find(m => m.email === email);
+  
+  // Validate password for existing users
+  if (user && user.password && user.password !== password) {
+    console.log('❌ Invalid password for:', user.firstName, user.lastName);
+    return res.status(401).json({
+      success: false,
+      message: 'Invalid email or password'
+    });
+  }
   
   // If not found in seed data, create new user for demo purposes
   if (!user) {
