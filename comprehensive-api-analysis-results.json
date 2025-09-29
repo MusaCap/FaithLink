@@ -1,0 +1,670 @@
+{
+  "totalFiles": 104,
+  "totalAPICalls": 219,
+  "uniqueAPIs": 64,
+  "uniqueRoutes": 48,
+  "apiEndpoints": [
+    "/api/attendance",
+    "/api/attendance/${data.id}",
+    "/api/attendance/${sessionId}",
+    "/api/attendance/${sessionId}/bulk-update",
+    "/api/attendance/stats?${params.toString()}",
+    "/api/attendance?${params.toString()}",
+    "/api/auth/forgot-password",
+    "/api/auth/logout",
+    "/api/auth/me",
+    "/api/auth/refresh",
+    "/api/auth/register",
+    "/api/auth/reset-password",
+    "/api/care/members-needing-care",
+    "/api/care/records",
+    "/api/events/${eventId}/check-in",
+    "/api/events/${eventId}/check-in/${attendeeId}",
+    "/api/events/${eventId}/check-in/${attendeeId}/no-show",
+    "/api/events/${eventId}/rsvps",
+    "/api/events/${eventId}/rsvps/${rsvpId}",
+    "/api/events/${selectedEvent.id}/register",
+    "/api/groups",
+    "/api/groups${queryParams.toString() ? ",
+    "/api/groups/${attendanceData.groupId}/attendance",
+    "/api/groups/${groupData.id}",
+    "/api/groups/${groupId}/attendance${queryParams.toString() ? ",
+    "/api/groups/${groupId}/attendance/${sessionId}",
+    "/api/groups/${groupId}/members",
+    "/api/groups/${groupId}/members/${memberId}",
+    "/api/groups/${groupId}/stats/attendance?period=${period}",
+    "/api/groups/${id}",
+    "/api/groups/bulk",
+    "/api/groups/stats",
+    "/api/journey-templates",
+    "/api/journey-templates/${data.id}",
+    "/api/journey-templates/${templateId}",
+    "/api/journey-templates/${templateId}/duplicate",
+    "/api/journey-templates?${params.toString()}",
+    "/api/members",
+    "/api/members${queryParams.toString() ? ",
+    "/api/members/${id}",
+    "/api/members/${memberData.id}",
+    "/api/members/bulk",
+    "/api/members/search/suggestions?q=${encodeURIComponent(query)}",
+    "/api/members/self-service/notifications",
+    "/api/members/self-service/profile",
+    "/api/members/self-service/report",
+    "/api/members/stats",
+    "/api/members/tags",
+    "/api/members/tags/${id}",
+    "/api/reports/attendance?range=${dateRange}&service=${selectedService}",
+    "/api/reports/engagement?range=${dateRange}",
+    "/api/reports/group-health?range=${dateRange}",
+    "/api/settings/church",
+    "/api/settings/system",
+    "/api/settings/users",
+    "/api/settings/users/${user.id}",
+    "/api/settings/users/${userId}",
+    "/api/tasks",
+    "/api/tasks/${data.id}",
+    "/api/tasks/${taskId}",
+    "/api/tasks?${params.toString()}",
+    "/api/volunteers/my-signups",
+    "/api/volunteers/opportunities",
+    "/api/volunteers/signup"
+  ],
+  "frontendRoutes": [
+    "/",
+    "/activity",
+    "/calendar",
+    "/care",
+    "/care/new",
+    "/communications",
+    "/communications/group",
+    "/communications/new",
+    "/communications/pastoral",
+    "/contact",
+    "/dashboard",
+    "/demo",
+    "/events",
+    "/events/group/new",
+    "/events/new",
+    "/features",
+    "/forgot-password",
+    "/groups",
+    "/groups/${groupId}",
+    "/groups/${groupId}/attendance",
+    "/groups/${savedGroup.id}",
+    "/groups/${updatedGroup.id}",
+    "/groups/attendance/new",
+    "/groups/new",
+    "/help",
+    "/journey",
+    "/journey-templates",
+    "/journey-templates/${savedTemplate.id}",
+    "/journey-templates/${templateId}/edit",
+    "/journey-templates/new",
+    "/journeys",
+    "/journeys/assign",
+    "/journeys/assign?template=${templateId}",
+    "/login",
+    "/members",
+    "/members/${params.id}",
+    "/members/${savedMember.id}",
+    "/members/${updatedMember.id}",
+    "/members/new",
+    "/members?filter=needs-followup",
+    "/prayer-requests",
+    "/pricing",
+    "/privacy",
+    "/profile",
+    "/register",
+    "/reports",
+    "/reports/group",
+    "/tasks"
+  ],
+  "expectedEndpoints": [
+    {
+      "path": "/api/events",
+      "method": "GET",
+      "description": "List events"
+    },
+    {
+      "path": "/api/events",
+      "method": "POST",
+      "description": "Create events"
+    },
+    {
+      "path": "/api/events/DYNAMIC_ID",
+      "method": "GET",
+      "description": "Get specific events"
+    },
+    {
+      "path": "/api/events/DYNAMIC_ID",
+      "method": "PUT",
+      "description": "Update specific events"
+    },
+    {
+      "path": "/api/events/DYNAMIC_ID",
+      "method": "DELETE",
+      "description": "Delete specific events"
+    },
+    {
+      "path": "/api/events/DYNAMIC_ID/register",
+      "method": "GET",
+      "description": "Frontend expects: /api/events/DYNAMIC_ID/register"
+    },
+    {
+      "path": "/api/settings",
+      "method": "GET",
+      "description": "List settings"
+    },
+    {
+      "path": "/api/settings",
+      "method": "POST",
+      "description": "Create settings"
+    },
+    {
+      "path": "/api/settings/church",
+      "method": "GET",
+      "description": "Frontend expects: /api/settings/church"
+    },
+    {
+      "path": "/api/care",
+      "method": "GET",
+      "description": "List care"
+    },
+    {
+      "path": "/api/care",
+      "method": "POST",
+      "description": "Create care"
+    },
+    {
+      "path": "/api/care/records",
+      "method": "GET",
+      "description": "Frontend expects: /api/care/records"
+    },
+    {
+      "path": "/api/care/members-needing-care",
+      "method": "GET",
+      "description": "Frontend expects: /api/care/members-needing-care"
+    },
+    {
+      "path": "/api/events/DYNAMIC_ID/check-in",
+      "method": "GET",
+      "description": "Frontend expects: /api/events/DYNAMIC_ID/check-in"
+    },
+    {
+      "path": "/api/events/DYNAMIC_ID/check-in/DYNAMIC_ID",
+      "method": "GET",
+      "description": "Frontend expects: /api/events/DYNAMIC_ID/check-in/DYNAMIC_ID"
+    },
+    {
+      "path": "/api/events/DYNAMIC_ID/check-in/DYNAMIC_ID/no-show",
+      "method": "GET",
+      "description": "Frontend expects: /api/events/DYNAMIC_ID/check-in/DYNAMIC_ID/no-show"
+    },
+    {
+      "path": "/api/events/DYNAMIC_ID/rsvps",
+      "method": "GET",
+      "description": "Frontend expects: /api/events/DYNAMIC_ID/rsvps"
+    },
+    {
+      "path": "/api/events/DYNAMIC_ID/rsvps/DYNAMIC_ID",
+      "method": "GET",
+      "description": "Frontend expects: /api/events/DYNAMIC_ID/rsvps/DYNAMIC_ID"
+    },
+    {
+      "path": "/api/members",
+      "method": "GET",
+      "description": "List members"
+    },
+    {
+      "path": "/api/members",
+      "method": "POST",
+      "description": "Create members"
+    },
+    {
+      "path": "/api/members/self-service/profile",
+      "method": "GET",
+      "description": "Frontend expects: /api/members/self-service/profile"
+    },
+    {
+      "path": "/api/members/self-service/notifications",
+      "method": "GET",
+      "description": "Frontend expects: /api/members/self-service/notifications"
+    },
+    {
+      "path": "/api/members/self-service/report",
+      "method": "GET",
+      "description": "Frontend expects: /api/members/self-service/report"
+    },
+    {
+      "path": "/api/volunteers",
+      "method": "GET",
+      "description": "List volunteers"
+    },
+    {
+      "path": "/api/volunteers",
+      "method": "POST",
+      "description": "Create volunteers"
+    },
+    {
+      "path": "/api/volunteers/opportunities",
+      "method": "GET",
+      "description": "Frontend expects: /api/volunteers/opportunities"
+    },
+    {
+      "path": "/api/volunteers/my-signups",
+      "method": "GET",
+      "description": "Frontend expects: /api/volunteers/my-signups"
+    },
+    {
+      "path": "/api/volunteers/signup",
+      "method": "GET",
+      "description": "Frontend expects: /api/volunteers/signup"
+    },
+    {
+      "path": "/api/reports",
+      "method": "GET",
+      "description": "List reports"
+    },
+    {
+      "path": "/api/reports",
+      "method": "POST",
+      "description": "Create reports"
+    },
+    {
+      "path": "/api/reports/DYNAMIC_ID",
+      "method": "GET",
+      "description": "Get specific reports"
+    },
+    {
+      "path": "/api/reports/DYNAMIC_ID",
+      "method": "PUT",
+      "description": "Update specific reports"
+    },
+    {
+      "path": "/api/reports/DYNAMIC_ID",
+      "method": "DELETE",
+      "description": "Delete specific reports"
+    },
+    {
+      "path": "/api/reports/attendance?range=DYNAMIC_ID&service=DYNAMIC_ID",
+      "method": "GET",
+      "description": "Frontend expects: /api/reports/attendance?range=DYNAMIC_ID&service=DYNAMIC_ID"
+    },
+    {
+      "path": "/api/reports/group-health?range=DYNAMIC_ID",
+      "method": "GET",
+      "description": "Frontend expects: /api/reports/group-health?range=DYNAMIC_ID"
+    },
+    {
+      "path": "/api/reports/engagement?range=DYNAMIC_ID",
+      "method": "GET",
+      "description": "Frontend expects: /api/reports/engagement?range=DYNAMIC_ID"
+    },
+    {
+      "path": "/api/settings/system",
+      "method": "GET",
+      "description": "Frontend expects: /api/settings/system"
+    },
+    {
+      "path": "/api/settings/users",
+      "method": "GET",
+      "description": "Frontend expects: /api/settings/users"
+    },
+    {
+      "path": "/api/settings/DYNAMIC_ID",
+      "method": "GET",
+      "description": "Get specific settings"
+    },
+    {
+      "path": "/api/settings/DYNAMIC_ID",
+      "method": "PUT",
+      "description": "Update specific settings"
+    },
+    {
+      "path": "/api/settings/DYNAMIC_ID",
+      "method": "DELETE",
+      "description": "Delete specific settings"
+    },
+    {
+      "path": "/api/settings/users/DYNAMIC_ID",
+      "method": "GET",
+      "description": "Frontend expects: /api/settings/users/DYNAMIC_ID"
+    },
+    {
+      "path": "/api/attendance",
+      "method": "GET",
+      "description": "List attendance"
+    },
+    {
+      "path": "/api/attendance",
+      "method": "POST",
+      "description": "Create attendance"
+    },
+    {
+      "path": "/api/attendance?DYNAMIC_ID",
+      "method": "GET",
+      "description": "List attendance?DYNAMIC_ID"
+    },
+    {
+      "path": "/api/attendance?DYNAMIC_ID",
+      "method": "POST",
+      "description": "Create attendance?DYNAMIC_ID"
+    },
+    {
+      "path": "/api/attendance?DYNAMIC_ID/DYNAMIC_ID",
+      "method": "GET",
+      "description": "Get specific attendance?DYNAMIC_ID"
+    },
+    {
+      "path": "/api/attendance?DYNAMIC_ID/DYNAMIC_ID",
+      "method": "PUT",
+      "description": "Update specific attendance?DYNAMIC_ID"
+    },
+    {
+      "path": "/api/attendance?DYNAMIC_ID/DYNAMIC_ID",
+      "method": "DELETE",
+      "description": "Delete specific attendance?DYNAMIC_ID"
+    },
+    {
+      "path": "/api/attendance/DYNAMIC_ID",
+      "method": "GET",
+      "description": "Get specific attendance"
+    },
+    {
+      "path": "/api/attendance/DYNAMIC_ID",
+      "method": "PUT",
+      "description": "Update specific attendance"
+    },
+    {
+      "path": "/api/attendance/DYNAMIC_ID",
+      "method": "DELETE",
+      "description": "Delete specific attendance"
+    },
+    {
+      "path": "/api/attendance/stats?DYNAMIC_ID",
+      "method": "GET",
+      "description": "Frontend expects: /api/attendance/stats?DYNAMIC_ID"
+    },
+    {
+      "path": "/api/attendance/DYNAMIC_ID/bulk-update",
+      "method": "GET",
+      "description": "Frontend expects: /api/attendance/DYNAMIC_ID/bulk-update"
+    },
+    {
+      "path": "/api/auth",
+      "method": "GET",
+      "description": "List auth"
+    },
+    {
+      "path": "/api/auth",
+      "method": "POST",
+      "description": "Create auth"
+    },
+    {
+      "path": "/api/auth/register",
+      "method": "GET",
+      "description": "Frontend expects: /api/auth/register"
+    },
+    {
+      "path": "/api/auth/me",
+      "method": "GET",
+      "description": "Frontend expects: /api/auth/me"
+    },
+    {
+      "path": "/api/auth/refresh",
+      "method": "GET",
+      "description": "Frontend expects: /api/auth/refresh"
+    },
+    {
+      "path": "/api/auth/logout",
+      "method": "GET",
+      "description": "Frontend expects: /api/auth/logout"
+    },
+    {
+      "path": "/api/auth/forgot-password",
+      "method": "GET",
+      "description": "Frontend expects: /api/auth/forgot-password"
+    },
+    {
+      "path": "/api/auth/reset-password",
+      "method": "GET",
+      "description": "Frontend expects: /api/auth/reset-password"
+    },
+    {
+      "path": "/api/groups",
+      "method": "GET",
+      "description": "List groups"
+    },
+    {
+      "path": "/api/groups",
+      "method": "POST",
+      "description": "Create groups"
+    },
+    {
+      "path": "/api/groups/stats",
+      "method": "GET",
+      "description": "Frontend expects: /api/groups/stats"
+    },
+    {
+      "path": "/api/groups/bulk",
+      "method": "GET",
+      "description": "Frontend expects: /api/groups/bulk"
+    },
+    {
+      "path": "/api/groups${queryParams.toString() ? ",
+      "method": "GET",
+      "description": "List groups${queryParams.toString() ? "
+    },
+    {
+      "path": "/api/groups${queryParams.toString() ? ",
+      "method": "POST",
+      "description": "Create groups${queryParams.toString() ? "
+    },
+    {
+      "path": "/api/groups/DYNAMIC_ID",
+      "method": "GET",
+      "description": "Get specific groups"
+    },
+    {
+      "path": "/api/groups/DYNAMIC_ID",
+      "method": "PUT",
+      "description": "Update specific groups"
+    },
+    {
+      "path": "/api/groups/DYNAMIC_ID",
+      "method": "DELETE",
+      "description": "Delete specific groups"
+    },
+    {
+      "path": "/api/groups/DYNAMIC_ID/members",
+      "method": "GET",
+      "description": "Frontend expects: /api/groups/DYNAMIC_ID/members"
+    },
+    {
+      "path": "/api/groups/DYNAMIC_ID/members/DYNAMIC_ID",
+      "method": "GET",
+      "description": "Frontend expects: /api/groups/DYNAMIC_ID/members/DYNAMIC_ID"
+    },
+    {
+      "path": "/api/groups/DYNAMIC_ID/attendance${queryParams.toString() ? ",
+      "method": "GET",
+      "description": "Frontend expects: /api/groups/DYNAMIC_ID/attendance${queryParams.toString() ? "
+    },
+    {
+      "path": "/api/groups/DYNAMIC_ID/attendance",
+      "method": "GET",
+      "description": "Frontend expects: /api/groups/DYNAMIC_ID/attendance"
+    },
+    {
+      "path": "/api/groups/DYNAMIC_ID/attendance/DYNAMIC_ID",
+      "method": "GET",
+      "description": "Frontend expects: /api/groups/DYNAMIC_ID/attendance/DYNAMIC_ID"
+    },
+    {
+      "path": "/api/groups/DYNAMIC_ID/stats/attendance?period=DYNAMIC_ID",
+      "method": "GET",
+      "description": "Frontend expects: /api/groups/DYNAMIC_ID/stats/attendance?period=DYNAMIC_ID"
+    },
+    {
+      "path": "/api/journey-templates",
+      "method": "GET",
+      "description": "List journey-templates"
+    },
+    {
+      "path": "/api/journey-templates",
+      "method": "POST",
+      "description": "Create journey-templates"
+    },
+    {
+      "path": "/api/journey-templates?DYNAMIC_ID",
+      "method": "GET",
+      "description": "List journey-templates?DYNAMIC_ID"
+    },
+    {
+      "path": "/api/journey-templates?DYNAMIC_ID",
+      "method": "POST",
+      "description": "Create journey-templates?DYNAMIC_ID"
+    },
+    {
+      "path": "/api/journey-templates?DYNAMIC_ID/DYNAMIC_ID",
+      "method": "GET",
+      "description": "Get specific journey-templates?DYNAMIC_ID"
+    },
+    {
+      "path": "/api/journey-templates?DYNAMIC_ID/DYNAMIC_ID",
+      "method": "PUT",
+      "description": "Update specific journey-templates?DYNAMIC_ID"
+    },
+    {
+      "path": "/api/journey-templates?DYNAMIC_ID/DYNAMIC_ID",
+      "method": "DELETE",
+      "description": "Delete specific journey-templates?DYNAMIC_ID"
+    },
+    {
+      "path": "/api/journey-templates/DYNAMIC_ID",
+      "method": "GET",
+      "description": "Get specific journey-templates"
+    },
+    {
+      "path": "/api/journey-templates/DYNAMIC_ID",
+      "method": "PUT",
+      "description": "Update specific journey-templates"
+    },
+    {
+      "path": "/api/journey-templates/DYNAMIC_ID",
+      "method": "DELETE",
+      "description": "Delete specific journey-templates"
+    },
+    {
+      "path": "/api/journey-templates/DYNAMIC_ID/duplicate",
+      "method": "GET",
+      "description": "Frontend expects: /api/journey-templates/DYNAMIC_ID/duplicate"
+    },
+    {
+      "path": "/api/members/stats",
+      "method": "GET",
+      "description": "Frontend expects: /api/members/stats"
+    },
+    {
+      "path": "/api/members/tags",
+      "method": "GET",
+      "description": "Frontend expects: /api/members/tags"
+    },
+    {
+      "path": "/api/members/bulk",
+      "method": "GET",
+      "description": "Frontend expects: /api/members/bulk"
+    },
+    {
+      "path": "/api/members${queryParams.toString() ? ",
+      "method": "GET",
+      "description": "List members${queryParams.toString() ? "
+    },
+    {
+      "path": "/api/members${queryParams.toString() ? ",
+      "method": "POST",
+      "description": "Create members${queryParams.toString() ? "
+    },
+    {
+      "path": "/api/members/DYNAMIC_ID",
+      "method": "GET",
+      "description": "Get specific members"
+    },
+    {
+      "path": "/api/members/DYNAMIC_ID",
+      "method": "PUT",
+      "description": "Update specific members"
+    },
+    {
+      "path": "/api/members/DYNAMIC_ID",
+      "method": "DELETE",
+      "description": "Delete specific members"
+    },
+    {
+      "path": "/api/members/tags/DYNAMIC_ID",
+      "method": "GET",
+      "description": "Frontend expects: /api/members/tags/DYNAMIC_ID"
+    },
+    {
+      "path": "/api/members/search/suggestions?q=DYNAMIC_ID",
+      "method": "GET",
+      "description": "Frontend expects: /api/members/search/suggestions?q=DYNAMIC_ID"
+    },
+    {
+      "path": "/api/tasks",
+      "method": "GET",
+      "description": "List tasks"
+    },
+    {
+      "path": "/api/tasks",
+      "method": "POST",
+      "description": "Create tasks"
+    },
+    {
+      "path": "/api/tasks?DYNAMIC_ID",
+      "method": "GET",
+      "description": "List tasks?DYNAMIC_ID"
+    },
+    {
+      "path": "/api/tasks?DYNAMIC_ID",
+      "method": "POST",
+      "description": "Create tasks?DYNAMIC_ID"
+    },
+    {
+      "path": "/api/tasks?DYNAMIC_ID/DYNAMIC_ID",
+      "method": "GET",
+      "description": "Get specific tasks?DYNAMIC_ID"
+    },
+    {
+      "path": "/api/tasks?DYNAMIC_ID/DYNAMIC_ID",
+      "method": "PUT",
+      "description": "Update specific tasks?DYNAMIC_ID"
+    },
+    {
+      "path": "/api/tasks?DYNAMIC_ID/DYNAMIC_ID",
+      "method": "DELETE",
+      "description": "Delete specific tasks?DYNAMIC_ID"
+    },
+    {
+      "path": "/api/tasks/DYNAMIC_ID",
+      "method": "GET",
+      "description": "Get specific tasks"
+    },
+    {
+      "path": "/api/tasks/DYNAMIC_ID",
+      "method": "PUT",
+      "description": "Update specific tasks"
+    },
+    {
+      "path": "/api/tasks/DYNAMIC_ID",
+      "method": "DELETE",
+      "description": "Delete specific tasks"
+    }
+  ],
+  "serviceFiles": [],
+  "pageFiles": [],
+  "componentFiles": [],
+  "moduleAPIs": {
+    "other": {}
+  }
+}

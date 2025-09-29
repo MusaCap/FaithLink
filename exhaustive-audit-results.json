@@ -1,0 +1,790 @@
+{
+  "tested": 90,
+  "passed": 88,
+  "failed": 2,
+  "endpoints": [
+    {
+      "method": "GET",
+      "endpoint": "/api/members",
+      "description": "List members",
+      "status": 200,
+      "success": true,
+      "module": "members"
+    },
+    {
+      "method": "POST",
+      "endpoint": "/api/members",
+      "description": "Create member",
+      "status": 201,
+      "success": true,
+      "module": "members"
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/members/mbr-001",
+      "description": "Get specific member",
+      "status": 200,
+      "success": true,
+      "module": "members"
+    },
+    {
+      "method": "PUT",
+      "endpoint": "/api/members/mbr-001",
+      "description": "Update specific member",
+      "status": 200,
+      "success": true,
+      "module": "members"
+    },
+    {
+      "method": "DELETE",
+      "endpoint": "/api/members/mbr-001",
+      "description": "Delete specific member",
+      "status": 200,
+      "success": true,
+      "module": "members"
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/members/stats",
+      "description": "Member statistics",
+      "status": 200,
+      "success": true,
+      "module": "members"
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/members/tags",
+      "description": "Member tags",
+      "status": 200,
+      "success": true,
+      "module": "members"
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/members/bulk",
+      "description": "Bulk member operations",
+      "status": 200,
+      "success": true,
+      "module": "members"
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/members/search/suggestions?q=john",
+      "description": "Member search suggestions",
+      "status": 200,
+      "success": true,
+      "module": "members"
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/groups",
+      "description": "List groups",
+      "status": 200,
+      "success": true,
+      "module": "groups"
+    },
+    {
+      "method": "POST",
+      "endpoint": "/api/groups",
+      "description": "Create group",
+      "status": 201,
+      "success": true,
+      "module": "groups"
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/groups/grp-001",
+      "description": "Get specific group",
+      "status": 200,
+      "success": true,
+      "module": "groups"
+    },
+    {
+      "method": "PUT",
+      "endpoint": "/api/groups/grp-001",
+      "description": "Update specific group",
+      "status": 200,
+      "success": true,
+      "module": "groups"
+    },
+    {
+      "method": "DELETE",
+      "endpoint": "/api/groups/grp-001",
+      "description": "Delete specific group",
+      "status": 200,
+      "success": true,
+      "module": "groups"
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/groups/stats",
+      "description": "Group statistics",
+      "status": 200,
+      "success": true,
+      "module": "groups"
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/groups/bulk",
+      "description": "Bulk group operations",
+      "status": 200,
+      "success": true,
+      "module": "groups"
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/groups/grp-001/members",
+      "description": "Group members",
+      "status": 200,
+      "success": true,
+      "module": "groups"
+    },
+    {
+      "method": "POST",
+      "endpoint": "/api/groups/grp-001/members",
+      "description": "Add group member",
+      "status": 201,
+      "success": true,
+      "module": "groups"
+    },
+    {
+      "method": "DELETE",
+      "endpoint": "/api/groups/grp-001/members/mbr-001",
+      "description": "Remove group member",
+      "status": 200,
+      "success": true,
+      "module": "groups"
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/events",
+      "description": "List events",
+      "status": 200,
+      "success": true,
+      "module": "events"
+    },
+    {
+      "method": "POST",
+      "endpoint": "/api/events",
+      "description": "Create event",
+      "status": 201,
+      "success": true,
+      "module": "events"
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/events/evt-001",
+      "description": "Get specific event",
+      "status": 200,
+      "success": true,
+      "module": "events"
+    },
+    {
+      "method": "PUT",
+      "endpoint": "/api/events/evt-001",
+      "description": "Update specific event",
+      "status": 200,
+      "success": true,
+      "module": "events"
+    },
+    {
+      "method": "DELETE",
+      "endpoint": "/api/events/evt-001",
+      "description": "Delete specific event",
+      "status": 200,
+      "success": true,
+      "module": "events"
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/events/evt-001/registrations",
+      "description": "Event registrations",
+      "status": 200,
+      "success": true,
+      "module": "events"
+    },
+    {
+      "method": "POST",
+      "endpoint": "/api/events/evt-001/registrations",
+      "description": "Register for event",
+      "status": 201,
+      "success": true,
+      "module": "events"
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/events/evt-001/rsvps",
+      "description": "Event RSVPs",
+      "status": 200,
+      "success": true,
+      "module": "events"
+    },
+    {
+      "method": "POST",
+      "endpoint": "/api/events/evt-001/rsvps",
+      "description": "RSVP for event",
+      "status": 201,
+      "success": true,
+      "module": "events"
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/events/evt-001/check-in",
+      "description": "Event check-in status",
+      "status": 200,
+      "success": true,
+      "module": "events"
+    },
+    {
+      "method": "POST",
+      "endpoint": "/api/events/evt-001/check-in",
+      "description": "Event check-in",
+      "status": 201,
+      "success": true,
+      "module": "events"
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/journey-templates",
+      "description": "List journey templates",
+      "status": 200,
+      "success": true,
+      "module": "journeys"
+    },
+    {
+      "method": "POST",
+      "endpoint": "/api/journey-templates",
+      "description": "Create journey template",
+      "status": 201,
+      "success": true,
+      "module": "journeys"
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/journey-templates/jt-001",
+      "description": "Get specific template",
+      "status": 200,
+      "success": true,
+      "module": "journeys"
+    },
+    {
+      "method": "PUT",
+      "endpoint": "/api/journey-templates/jt-001",
+      "description": "Update specific template",
+      "status": 200,
+      "success": true,
+      "module": "journeys"
+    },
+    {
+      "method": "DELETE",
+      "endpoint": "/api/journey-templates/jt-001",
+      "description": "Delete specific template",
+      "status": 200,
+      "success": true,
+      "module": "journeys"
+    },
+    {
+      "method": "POST",
+      "endpoint": "/api/journey-templates/jt-001/duplicate",
+      "description": "Duplicate template",
+      "status": 201,
+      "success": true,
+      "module": "journeys"
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/journeys",
+      "description": "List journeys",
+      "status": 200,
+      "success": true,
+      "module": "journeys"
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/journeys/member-journeys",
+      "description": "List member journeys",
+      "status": 200,
+      "success": true,
+      "module": "journeys"
+    },
+    {
+      "method": "POST",
+      "endpoint": "/api/journeys/member-journeys",
+      "description": "Assign journey to member",
+      "status": "ERROR",
+      "success": false,
+      "error": "expectedStatus.includes is not a function",
+      "module": "journeys"
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/journeys/member-journeys/task-001",
+      "description": "Get member journey progress",
+      "status": 200,
+      "success": true,
+      "module": "journeys"
+    },
+    {
+      "method": "PUT",
+      "endpoint": "/api/journeys/member-journeys/task-001",
+      "description": "Update member journey",
+      "status": 200,
+      "success": true,
+      "module": "journeys"
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/journeys/devotions",
+      "description": "Get daily devotions",
+      "status": 200,
+      "success": true,
+      "module": "journeys"
+    },
+    {
+      "method": "POST",
+      "endpoint": "/api/journeys/devotions",
+      "description": "Record devotion entry",
+      "status": 201,
+      "success": true,
+      "module": "journeys"
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/journeys/spiritual-gifts",
+      "description": "Get spiritual gifts assessment",
+      "status": 200,
+      "success": true,
+      "module": "journeys"
+    },
+    {
+      "method": "POST",
+      "endpoint": "/api/journeys/spiritual-gifts",
+      "description": "Submit gifts assessment",
+      "status": 201,
+      "success": true,
+      "module": "journeys"
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/journeys/serving-opportunities",
+      "description": "Get serving opportunities",
+      "status": 200,
+      "success": true,
+      "module": "journeys"
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/journeys/milestones",
+      "description": "Get journey milestones",
+      "status": 200,
+      "success": true,
+      "module": "journeys"
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/journeys/analytics",
+      "description": "Get journey analytics",
+      "status": 200,
+      "success": true,
+      "module": "journeys"
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/journeys/reflections",
+      "description": "Get personal reflections",
+      "status": 200,
+      "success": true,
+      "module": "journeys"
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/tasks",
+      "description": "List tasks",
+      "status": 200,
+      "success": true,
+      "module": "tasks"
+    },
+    {
+      "method": "POST",
+      "endpoint": "/api/tasks",
+      "description": "Create task",
+      "status": 201,
+      "success": true,
+      "module": "tasks"
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/tasks/task-001",
+      "description": "Get specific task",
+      "status": 200,
+      "success": true,
+      "module": "tasks"
+    },
+    {
+      "method": "PUT",
+      "endpoint": "/api/tasks/task-001",
+      "description": "Update specific task",
+      "status": 200,
+      "success": true,
+      "module": "tasks"
+    },
+    {
+      "method": "DELETE",
+      "endpoint": "/api/tasks/task-001",
+      "description": "Delete specific task",
+      "status": 200,
+      "success": true,
+      "module": "tasks"
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/attendance",
+      "description": "List attendance sessions",
+      "status": 200,
+      "success": true,
+      "module": "attendance"
+    },
+    {
+      "method": "POST",
+      "endpoint": "/api/attendance",
+      "description": "Create attendance session",
+      "status": 201,
+      "success": true,
+      "module": "attendance"
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/attendance/stats",
+      "description": "Attendance statistics",
+      "status": 200,
+      "success": true,
+      "module": "attendance"
+    },
+    {
+      "method": "POST",
+      "endpoint": "/api/attendance/grp-001/bulk-update",
+      "description": "Bulk update attendance",
+      "status": 200,
+      "success": true,
+      "module": "attendance"
+    },
+    {
+      "method": "POST",
+      "endpoint": "/api/auth/register",
+      "description": "Register user",
+      "status": 201,
+      "success": true,
+      "module": "auth"
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/auth/me",
+      "description": "Get current user",
+      "status": 200,
+      "success": true,
+      "module": "auth"
+    },
+    {
+      "method": "POST",
+      "endpoint": "/api/auth/refresh",
+      "description": "Refresh token",
+      "status": 200,
+      "success": true,
+      "module": "auth"
+    },
+    {
+      "method": "POST",
+      "endpoint": "/api/auth/logout",
+      "description": "Logout",
+      "status": 200,
+      "success": true,
+      "module": "auth"
+    },
+    {
+      "method": "POST",
+      "endpoint": "/api/auth/forgot-password",
+      "description": "Forgot password",
+      "status": 200,
+      "success": true,
+      "module": "auth"
+    },
+    {
+      "method": "POST",
+      "endpoint": "/api/auth/reset-password",
+      "description": "Reset password",
+      "status": 200,
+      "success": true,
+      "module": "auth"
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/care/prayer-requests",
+      "description": "List prayer requests",
+      "status": 200,
+      "success": true,
+      "module": "care"
+    },
+    {
+      "method": "POST",
+      "endpoint": "/api/care/prayer-requests",
+      "description": "Create prayer request",
+      "status": 201,
+      "success": true,
+      "module": "care"
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/care/records",
+      "description": "List care records",
+      "status": 200,
+      "success": true,
+      "module": "care"
+    },
+    {
+      "method": "POST",
+      "endpoint": "/api/care/records",
+      "description": "Create care record",
+      "status": 400,
+      "success": false,
+      "module": "care"
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/care/members-needing-care",
+      "description": "Members needing care",
+      "status": 200,
+      "success": true,
+      "module": "care"
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/communications/campaigns",
+      "description": "List campaigns",
+      "status": 200,
+      "success": true,
+      "module": "communications"
+    },
+    {
+      "method": "POST",
+      "endpoint": "/api/communications/campaigns",
+      "description": "Create campaign",
+      "status": 201,
+      "success": true,
+      "module": "communications"
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/communications/announcements",
+      "description": "List announcements",
+      "status": 200,
+      "success": true,
+      "module": "communications"
+    },
+    {
+      "method": "POST",
+      "endpoint": "/api/communications/announcements",
+      "description": "Create announcement",
+      "status": 201,
+      "success": true,
+      "module": "communications"
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/communications/templates",
+      "description": "List templates",
+      "status": 200,
+      "success": true,
+      "module": "communications"
+    },
+    {
+      "method": "POST",
+      "endpoint": "/api/communications/templates",
+      "description": "Create template",
+      "status": 201,
+      "success": true,
+      "module": "communications"
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/volunteers/opportunities",
+      "description": "List volunteer opportunities",
+      "status": 200,
+      "success": true,
+      "module": "volunteers"
+    },
+    {
+      "method": "POST",
+      "endpoint": "/api/volunteers/opportunities",
+      "description": "Create volunteer opportunity",
+      "status": 201,
+      "success": true,
+      "module": "volunteers"
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/volunteers/my-signups",
+      "description": "My volunteer signups",
+      "status": 200,
+      "success": true,
+      "module": "volunteers"
+    },
+    {
+      "method": "POST",
+      "endpoint": "/api/volunteers/signup",
+      "description": "Volunteer signup",
+      "status": 201,
+      "success": true,
+      "module": "volunteers"
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/reports",
+      "description": "List reports",
+      "status": 200,
+      "success": true,
+      "module": "reports"
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/reports/members",
+      "description": "Member reports",
+      "status": 200,
+      "success": true,
+      "module": "reports"
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/reports/groups",
+      "description": "Group reports",
+      "status": 200,
+      "success": true,
+      "module": "reports"
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/reports/events",
+      "description": "Event reports",
+      "status": 200,
+      "success": true,
+      "module": "reports"
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/reports/attendance",
+      "description": "Attendance reports",
+      "status": 200,
+      "success": true,
+      "module": "reports"
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/reports/journeys",
+      "description": "Journey reports",
+      "status": 200,
+      "success": true,
+      "module": "reports"
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/reports/engagement",
+      "description": "Engagement analytics",
+      "status": 200,
+      "success": true,
+      "module": "reports"
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/reports/group-health?range=30days",
+      "description": "Group health reports",
+      "status": 200,
+      "success": true,
+      "module": "reports"
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/settings/system",
+      "description": "System settings",
+      "status": 200,
+      "success": true,
+      "module": "settings"
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/settings/users",
+      "description": "User settings",
+      "status": 200,
+      "success": true,
+      "module": "settings"
+    },
+    {
+      "method": "PUT",
+      "endpoint": "/api/settings/system",
+      "description": "Update system settings",
+      "status": 200,
+      "success": true,
+      "module": "settings"
+    }
+  ],
+  "byModule": {
+    "members": {
+      "tested": 9,
+      "passed": 9,
+      "failed": 0
+    },
+    "groups": {
+      "tested": 10,
+      "passed": 10,
+      "failed": 0
+    },
+    "events": {
+      "tested": 11,
+      "passed": 11,
+      "failed": 0
+    },
+    "journeys": {
+      "tested": 19,
+      "passed": 18,
+      "failed": 1
+    },
+    "tasks": {
+      "tested": 5,
+      "passed": 5,
+      "failed": 0
+    },
+    "attendance": {
+      "tested": 4,
+      "passed": 4,
+      "failed": 0
+    },
+    "auth": {
+      "tested": 6,
+      "passed": 6,
+      "failed": 0
+    },
+    "care": {
+      "tested": 5,
+      "passed": 4,
+      "failed": 1
+    },
+    "communications": {
+      "tested": 6,
+      "passed": 6,
+      "failed": 0
+    },
+    "volunteers": {
+      "tested": 4,
+      "passed": 4,
+      "failed": 0
+    },
+    "reports": {
+      "tested": 8,
+      "passed": 8,
+      "failed": 0
+    },
+    "settings": {
+      "tested": 3,
+      "passed": 3,
+      "failed": 0
+    }
+  }
+}
