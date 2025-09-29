@@ -43,7 +43,7 @@ export default function NewEventPage() {
         isPublic: formData.isPublic
       };
 
-      const response = await fetch('http://localhost:8000/api/events', {
+      const response = await fetch('/api/events', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

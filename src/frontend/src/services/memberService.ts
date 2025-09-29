@@ -8,7 +8,7 @@ import {
   MemberTag
 } from '../types/member';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || '';
 
 class MemberService {
   private requestCache = new Map<string, { data: any; timestamp: number }>();
@@ -18,7 +18,7 @@ class MemberService {
 
   private async fetchWithAuth(endpoint: string, options: RequestInit = {}): Promise<any> {
     const token = localStorage.getItem('auth_token');
-    const fullUrl = endpoint.startsWith('http') ? endpoint : `http://localhost:8000${endpoint}`;
+    const fullUrl = endpoint.startsWith('http') ? endpoint : `${API_BASE_URL}${endpoint}`;
     
     let attempts = 0;
     while (attempts <= this.MAX_RETRIES) {

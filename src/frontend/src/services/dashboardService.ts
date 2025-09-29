@@ -28,13 +28,12 @@ export interface DashboardAlert {
   message: string;
   priority: 'low' | 'medium' | 'high';
   timestamp: string;
-}
 
 class DashboardService {
   private cache: any | null = null;
   private cacheExpiry: number = 0;
   private readonly CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
-  private readonly API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+  private readonly API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || '';
 
   async getStats(): Promise<DashboardStats> {
     // Check cache first
@@ -44,7 +43,7 @@ class DashboardService {
 
     try {
       const token = localStorage.getItem('auth_token') || 'mock_token_admin';
-      const response = await fetch(`${this.API_URL}/api/reports/dashboard`, {
+      const response = await fetch(`${this.API_BASE_URL}/api/reports/dashboard`, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'

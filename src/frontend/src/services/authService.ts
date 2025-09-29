@@ -1,6 +1,6 @@
 import { LoginRequest, RegisterRequest, AuthResponse, User } from '../types/auth';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || '';
 
 class AuthService {
   private async fetchWithAuth(url: string, options: RequestInit = {}) {

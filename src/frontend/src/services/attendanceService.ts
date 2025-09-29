@@ -7,7 +7,7 @@ import {
   AttendanceStats 
 } from '../types/attendance';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || '';
 
 // Cache for API responses
 const cache = new Map<string, { data: any; timestamp: number; ttl: number }>();

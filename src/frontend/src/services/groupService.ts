@@ -10,7 +10,7 @@ import {
   GroupMember
 } from '../types/group';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || '';
 
 class GroupService {
   private requestCache = new Map<string, { data: any; timestamp: number }>();
