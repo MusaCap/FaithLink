@@ -53,7 +53,7 @@ export default function GroupMessages({ groupId }: GroupMessagesProps) {
   const fetchMessages = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`http://localhost:8000/api/groups/${groupId}/messages`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/groups/${groupId}/messages`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('auth_token')}`
         }
@@ -82,7 +82,7 @@ export default function GroupMessages({ groupId }: GroupMessagesProps) {
     setError(null);
 
     try {
-      const response = await fetch(`http://localhost:8000/api/groups/${groupId}/messages`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/groups/${groupId}/messages`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -115,7 +115,7 @@ export default function GroupMessages({ groupId }: GroupMessagesProps) {
     if (!editContent.trim()) return;
 
     try {
-      const response = await fetch(`http://localhost:8000/api/groups/${groupId}/messages/${messageId}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/groups/${groupId}/messages/${messageId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -146,7 +146,7 @@ export default function GroupMessages({ groupId }: GroupMessagesProps) {
     if (!confirm('Are you sure you want to delete this message?')) return;
 
     try {
-      const response = await fetch(`http://localhost:8000/api/groups/${groupId}/messages/${messageId}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/groups/${groupId}/messages/${messageId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('auth_token')}`
@@ -166,7 +166,7 @@ export default function GroupMessages({ groupId }: GroupMessagesProps) {
 
   const handleReaction = async (messageId: string, reactionType: 'like' | 'heart') => {
     try {
-      const response = await fetch(`http://localhost:8000/api/groups/${groupId}/messages/${messageId}/reactions`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/groups/${groupId}/messages/${messageId}/reactions`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

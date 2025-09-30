@@ -42,7 +42,7 @@ export default function GroupFiles({ groupId }: GroupFilesProps) {
   const fetchFiles = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`http://localhost:8000/api/groups/${groupId}/files`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/groups/${groupId}/files`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('auth_token')}`
         }
@@ -74,7 +74,7 @@ export default function GroupFiles({ groupId }: GroupFilesProps) {
     setError(null);
 
     try {
-      const response = await fetch(`http://localhost:8000/api/groups/${groupId}/files`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/groups/${groupId}/files`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -107,7 +107,7 @@ export default function GroupFiles({ groupId }: GroupFilesProps) {
     if (!confirm('Are you sure you want to delete this file?')) return;
 
     try {
-      const response = await fetch(`http://localhost:8000/api/groups/${groupId}/files/${fileId}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/groups/${groupId}/files/${fileId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('auth_token')}`
@@ -130,7 +130,7 @@ export default function GroupFiles({ groupId }: GroupFilesProps) {
   const handleFileDownload = async (file: GroupFile) => {
     try {
       // In a real implementation, this would handle actual file download
-      window.open(`http://localhost:8000${file.url}`, '_blank');
+      window.open(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}${file.url}`, '_blank');
     } catch (error) {
       setError('Failed to download file');
       console.error('Error downloading file:', error);

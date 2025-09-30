@@ -561,6 +561,43 @@ Outreach Coordinator`,
       tags: ['employment', 'provision', 'guidance'],
       createdAt: '2024-11-28T14:45:00Z'
     }
+  ],
+
+  // Counseling Sessions
+  counselingSessions: [
+    {
+      id: 'session-001',
+      memberId: 'mbr-002',
+      memberName: 'Sarah Martinez',
+      counselorId: 'mbr-001',
+      counselorName: 'Pastor David Johnson',
+      sessionType: 'individual',
+      status: 'scheduled',
+      scheduledDate: '2025-01-25T10:00:00Z',
+      duration: 60,
+      topic: 'Career Transition Guidance',
+      notes: 'Initial session to discuss career change concerns and spiritual discernment.',
+      followUpNeeded: true,
+      nextSession: '2025-02-01T10:00:00Z',
+      createdAt: '2025-01-20T14:30:00Z'
+    },
+    {
+      id: 'session-002',
+      memberId: 'mbr-003',
+      memberName: 'Michael Thompson',
+      counselorId: 'mbr-001',
+      counselorName: 'Pastor David Johnson',
+      sessionType: 'couple',
+      status: 'completed',
+      scheduledDate: '2025-01-18T15:00:00Z',
+      duration: 90,
+      topic: 'Marriage Enrichment',
+      notes: 'Third session focusing on communication skills. Couple is making excellent progress.',
+      sessionCount: 3,
+      followUpNeeded: true,
+      nextSession: '2025-01-25T15:00:00Z',
+      createdAt: '2025-01-15T10:00:00Z'
+    }
   ]
 };
 

@@ -44,7 +44,7 @@ export default function NewCommunicationCampaignPage() {
         scheduledFor: action === 'schedule' ? `${formData.scheduledDate}T${formData.scheduledTime}` : undefined
       };
 
-      const response = await fetch('http://localhost:8000/api/communications/campaigns', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/communications/campaigns`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
