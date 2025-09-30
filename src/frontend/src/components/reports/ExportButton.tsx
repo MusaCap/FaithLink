@@ -25,7 +25,7 @@ export default function ExportButton({ reportType, filters = {}, dateRange, clas
         ...(dateRange && { dateRange })
       });
 
-      const response = await fetch(`http://localhost:8000/api/reports/${reportType}/export?${params}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/reports/${reportType}/export?${params}`, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('auth_token')}`

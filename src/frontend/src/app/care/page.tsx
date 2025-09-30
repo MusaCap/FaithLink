@@ -58,7 +58,7 @@ export default function CarePage() {
 
   const fetchPrayerRequests = async () => {
     try {
-      const response = await fetch('http://localhost:8000/api/care/prayer-requests', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/care/prayer-requests`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
           'Content-Type': 'application/json'
@@ -77,7 +77,7 @@ export default function CarePage() {
 
   const fetchCounselingSessions = async () => {
     try {
-      const response = await fetch('http://localhost:8000/api/care/counseling-sessions', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/care/counseling-sessions`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
           'Content-Type': 'application/json'

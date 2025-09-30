@@ -30,7 +30,7 @@ export default function ReportsPage() {
   const fetchReportsData = async () => {
     try {
       setRefreshing(true);
-      const response = await fetch(`http://localhost:8000/api/reports/dashboard-stats?range=${dateRange}`);
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/reports/dashboard-stats?range=${dateRange}`);
       if (response.ok) {
         const data = await response.json();
         setStats(data.stats);
@@ -49,7 +49,7 @@ export default function ReportsPage() {
 
   const exportReport = async (reportType: string) => {
     try {
-      const response = await fetch(`http://localhost:8000/api/reports/export/${reportType}?range=${dateRange}`);
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/reports/export/${reportType}?range=${dateRange}`);
       if (response.ok) {
         const blob = await response.blob();
         const url = window.URL.createObjectURL(blob);

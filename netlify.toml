@@ -6,6 +6,10 @@
 [build.environment]
   NODE_VERSION = "18"
   NPM_VERSION = "9"
+  NEXT_PUBLIC_API_URL = "https://faithlink-ntgg.onrender.com"
+  NEXT_PUBLIC_APP_URL = "https://subtle-semifreddo-ed7b4b.netlify.app"
+  NEXTAUTH_URL = "https://subtle-semifreddo-ed7b4b.netlify.app"
+  NEXTAUTH_SECRET = "production-secret-key-2024"
 
 [[plugins]]
   package = "@netlify/plugin-nextjs"
