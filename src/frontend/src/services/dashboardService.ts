@@ -28,6 +28,7 @@ export interface DashboardAlert {
   message: string;
   priority: 'low' | 'medium' | 'high';
   timestamp: string;
+}
 
 class DashboardService {
   private cache: any | null = null;
@@ -82,7 +83,7 @@ class DashboardService {
       }
 
       const token = localStorage.getItem('auth_token') || 'mock_token_admin';
-      const response = await fetch(`${this.API_URL}/api/reports/dashboard`, {
+      const response = await fetch(`${this.API_BASE_URL}/api/reports/dashboard`, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
@@ -123,7 +124,7 @@ class DashboardService {
       }
 
       const token = localStorage.getItem('auth_token') || 'mock_token_admin';
-      const response = await fetch(`${this.API_URL}/api/reports/dashboard`, {
+      const response = await fetch(`${this.API_BASE_URL}/api/reports/dashboard`, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
@@ -155,7 +156,7 @@ class DashboardService {
       }
 
       const token = localStorage.getItem('auth_token') || 'mock_token_admin';
-      const response = await fetch(`${this.API_URL}/api/reports/dashboard`, {
+      const response = await fetch(`${this.API_BASE_URL}/api/reports/dashboard`, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
