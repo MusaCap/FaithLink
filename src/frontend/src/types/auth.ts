@@ -3,7 +3,7 @@ export interface User {
   email: string;
   firstName: string;
   lastName: string;
-  role: 'admin' | 'pastor' | 'group_leader' | 'member' | 'leader';
+  role: 'admin' | 'leader' | 'member';
   profilePhoto?: string;
   churchId?: string;
   churchName?: string;
@@ -38,7 +38,7 @@ export interface RegisterRequest {
   firstName: string;
   lastName: string;
   churchName?: string;
-  role?: 'admin' | 'member';
+  role?: 'admin' | 'leader' | 'member';
   churchChoice?: 'join' | 'create';
   selectedChurchId?: string;
   newChurchName?: string;

@@ -149,7 +149,17 @@ app.post('/api/bug-report', (req, res) => {
     expectedBehavior, 
     actualBehavior, 
     browserInfo, 
-    userEmail, 
+    userEmail,
+    userId,
+    churchId,
+    churchName,
+    timestamp,
+    url,
+    viewport,
+    userAgent,
+    platform,
+    stackTrace,
+    context,
     severity = 'medium',
     category = 'general' 
   } = req.body;
@@ -168,24 +178,96 @@ app.post('/api/bug-report', (req, res) => {
     steps: steps || '',
     expectedBehavior: expectedBehavior || '',
     actualBehavior: actualBehavior || '',
-    browserInfo: browserInfo || navigator.userAgent,
+    browserInfo: browserInfo || userAgent || 'Unknown',
     userEmail: userEmail || 'anonymous',
+    userId: userId || 'anonymous',
+    churchId: churchId || 'unknown',
+    churchName: churchName || 'Unknown Church',
     severity, // low, medium, high, critical
-    category, // general, authentication, ui, performance, data
+    category, // general, authentication, ui, performance, data, automatic
     status: 'open',
-    submittedAt: new Date().toISOString(),
-    url: req.headers.referer || 'unknown'
+    submittedAt: timestamp || new Date().toISOString(),
+    reportedUrl: url || req.headers.referer || 'unknown',
+    stackTrace: stackTrace || '',
+    context: context || {},
+    viewport: viewport || {},
+    platform: platform || '',
+    priority: severity === 'critical' ? 'urgent' : severity === 'high' ? 'high' : 'normal',
+    isAutomatic: category === 'automatic'
   };
   
   bugReports.push(bugReport);
   
-  console.log('✅ Bug report saved:', bugReport.id, '-', bugReport.title);
+  // Log differently based on severity
+  if (severity === 'critical') {
+    console.error('🚨 CRITICAL Bug Report:', bugReport.id, '-', bugReport.title);
+  } else if (severity === 'high') {
+    console.warn('⚠️ HIGH Priority Bug Report:', bugReport.id, '-', bugReport.title);
+  } else {
+    console.log('✅ Bug report saved:', bugReport.id, '-', bugReport.title);
+  }
   
   res.status(201).json({
     success: true,
     message: 'Bug report submitted successfully',
     reportId: bugReport.id,
     thankYou: 'Thank you for helping us improve FaithLink360!'
+  });
+});
+
+// Automatic error reporting endpoint
+app.post('/api/error-report', (req, res) => {
+  console.log('🚨 Automatic error report received');
+  
+  // Reuse the bug report structure but mark as automatic
+  const errorData = {
+    ...req.body,
+    category: 'automatic',
+    severity: req.body.severity || 'high'
+  };
+  
+  // Forward to bug report handler
+  req.body = errorData;
+  
+  // Call the bug report logic
+  const { 
+    title, description, severity, userEmail, userId, churchId, churchName,
+    stackTrace, url, viewport, userAgent, timestamp, context
+  } = errorData;
+  
+  const bugReport = {
+    id: `auto-error-${Date.now()}`,
+    title: title || 'Automatic Error Report',
+    description: description || 'An error was automatically detected and reported',
+    steps: '',
+    expectedBehavior: '',
+    actualBehavior: description || '',
+    browserInfo: userAgent || 'Unknown',
+    userEmail: userEmail || 'anonymous',
+    userId: userId || 'anonymous', 
+    churchId: churchId || 'unknown',
+    churchName: churchName || 'Unknown Church',
+    severity: severity || 'high',
+    category: 'automatic',
+    status: 'open',
+    submittedAt: timestamp || new Date().toISOString(),
+    reportedUrl: url || req.headers.referer || 'unknown',
+    stackTrace: stackTrace || '',
+    context: context || {},
+    viewport: viewport || {},
+    platform: '',
+    priority: severity === 'critical' ? 'urgent' : 'high',
+    isAutomatic: true
+  };
+  
+  bugReports.push(bugReport);
+  
+  console.error('🤖 Automatic Error Logged:', bugReport.id, '-', bugReport.title);
+  
+  res.status(201).json({
+    success: true,
+    message: 'Error report logged automatically',
+    reportId: bugReport.id
   });
 });
 
@@ -4008,13 +4090,342 @@ app.get('/api/settings/users/:userId', (req, res) => {
 });
 
 // ==========================================
+// BULK MEMBER UPLOAD API
+// ==========================================
+
+const multer = require('multer');
+const csv = require('csv-parser');
+const XLSX = require('xlsx');
+
+// Configure multer for file uploads
+const upload = multer({ 
+  dest: 'uploads/',
+  limits: { fileSize: 10 * 1024 * 1024 }, // 10MB limit
+  fileFilter: (req, file, cb) => {
+    const allowedTypes = [
+      'text/csv',
+      'application/csv',
+      'application/vnd.ms-excel',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    ];
+    if (allowedTypes.includes(file.mimetype) || file.originalname.endsWith('.csv')) {
+      cb(null, true);
+    } else {
+      cb(new Error('Only CSV and Excel files are allowed'));
+    }
+  }
+});
+
+app.post('/api/members/bulk-upload', upload.single('file'), (req, res) => {
+  console.log('📤 Bulk member upload requested');
+  
+  if (!req.file) {
+    return res.status(400).json({
+      success: false,
+      message: 'No file uploaded'
+    });
+  }
+
+  const { action, churchId } = req.body;
+  const isPreview = action === 'preview';
+  
+  console.log(`📋 Processing ${isPreview ? 'preview' : 'upload'} for file: ${req.file.originalname}`);
+
+  try {
+    let data = [];
+    const fs = require('fs');
+    const path = require('path');
+
+    // Parse file based on type
+    if (req.file.mimetype.includes('csv') || req.file.originalname.endsWith('.csv')) {
+      // Parse CSV
+      const csvData = fs.readFileSync(req.file.path, 'utf8');
+      const rows = csvData.split('\n').map(row => row.split(','));
+      const headers = rows[0];
+      
+      for (let i = 1; i < rows.length; i++) {
+        if (rows[i].length > 1) { // Skip empty rows
+          const obj = {};
+          headers.forEach((header, index) => {
+            obj[header.trim()] = rows[i][index] ? rows[i][index].trim() : '';
+          });
+          data.push(obj);
+        }
+      }
+    } else {
+      // Parse Excel
+      const workbook = XLSX.readFile(req.file.path);
+      const sheetName = workbook.SheetNames[0];
+      const worksheet = workbook.Sheets[sheetName];
+      data = XLSX.utils.sheet_to_json(worksheet);
+    }
+
+    console.log(`📊 Parsed ${data.length} rows from file`);
+
+    // Clean up uploaded file
+    fs.unlinkSync(req.file.path);
+
+    if (isPreview) {
+      // Return preview data
+      return res.json({
+        success: true,
+        preview: data.slice(0, 100), // Limit preview to 100 rows
+        totalRows: data.length,
+        message: `Preview of ${data.length} rows`
+      });
+    }
+
+    // Process actual upload
+    const results = {
+      totalRows: data.length,
+      successCount: 0,
+      errorCount: 0,
+      errors: [],
+      warnings: [],
+      success: true
+    };
+
+    const targetChurchId = churchId || `church-${Date.now()}`;
+
+    data.forEach((row, index) => {
+      try {
+        // Validate required fields
+        if (!row['First Name'] || !row['Last Name'] || !row['Email Address']) {
+          results.errors.push({
+            row: index + 2, // +2 for header and 0-based index
+            field: 'required',
+            message: 'Missing required fields (First Name, Last Name, Email)',
+            data: row
+          });
+          results.errorCount++;
+          return;
+        }
+
+        // Check for duplicate email
+        const existingMember = productionSeed.members.find(m => 
+          m.email.toLowerCase() === row['Email Address'].toLowerCase()
+        );
+        
+        if (existingMember) {
+          results.warnings.push({
+            row: index + 2,
+            field: 'email',
+            message: 'Email already exists - skipping',
+            data: row
+          });
+          return;
+        }
+
+        // Create member object
+        const memberId = `mbr-bulk-${Date.now()}-${index}`;
+        const member = {
+          id: memberId,
+          memberNumber: `M${Date.now()}${String(index).padStart(3, '0')}`,
+          firstName: row['First Name'],
+          lastName: row['Last Name'],
+          email: row['Email Address'],
+          phone: row['Phone Number'] || '',
+          role: row['Role (admin/leader/member)'] || 'member',
+          status: 'active',
+          joinDate: new Date().toISOString().split('T')[0],
+          churchId: targetChurchId,
+          churchName: productionSeed.churches.find(c => c.id === targetChurchId)?.name || 'Default Church',
+          address: {
+            street: row['Street Address'] || '',
+            city: row['City'] || '',
+            state: row['State/Province'] || '',
+            zipCode: row['ZIP/Postal Code'] || '',
+            country: 'USA'
+          },
+          demographics: {
+            dateOfBirth: row['Date of Birth (YYYY-MM-DD)'] || null,
+            gender: row['Gender (M/F/Other)'] || null,
+            maritalStatus: row['Marital Status'] || null,
+            occupation: row['Occupation'] || '',
+            employer: row['Employer'] || ''
+          },
+          membershipInfo: {
+            memberSince: new Date().toISOString(),
+            membershipStatus: row['Membership Status (active/inactive)'] || 'active',
+            membershipType: row['Membership Type (regular/associate/youth)'] || 'regular'
+          },
+          emergencyContact: {
+            name: row['Emergency Contact Name'] || '',
+            relationship: 'Emergency Contact',
+            phone: row['Emergency Contact Phone'] || '',
+            email: ''
+          },
+          groups: [],
+          giving: {
+            totalLifetime: 0,
+            averageMonthly: 0
+          },
+          attendance: {
+            totalServices: 0,
+            averageMonthly: 0
+          },
+          skillsAndInterests: {
+            skills: [],
+            interests: [],
+            availability: [],
+            languages: ['English']
+          },
+          pastoralCare: {
+            careConcerns: [],
+            prayerRequests: []
+          }
+        };
+
+        productionSeed.members.push(member);
+        results.successCount++;
+
+      } catch (error) {
+        results.errors.push({
+          row: index + 2,
+          field: 'processing',
+          message: error.message,
+          data: row
+        });
+        results.errorCount++;
+      }
+    });
+
+    results.success = results.errorCount === 0;
+
+    console.log(`✅ Bulk upload completed: ${results.successCount} success, ${results.errorCount} errors`);
+
+    res.json(results);
+
+  } catch (error) {
+    console.error('❌ Bulk upload failed:', error);
+    
+    // Clean up uploaded file on error
+    if (req.file && fs.existsSync(req.file.path)) {
+      fs.unlinkSync(req.file.path);
+    }
+
+    res.status(500).json({
+      success: false,
+      message: 'File processing failed',
+      error: error.message
+    });
+  }
+});
+
+// Enhanced Member Profile API
+app.get('/api/members/:id/enhanced', (req, res) => {
+  console.log('👤 Enhanced member profile requested:', req.params.id);
+  
+  const member = productionSeed.members.find(m => m.id === req.params.id);
+  if (!member) {
+    return res.status(404).json({
+      success: false,
+      message: 'Member not found'
+    });
+  }
+
+  // Enhance member data with additional computed fields
+  const enhancedMember = {
+    ...member,
+    memberNumber: member.memberNumber || `M${Date.now()}`,
+    demographics: member.demographics || {
+      dateOfBirth: null,
+      gender: null,
+      maritalStatus: null,
+      occupation: '',
+      employer: '',
+      education: ''
+    },
+    membershipInfo: member.membershipInfo || {
+      memberSince: member.joinDate || new Date().toISOString(),
+      membershipStatus: 'active',
+      membershipType: 'regular'
+    },
+    emergencyContact: member.emergencyContact || {
+      name: '',
+      relationship: '',
+      phone: '',
+      email: ''
+    },
+    groups: member.groups || [],
+    giving: member.giving || {
+      totalLifetime: Math.floor(Math.random() * 10000),
+      averageMonthly: Math.floor(Math.random() * 500),
+      lastGiftDate: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000).toISOString(),
+      pledgeAmount: Math.floor(Math.random() * 2000)
+    },
+    attendance: member.attendance || {
+      totalServices: Math.floor(Math.random() * 100),
+      averageMonthly: Math.floor(Math.random() * 8),
+      lastAttended: new Date(Date.now() - Math.random() * 14 * 24 * 60 * 60 * 1000).toISOString(),
+      preferredService: 'Sunday Morning'
+    },
+    skillsAndInterests: member.skillsAndInterests || {
+      skills: ['Leadership', 'Communication'],
+      interests: ['Youth Ministry', 'Music'],
+      availability: ['Weekends', 'Evenings'],
+      languages: ['English']
+    },
+    pastoralCare: member.pastoralCare || {
+      lastVisit: new Date(Date.now() - Math.random() * 90 * 24 * 60 * 60 * 1000).toISOString(),
+      careConcerns: [],
+      prayerRequests: []
+    }
+  };
+
+  res.json({
+    success: true,
+    member: enhancedMember
+  });
+});
+
+app.put('/api/members/:id/enhanced', (req, res) => {
+  console.log('💾 Enhanced member profile update:', req.params.id);
+  
+  const memberIndex = productionSeed.members.findIndex(m => m.id === req.params.id);
+  if (memberIndex === -1) {
+    return res.status(404).json({
+      success: false,
+      message: 'Member not found'
+    });
+  }
+
+  try {
+    // Update member with enhanced data
+    const updatedMember = {
+      ...productionSeed.members[memberIndex],
+      ...req.body,
+      updatedAt: new Date().toISOString()
+    };
+
+    productionSeed.members[memberIndex] = updatedMember;
+
+    console.log('✅ Enhanced member profile updated successfully');
+
+    res.json({
+      success: true,
+      member: updatedMember,
+      message: 'Member profile updated successfully'
+    });
+
+  } catch (error) {
+    console.error('❌ Failed to update enhanced member profile:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to update member profile',
+      error: error.message
+    });
+  }
+});
+
+// ==========================================
 // AUTH MODULE EXTENSIONS - Missing Endpoints
 // ==========================================
 
 app.post('/api/auth/register', (req, res) => {
   console.log('🔐 User registration requested:', req.body.email);
   console.log('📋 Registration payload:', JSON.stringify(req.body, null, 2));
-  const { email, password, firstName, lastName, churchChoice, selectedChurchId, newChurchName, joinCode } = req.body;
+  const { email, password, firstName, lastName, churchChoice, selectedChurchId, newChurchName, joinCode, role } = req.body;
   
   if (!email || !password) {
     return res.status(400).json({
@@ -4115,7 +4526,7 @@ app.post('/api/auth/register', (req, res) => {
     firstName: firstName || 'New',
     lastName: lastName || 'User',
     email: email,
-    role: 'member', // Default role for registered users
+    role: role || 'member', // Use provided role or default to member
     status: 'active',
     joinDate: new Date().toISOString().split('T')[0],
     churchId: churchId,

@@ -37,7 +37,7 @@ export default function BugReportModal({ isOpen, onClose }: BugReportModalProps)
     setIsSubmitting(true);
 
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/bug-report`, {
+      const response = await fetch('/api/bug-report', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -45,7 +45,18 @@ export default function BugReportModal({ isOpen, onClose }: BugReportModalProps)
         body: JSON.stringify({
           ...formData,
           userEmail: user?.email || 'anonymous',
+          userId: user?.id || 'anonymous',
+          churchId: user?.churchId || 'unknown',
+          churchName: user?.churchName || 'unknown',
           browserInfo: navigator.userAgent,
+          timestamp: new Date().toISOString(),
+          url: window.location.href,
+          viewport: {
+            width: window.innerWidth,
+            height: window.innerHeight
+          },
+          userAgent: navigator.userAgent,
+          platform: navigator.platform
         }),
       });
 

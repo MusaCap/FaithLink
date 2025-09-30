@@ -6,9 +6,10 @@ import { useAuth } from '../../contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import { Eye, EyeOff, Loader2, Heart, Users } from 'lucide-react';
 import ChurchSelection from '../../components/auth/ChurchSelection';
+import RoleSelection from '../../components/auth/RoleSelection';
 
 export default function RegisterPage() {
-  const [currentStep, setCurrentStep] = useState<'basic' | 'church'>('basic');
+  const [currentStep, setCurrentStep] = useState<'basic' | 'role' | 'church'>('basic');
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -16,7 +17,7 @@ export default function RegisterPage() {
     password: '',
     confirmPassword: '',
     churchName: '',
-    role: 'admin' as 'admin' | 'member',
+    role: 'member' as 'admin' | 'leader' | 'member',
   });
   const [churchSelection, setChurchSelection] = useState<{
     churchChoice: 'join' | 'create';
@@ -38,15 +39,18 @@ export default function RegisterPage() {
     }));
   };
 
-  const handleBasicFormSubmit = async (e: React.FormEvent) => {
+  const handleBasicFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    clearError();
-    
     if (formData.password !== formData.confirmPassword) {
       return;
     }
 
-    // Move to church selection step
+    // Move to role selection step
+    setCurrentStep('role');
+  };
+
+  const handleRoleSelection = (role: 'admin' | 'leader' | 'member') => {
+    setFormData(prev => ({ ...prev, role }));
     setCurrentStep('church');
   };
 
@@ -78,6 +82,7 @@ export default function RegisterPage() {
         selectedChurchId: selection.selectedChurchId,
         newChurchName: selection.newChurchName,
         joinCode: selection.joinCode,
+        role: formData.role,
       });
       router.push('/dashboard');
     } catch (err) {
@@ -85,12 +90,24 @@ export default function RegisterPage() {
     }
   };
 
+  if (currentStep === 'role') {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-primary-50 to-secondary-50 py-12 px-4 sm:px-6 lg:px-8">
+        <RoleSelection 
+          onSelection={handleRoleSelection}
+          onBack={() => setCurrentStep('basic')}
+          selectedRole={formData.role}
+        />
+      </div>
+    );
+  }
+
   if (currentStep === 'church') {
     return (
       <div className="min-h-screen bg-gradient-to-br from-primary-50 to-secondary-50 py-12 px-4 sm:px-6 lg:px-8">
         <ChurchSelection 
           onSelection={handleChurchSelection}
-          onBack={() => setCurrentStep('basic')}
+          onBack={() => setCurrentStep('role')}
         />
       </div>
     );
