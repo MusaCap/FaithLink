@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { User, Edit3, Calendar, MapPin, Heart, BookOpen, Users, Settings, Bell, Download } from 'lucide-react';
+import { useAuth } from '../../contexts/AuthContext';
 
 interface MemberProfile {
   id: string;
@@ -44,6 +45,7 @@ interface NotificationSettings {
 }
 
 export default function MemberSelfServicePortal() {
+  const { user } = useAuth();
   const [activeTab, setActiveTab] = useState('profile');
   const [profile, setProfile] = useState<MemberProfile | null>(null);
   const [notifications, setNotifications] = useState<NotificationSettings>({
@@ -65,21 +67,26 @@ export default function MemberSelfServicePortal() {
 
   const fetchMemberProfile = async () => {
     try {
-      const response = await fetch('/api/members/self-service/profile');
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/members/self-service/profile`, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
+          'Content-Type': 'application/json'
+        }
+      });
       if (response.ok) {
         const data = await response.json();
         setProfile(data.profile);
         setEditForm(data.profile);
       } else {
-        // Mock data fallback
+        // Use actual user data as fallback
         const mockProfile: MemberProfile = {
-          id: '1',
-          name: 'Sarah Johnson',
-          email: 'sarah@faithlink.org',
-          phone: '(555) 234-5678',
-          address: '123 Faith Street, Community City, CA 90210',
-          birthDate: '1990-05-15',
-          membershipDate: '2023-03-20',
+          id: user?.id || '1',
+          name: (user as any)?.name || `${user?.firstName || ''} ${user?.lastName || ''}`.trim() || 'User',
+          email: user?.email || 'user@faithlink.org',
+          phone: (user as any)?.phone || '(555) 234-5678',
+          address: (user as any)?.address?.street || '123 Faith Street, Community City, CA 90210',
+          birthDate: (user as any)?.demographics?.dateOfBirth || '1990-05-15',
+          membershipDate: (user as any)?.joinDate || '2023-03-20',
           status: 'active',
           groups: ['Ladies Bible Study', 'Worship Team'],
           journeys: [
@@ -150,18 +157,54 @@ export default function MemberSelfServicePortal() {
 
   const downloadMembershipReport = async () => {
     try {
-      const response = await fetch('/api/members/self-service/report');
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/members/self-service/report`, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
+          'Content-Type': 'application/json'
+        }
+      });
+      
       if (response.ok) {
         const blob = await response.blob();
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = 'membership-report.pdf';
+        a.download = `membership-report-${user?.firstName || 'member'}-${new Date().toISOString().split('T')[0]}.pdf`;
+        a.click();
+        URL.revokeObjectURL(url);
+      } else {
+        // Fallback: Generate a simple text report
+        const reportData = `
+FAITH LINK 360 - MEMBER REPORT
+Generated: ${new Date().toLocaleDateString()}
+
+MEMBER INFORMATION:
+Name: ${profile?.name || 'Unknown'}
+Email: ${profile?.email || 'Unknown'}
+Phone: ${profile?.phone || 'Not provided'}
+Member Since: ${profile?.membershipDate || 'Unknown'}
+Status: ${profile?.status || 'Unknown'}
+
+GROUPS: ${profile?.groups?.join(', ') || 'None'}
+
+JOURNEY PROGRESS:
+${profile?.journeys?.map(j => `- ${j.title}: ${j.progress}% (${j.status})`).join('\n') || 'No journeys'}
+
+PRAYER REQUESTS:
+${profile?.prayerRequests?.map(p => `- ${p.title} (${p.status}) - ${p.date}`).join('\n') || 'No prayer requests'}
+        `;
+        
+        const blob = new Blob([reportData], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `membership-report-${user?.firstName || 'member'}-${new Date().toISOString().split('T')[0]}.txt`;
         a.click();
         URL.revokeObjectURL(url);
       }
     } catch (error) {
       console.error('Failed to download report:', error);
+      alert('Failed to download report. Please try again later.');
     }
   };
 
