@@ -10,14 +10,29 @@ export default function ProfilePage() {
   const [editing, setEditing] = useState(false);
   
   const [profile, setProfile] = useState({
-    firstName: 'Admin',
-    lastName: 'User',
-    email: 'admin@faithlink360.com',
-    phone: '(555) 123-4567',
-    address: '123 Church St',
-    role: 'ADMIN',
-    joinDate: '2025-01-01'
+    firstName: user?.firstName || 'Loading...',
+    lastName: user?.lastName || '',
+    email: user?.email || '',
+    phone: (user as any)?.phone || '',
+    address: (user as any)?.address?.street || '',
+    role: user?.role || 'member',
+    joinDate: (user as any)?.joinDate || new Date().toISOString().split('T')[0]
   });
+
+  // Update profile when user data changes
+  useEffect(() => {
+    if (user) {
+      setProfile({
+        firstName: user.firstName || '',
+        lastName: user.lastName || '',
+        email: user.email || '',
+        phone: (user as any).phone || '',
+        address: (user as any).address?.street || '',
+        role: user.role || 'member',
+        joinDate: (user as any).joinDate || new Date().toISOString().split('T')[0]
+      });
+    }
+  }, [user]);
 
   const handleSave = async () => {
     setLoading(true);

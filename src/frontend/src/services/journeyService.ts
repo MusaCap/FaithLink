@@ -194,7 +194,7 @@ class JourneyService {
     
     const cacheKey = `member_journeys_${params.toString()}`;
     return this.request<MemberJourneyResponse>(
-      `/journeys/member-journeys?${params.toString()}`, 
+      `/api/journeys/member-journeys?${params.toString()}`, 
       { method: 'GET' },
       cacheKey
     );
@@ -203,7 +203,7 @@ class JourneyService {
   async getMemberJourney(journeyId: string): Promise<MemberJourney> {
     const cacheKey = `member_journey_${journeyId}`;
     return this.request<MemberJourney>(
-      `/journeys/member-journeys/${journeyId}`, 
+      `/api/journeys/member-journeys/${journeyId}`, 
       { method: 'GET' },
       cacheKey
     );
@@ -211,7 +211,7 @@ class JourneyService {
 
   async assignJourneyToMember(data: MemberJourneyCreateRequest): Promise<MemberJourney> {
     const result = await this.request<MemberJourney>(
-      '/journeys/member-journeys', 
+      '/api/journeys/member-journeys', 
       {
         method: 'POST',
         body: JSON.stringify(data),
@@ -226,7 +226,7 @@ class JourneyService {
 
   async updateMemberJourney(data: MemberJourneyUpdateRequest): Promise<MemberJourney> {
     const result = await this.request<MemberJourney>(
-      `/journeys/member-journeys/${data.id}`, 
+      `/api/journeys/member-journeys/${data.id}`, 
       {
         method: 'PUT',
         body: JSON.stringify(data),
@@ -242,7 +242,7 @@ class JourneyService {
 
   async deleteMemberJourney(journeyId: string): Promise<void> {
     await this.request<void>(
-      `/journeys/member-journeys/${journeyId}`, 
+      `/api/journeys/member-journeys/${journeyId}`, 
       { method: 'DELETE' }
     );
     
@@ -255,7 +255,7 @@ class JourneyService {
   async getMilestoneProgress(journeyId: string, milestoneId: string): Promise<MilestoneProgress> {
     const cacheKey = `milestone_progress_${journeyId}_${milestoneId}`;
     return this.request<MilestoneProgress>(
-      `/journeys/member-journeys/${journeyId}/milestones/${milestoneId}/progress`, 
+      `/api/journeys/member-journeys/${journeyId}/milestones/${milestoneId}/progress`, 
       { method: 'GET' },
       cacheKey
     );
@@ -263,7 +263,7 @@ class JourneyService {
 
   async startMilestone(journeyId: string, milestoneId: string): Promise<MilestoneProgress> {
     const result = await this.request<MilestoneProgress>(
-      `/journeys/member-journeys/${journeyId}/milestones/${milestoneId}/start`, 
+      `/api/journeys/member-journeys/${journeyId}/milestones/${milestoneId}/start`, 
       { method: 'POST' }
     );
     
@@ -276,7 +276,7 @@ class JourneyService {
 
   async completeMilestone(journeyId: string, milestoneId: string, notes?: string): Promise<MilestoneProgress> {
     const result = await this.request<MilestoneProgress>(
-      `/journeys/member-journeys/${journeyId}/milestones/${milestoneId}/complete`, 
+      `/api/journeys/member-journeys/${journeyId}/milestones/${milestoneId}/complete`, 
       {
         method: 'POST',
         body: JSON.stringify({ notes }),
@@ -331,7 +331,7 @@ class JourneyService {
     feedback?: string
   ): Promise<MilestoneProgress> {
     const result = await this.request<MilestoneProgress>(
-      `/journeys/member-journeys/${journeyId}/milestones/${milestoneId}/approve`, 
+      `/api/journeys/member-journeys/${journeyId}/milestones/${milestoneId}/approve`, 
       {
         method: 'POST',
         body: JSON.stringify({ feedback }),
@@ -351,7 +351,7 @@ class JourneyService {
     feedback: string
   ): Promise<MilestoneProgress> {
     const result = await this.request<MilestoneProgress>(
-      `/journeys/member-journeys/${journeyId}/milestones/${milestoneId}/request-revision`, 
+      `/api/journeys/member-journeys/${journeyId}/milestones/${milestoneId}/request-revision`, 
       {
         method: 'POST',
         body: JSON.stringify({ feedback }),
@@ -428,7 +428,7 @@ class JourneyService {
   }
 
   async exportMemberJourneyProgress(journeyId: string, format: 'json' | 'pdf' = 'pdf'): Promise<Blob> {
-    const response = await fetch(`${API_BASE_URL}/journeys/member-journeys/${journeyId}/export?format=${format}`, {
+    const response = await fetch(`${API_BASE_URL}/api/journeys/member-journeys/${journeyId}/export?format=${format}`, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem('auth_token')}`,
       },
