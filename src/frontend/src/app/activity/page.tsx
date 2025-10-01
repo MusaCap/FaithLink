@@ -95,13 +95,40 @@ export default function ActivityPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Simulate API call
-    setTimeout(() => {
-      setActivities(mockActivities);
-      setFilteredActivities(mockActivities);
-      setLoading(false);
-    }, 500);
+    loadActivities();
   }, []);
+
+  const loadActivities = async () => {
+    try {
+      setLoading(true);
+      const token = localStorage.getItem('auth_token');
+      if (!token) {
+        throw new Error('No authentication token found');
+      }
+      
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/activity`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      if (!response.ok) {
+        throw new Error(`Failed to fetch activities: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      const activityData = data.activities || data || [];
+      setActivities(activityData);
+      setFilteredActivities(activityData);
+    } catch (error) {
+      console.error('Failed to load activities:', error);
+      setActivities([]);
+      setFilteredActivities([]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     if (selectedFilter === 'all') {

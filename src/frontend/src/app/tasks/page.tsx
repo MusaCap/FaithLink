@@ -67,54 +67,11 @@ export default function TasksPage() {
     }
   };
 
-  // Mock data for fallback
+  // Load tasks from API
   useEffect(() => {
-    if (tasks.length === 0 && !loading && !error) {
-      const mockTasks: Task[] = [
-        {
-          id: '1',
-          title: 'Update member directory',
-          description: 'Review and update contact information for all members',
-          priority: 'high',
-          status: 'pending',
-          assignedTo: 'Admin User',
-          dueDate: '2025-09-15',
-          createdAt: '2025-09-01T00:00:00Z',
-          category: 'Administration',
-          createdBy: 'Admin User'
-        },
-        {
-          id: '2',
-          title: 'Prepare youth event',
-          description: 'Plan activities and coordinate volunteers for upcoming youth retreat',
-          priority: 'medium',
-          status: 'in_progress',
-          assignedTo: 'Pastor Smith',
-          dueDate: '2025-09-20',
-          createdAt: '2025-09-05T00:00:00Z',
-          category: 'Events',
-          createdBy: 'Pastor Smith'
-        },
-        {
-          id: '3',
-          title: 'Review group attendance',
-          description: 'Analyze attendance patterns and reach out to inactive members',
-          priority: 'medium',
-          status: 'completed',
-          assignedTo: 'Group Leader',
-          dueDate: '2025-09-10',
-          createdAt: '2025-08-28T00:00:00Z',
-          category: 'Groups',
-          createdBy: 'Group Leader'
-        }
-      ];
-      
-      setTimeout(() => {
-        setTasks(mockTasks);
-        setLoading(false);
-      }, 500);
-    }
+    loadTasks();
   }, []);
+
 
   const filteredTasks = tasks.filter(task => {
     const matchesSearch = task.title.toLowerCase().includes(searchQuery.toLowerCase()) ||

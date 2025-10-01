@@ -60,46 +60,7 @@ export default function JourneyPage() {
     } catch (error: any) {
       console.error('Failed to load member journeys:', error);
       setError(error.message);
-      
-      // Fallback mock data for development
-      setJourneys([
-        {
-          id: 'journey-001',
-          memberId: user.id,
-          templateId: 'template-001',
-          status: 'IN_PROGRESS',
-          startedAt: '2024-01-15T00:00:00Z',
-          completedAt: null,
-          progress: 65,
-          currentMilestone: 'Community Connection',
-          template: {
-            id: 'template-001',
-            name: 'New Member Journey',
-            description: 'Basic orientation and integration path for new church members',
-            difficulty: 'beginner'
-          },
-          mentor: {
-            id: 'mentor-001',
-            name: 'Pastor John'
-          }
-        },
-        {
-          id: 'journey-002',
-          memberId: user.id,
-          templateId: 'template-002',
-          status: 'COMPLETED',
-          startedAt: '2024-02-01T00:00:00Z',
-          completedAt: '2024-03-15T00:00:00Z',
-          progress: 100,
-          currentMilestone: 'Journey Complete',
-          template: {
-            id: 'template-002',
-            name: 'Spiritual Growth Track',
-            description: 'Deepen your relationship with God through guided study',
-            difficulty: 'intermediate'
-          }
-        }
-      ]);
+      setJourneys([]); // Clear journeys on error instead of showing mock data
     } finally {
       setLoading(false);
     }
