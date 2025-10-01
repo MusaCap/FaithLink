@@ -1827,8 +1827,8 @@ app.post('/api/events/:id/registrations', (req, res) => {
 });
 
 // Event Check-in
-app.post('/api/events/:id/check-in', (req, res) => {
-  console.log(`✅ Event check-in: ${req.params.id}`);
+app.post('/api/events/:eventId/check-in', (req, res) => {
+  console.log(`✅ Event check-in: ${req.params.eventId}`);
   const { memberId, checkInTime, checkInMethod = 'manual' } = req.body;
   
   if (!memberId) {
@@ -1837,7 +1837,7 @@ app.post('/api/events/:id/check-in', (req, res) => {
   
   const checkin = {
     id: `checkin-${Date.now()}`,
-    eventId: req.params.id,
+    eventId: req.params.eventId,
     memberId,
     checkInTime: checkInTime || new Date().toISOString(),
     checkInMethod,
@@ -4860,79 +4860,7 @@ app.post('/api/events/:eventId/registrations', (req, res) => {
   });
 });
 
-app.get('/api/events/:eventId/rsvps', (req, res) => {
-  console.log('📅 Event RSVPs requested for:', req.params.eventId);
-  const { eventId } = req.params;
-  
-  const rsvps = [
-    {
-      id: 'rsvp-001',
-      eventId,
-      memberId: 'mbr-001',
-      memberName: 'John Smith',
-      response: 'yes',
-      rsvpDate: '2024-01-15T10:00:00Z',
-      guestCount: 2
-    },
-    {
-      id: 'rsvp-002',
-      eventId,
-      memberId: 'mbr-002',
-      memberName: 'Sarah Johnson', 
-      response: 'maybe',
-      rsvpDate: '2024-01-16T14:30:00Z',
-      guestCount: 0
-    }
-  ];
-  
-  res.json({
-    eventId,
-    rsvps,
-    summary: {
-      yes: 1,
-      no: 0,
-      maybe: 1,
-      pending: 0
-    }
-  });
-});
-
-app.post('/api/events/:eventId/rsvps', (req, res) => {
-  console.log('📅 RSVP submitted:', req.params.eventId, req.body);
-  const { eventId } = req.params;
-  const { memberId, response, guestCount = 0 } = req.body;
-  
-  const rsvp = {
-    id: `rsvp-${Date.now()}`,
-    eventId,
-    memberId,
-    response,
-    guestCount,
-    rsvpDate: new Date().toISOString()
-  };
-  
-  res.status(201).json({
-    success: true,
-    message: 'RSVP recorded successfully',
-    rsvp
-  });
-});
-
-app.get('/api/events/:eventId/check-in', (req, res) => {
-  console.log('📅 Event check-in status for:', req.params.eventId);
-  const { eventId } = req.params;
-  
-  res.json({
-    eventId,
-    checkInOpen: true,
-    totalRegistered: 25,
-    totalCheckedIn: 18,
-    checkInRate: 72,
-    recentCheckIns: [
-      { memberId: 'mbr-001', memberName: 'John Smith', checkInTime: new Date().toISOString() }
-    ]
-  });
-});
+// Duplicate RSVP and check-in endpoints removed - using the main ones above
 
 // ==========================================
 // MISSING COMMUNICATIONS MODULE ENDPOINTS
