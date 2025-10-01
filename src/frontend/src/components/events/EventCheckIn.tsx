@@ -41,6 +41,7 @@ export default function EventCheckIn({ eventId, eventTitle, isOpen, onClose }: E
           'Content-Type': 'application/json'
         }
       });
+      if (response.ok) {
         const data = await response.json();
         setAttendees(data.attendees || data || []);
       } else {
@@ -50,7 +51,7 @@ export default function EventCheckIn({ eventId, eventTitle, isOpen, onClose }: E
       }
     } catch (error) {
       console.error('Failed to fetch attendees:', error);
-      alert(`Failed to fetch attendees: ${error.message}`);
+      alert(`Failed to fetch attendees: ${error instanceof Error ? error.message : 'Unknown error'}`);
     } finally {
       setLoading(false);
     }
