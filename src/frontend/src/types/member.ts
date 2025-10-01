@@ -1,5 +1,6 @@
 export interface Member {
   id: string;
+  memberNumber: string; // Unique member number for financial system integration
   firstName: string;
   lastName: string;
   email: string;
@@ -64,6 +65,7 @@ export interface MemberCreateRequest {
   firstName: string;
   lastName: string;
   email: string;
+  memberNumber?: string; // Optional - auto-generated if not provided
   phone?: string;
   dateOfBirth?: Date;
   address?: Member['address'];

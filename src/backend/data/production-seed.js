@@ -25,6 +25,7 @@ const productionSeedData = {
   members: [
     {
       id: 'mbr-001',
+      memberNumber: '10001', // Unique member number for financial system integration
       firstName: 'David',
       lastName: 'Johnson',
       email: 'david.johnson@faithlink360.org',
@@ -63,7 +64,8 @@ const productionSeedData = {
       }
     },
     {
-      id: 'mbr-002', 
+      id: 'mbr-002',
+      memberNumber: '10002', // Unique member number for financial system integration
       firstName: 'Sarah',
       lastName: 'Martinez',
       email: 'sarah.martinez@email.com',
@@ -103,6 +105,7 @@ const productionSeedData = {
     },
     {
       id: 'mbr-003',
+      memberNumber: '10003', // Unique member number for financial system integration
       firstName: 'Michael',
       lastName: 'Thompson', 
       email: 'michael.thompson@email.com',

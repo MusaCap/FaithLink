@@ -722,6 +722,7 @@ app.post('/api/members', (req, res) => {
     firstName, 
     lastName, 
     email, 
+    memberNumber,
     phone, 
     dateOfBirth,
     address, 
@@ -736,8 +737,12 @@ app.post('/api/members', (req, res) => {
     return res.status(400).json({ error: 'First name, last name, and email are required' });
   }
   
+  // Auto-generate member number if not provided
+  const generatedMemberNumber = memberNumber || (10000 + Date.now() % 90000).toString();
+  
   const newMember = {
     id: `mbr-${Date.now()}`,
+    memberNumber: generatedMemberNumber, // Unique member number for financial system integration
     firstName,
     lastName,
     email,
