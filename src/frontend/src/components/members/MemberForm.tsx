@@ -29,6 +29,7 @@ export default function MemberForm({ member, onSave, onCancel }: MemberFormProps
     firstName: '',
     lastName: '',
     email: '',
+    memberNumber: '', // Auto-generated if empty
     phone: '',
     dateOfBirth: undefined,
     address: {
@@ -63,11 +64,7 @@ export default function MemberForm({ member, onSave, onCancel }: MemberFormProps
       newsletter: true,
       eventNotifications: true,
       privacyLevel: 'members'
-    },
-    createdAt: new Date(),
-    updatedAt: new Date(),
-    createdBy: '',
-    updatedBy: ''
+    }
   });
 
   const [newTag, setNewTag] = useState('');
@@ -88,10 +85,11 @@ export default function MemberForm({ member, onSave, onCancel }: MemberFormProps
       if (keys.length === 1) {
         return { ...prev, [field]: value };
       } else if (keys.length === 2) {
+        const nestedObj = prev[keys[0] as keyof MemberFormData];
         return {
           ...prev,
           [keys[0]]: {
-            ...prev[keys[0] as keyof MemberFormData],
+            ...(nestedObj as object),
             [keys[1]]: value
           }
         };
@@ -310,6 +308,25 @@ export default function MemberForm({ member, onSave, onCancel }: MemberFormProps
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 placeholder="Enter last name"
               />
+            </div>
+          </div>
+
+          {/* Member Number */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Member Number
+              </label>
+              <input
+                type="text"
+                value={formData.memberNumber}
+                onChange={(e) => handleInputChange('memberNumber', e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="Auto-generated if left empty"
+              />
+              <p className="text-xs text-gray-500 mt-1">
+                Unique identifier for financial system integration
+              </p>
             </div>
           </div>
 

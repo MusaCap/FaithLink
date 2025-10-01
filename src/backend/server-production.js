@@ -738,7 +738,15 @@ app.post('/api/members', (req, res) => {
   }
   
   // Auto-generate member number if not provided
-  const generatedMemberNumber = memberNumber || (10000 + Date.now() % 90000).toString();
+  let generatedMemberNumber = memberNumber || (10000 + Date.now() % 90000).toString();
+  
+  // Check if member number already exists
+  if (memberNumber) {
+    const existingMember = productionSeed.members.find(m => m.memberNumber === memberNumber);
+    if (existingMember) {
+      return res.status(400).json({ error: 'Member number already exists. Please use a different number.' });
+    }
+  }
   
   const newMember = {
     id: `mbr-${Date.now()}`,

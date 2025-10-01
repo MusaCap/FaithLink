@@ -385,6 +385,11 @@ export default function MemberList({
                       <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(member.membershipStatus)}`}>
                         {member.membershipStatus}
                       </span>
+                      {member.memberNumber && (
+                        <div className="flex items-center text-xs text-gray-400 font-mono">
+                          #{member.memberNumber}
+                        </div>
+                      )}
                     </div>
                     
                     <div className="flex flex-col sm:flex-row sm:items-center text-sm text-gray-500 space-y-1 sm:space-y-0 sm:space-x-4">
