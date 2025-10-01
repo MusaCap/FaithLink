@@ -23,6 +23,7 @@ async function main() {
           email: 'admin@faithlink360.com',
           phone: '(555) 123-4567',
           address: '123 Church St',
+          memberNumber: '10000', // Admin gets member number 10000
           spiritualStatus: 'Leadership'
         }
       }
@@ -44,6 +45,7 @@ async function main() {
           email: 'pastor@faithlink360.com',
           phone: '(555) 234-5678',
           address: '456 Faith Ave',
+          memberNumber: '10001', // Pastor gets member number 10001 (David Johnson from production seed)
           spiritualStatus: 'Leadership'
         }
       }
