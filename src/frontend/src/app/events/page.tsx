@@ -40,49 +40,24 @@ export default function EventsPage() {
   const fetchEvents = async () => {
     try {
       setLoading(true);
-      // Mock data for now - replace with actual API call
-      const mockEvents: Event[] = [
-        {
-          id: '1',
-          title: 'Sunday Service',
-          description: 'Weekly worship service with communion',
-          startDateTime: '2024-01-07T10:00:00',
-          endDateTime: '2024-01-07T11:30:00',
-          location: 'Main Sanctuary',
-          eventType: 'service',
-          maxAttendees: 200,
-          currentAttendees: 150,
-          isRecurring: true,
-          status: 'upcoming'
-        },
-        {
-          id: '2',
-          title: 'Youth Bible Study',
-          description: 'Interactive Bible study for teens and young adults',
-          startDateTime: '2024-01-10T19:00:00',
-          endDateTime: '2024-01-10T20:30:00',
-          location: 'Youth Center',
-          eventType: 'bible_study',
-          maxAttendees: 30,
-          currentAttendees: 18,
-          isRecurring: true,
-          status: 'upcoming'
-        },
-        {
-          id: '3',
-          title: 'Community Outreach',
-          description: 'Serving meals at local shelter',
-          startDateTime: '2024-01-15T12:00:00',
-          endDateTime: '2024-01-15T16:00:00',
-          location: 'Downtown Shelter',
-          eventType: 'outreach',
-          maxAttendees: 25,
-          currentAttendees: 12,
-          isRecurring: false,
-          status: 'upcoming'
+      const token = localStorage.getItem('auth_token');
+      if (!token) {
+        throw new Error('No authentication token found');
+      }
+      
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/events`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
         }
-      ];
-      setEvents(mockEvents);
+      });
+      
+      if (!response.ok) {
+        throw new Error(`Failed to fetch events: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      setEvents(data.events || data || []);
     } catch (error) {
       console.error('Error fetching events:', error);
     } finally {

@@ -69,90 +69,36 @@ export default function CommunicationsPage() {
   const fetchCommunications = async () => {
     try {
       setLoading(true);
-      // Mock data - replace with actual API calls
-      const mockCampaigns: EmailCampaign[] = [
-        {
-          id: '1',
-          title: 'Weekly Newsletter - September',
-          subject: 'This Week at FaithLink Community Church',
-          content: 'Join us for worship this Sunday...',
-          status: 'sent',
-          recipients: 245,
-          targetGroups: ['All Members', 'Visitors'],
-          sentAt: '2025-09-08T08:00:00Z',
-          openRate: 72,
-          clickRate: 18,
-          createdBy: 'Admin User',
-          createdAt: '2025-09-07T10:00:00Z'
-        },
-        {
-          id: '2',
-          title: 'Upcoming Easter Services',
-          subject: 'Celebrate Easter with Us - Special Service Times',
-          content: 'We are excited to celebrate the resurrection...',
-          status: 'scheduled',
-          recipients: 320,
-          targetGroups: ['All Members', 'Visitors', 'Community'],
-          scheduledFor: '2025-09-15T07:00:00Z',
-          createdBy: 'Pastor Smith',
-          createdAt: '2025-09-05T14:00:00Z'
-        },
-        {
-          id: '3',
-          title: 'Youth Group Fundraiser',
-          subject: 'Support Our Youth Mission Trip',
-          content: 'Our youth group is raising funds for their summer mission...',
-          status: 'draft',
-          recipients: 156,
-          targetGroups: ['Youth Parents', 'All Members'],
-          createdBy: 'Youth Pastor',
-          createdAt: '2025-09-10T09:00:00Z'
+      const token = localStorage.getItem('auth_token');
+      if (!token) {
+        throw new Error('No authentication token found');
+      }
+      
+      // Fetch campaigns
+      const campaignsResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/communications/campaigns`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
         }
-      ];
-
-      const mockAnnouncements: Announcement[] = [
-        {
-          id: '1',
-          title: 'Sunday Service Time Change',
-          content: 'Starting October 1st, our Sunday service time will change to 10:30 AM to accommodate our growing congregation.',
-          priority: 'high',
-          targetAudience: ['All Members'],
-          channels: ['email', 'dashboard', 'website'],
-          status: 'active',
-          startDate: '2025-09-10T00:00:00Z',
-          endDate: '2025-10-01T00:00:00Z',
-          createdBy: 'Pastor Smith',
-          createdAt: '2025-09-09T10:00:00Z'
-        },
-        {
-          id: '2',
-          title: 'Building Maintenance - Parking Lot',
-          content: 'The main parking lot will be resurfaced this weekend. Please use the side entrance and overflow parking.',
-          priority: 'normal',
-          targetAudience: ['All Members', 'Visitors'],
-          channels: ['email', 'sms', 'dashboard'],
-          status: 'active',
-          startDate: '2025-09-12T00:00:00Z',
-          endDate: '2025-09-15T00:00:00Z',
-          createdBy: 'Admin User',
-          createdAt: '2025-09-10T08:00:00Z'
-        },
-        {
-          id: '3',
-          title: 'New Small Group Leaders Needed',
-          content: 'We are looking for dedicated members to lead new small groups starting in October. Contact Pastor David for more information.',
-          priority: 'normal',
-          targetAudience: ['Members'],
-          channels: ['dashboard', 'website'],
-          status: 'active',
-          startDate: '2025-09-08T00:00:00Z',
-          createdBy: 'Pastor David',
-          createdAt: '2025-09-08T12:00:00Z'
+      });
+      
+      // Fetch announcements  
+      const announcementsResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/communications/announcements`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
         }
-      ];
-
-      setCampaigns(mockCampaigns);
-      setAnnouncements(mockAnnouncements);
+      });
+      
+      if (campaignsResponse.ok) {
+        const campaignsData = await campaignsResponse.json();
+        setCampaigns(campaignsData.campaigns || campaignsData || []);
+      }
+      
+      if (announcementsResponse.ok) {
+        const announcementsData = await announcementsResponse.json();
+        setAnnouncements(announcementsData.announcements || announcementsData || []);
+      }
     } catch (error) {
       console.error('Failed to fetch communications:', error);
     } finally {

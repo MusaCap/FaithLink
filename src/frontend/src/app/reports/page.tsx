@@ -66,17 +66,21 @@ export default function ReportsPage() {
     }
   };
 
-  // Mock data if no real data loaded
-  const mockStats: DashboardStats = {
-    totalMembers: 248,
-    activeGroups: 18,
-    avgAttendance: 85,
-    memberGrowth: 12,
-    attendanceGrowth: 8,
-    engagementScore: 78
-  };
-
-  const displayStats = stats || mockStats;
+  // Show loading state if no stats available
+  if (!stats) {
+    return (
+      <div className="p-6">
+        <div className="flex items-center justify-center h-64">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-500 mb-4"></div>
+            <p className="text-gray-600">Loading reports...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+  
+  const displayStats = stats;
 
   return (
     <div className="p-6">

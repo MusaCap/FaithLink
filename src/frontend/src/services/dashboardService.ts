@@ -43,7 +43,10 @@ class DashboardService {
     }
 
     try {
-      const token = localStorage.getItem('auth_token') || 'mock_token_admin';
+      const token = localStorage.getItem('auth_token');
+      if (!token) {
+        throw new Error('No authentication token found');
+      }
       const response = await fetch(`${this.API_BASE_URL}/api/reports/dashboard`, {
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -82,7 +85,10 @@ class DashboardService {
         return this.cache.data?.recentActivity || this.cache.recentActivity || [];
       }
 
-      const token = localStorage.getItem('auth_token') || 'mock_token_admin';
+      const token = localStorage.getItem('auth_token');
+      if (!token) {
+        throw new Error('No authentication token found');
+      }
       const response = await fetch(`${this.API_BASE_URL}/api/reports/dashboard`, {
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -123,7 +129,10 @@ class DashboardService {
         return this.cache.data?.upcomingEventsDetailed || this.cache.upcomingEvents || [];
       }
 
-      const token = localStorage.getItem('auth_token') || 'mock_token_admin';
+      const token = localStorage.getItem('auth_token');
+      if (!token) {
+        throw new Error('No authentication token found');
+      }
       const response = await fetch(`${this.API_BASE_URL}/api/reports/dashboard`, {
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -155,7 +164,10 @@ class DashboardService {
         return this.cache.alerts || [];
       }
 
-      const token = localStorage.getItem('auth_token') || 'mock_token_admin';
+      const token = localStorage.getItem('auth_token');
+      if (!token) {
+        throw new Error('No authentication token found');
+      }
       const response = await fetch(`${this.API_BASE_URL}/api/reports/dashboard`, {
         headers: {
           'Authorization': `Bearer ${token}`,
