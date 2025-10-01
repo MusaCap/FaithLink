@@ -178,9 +178,9 @@ const MemberEngagementMetrics: React.FC<MemberEngagementMetricsProps> = ({ dateR
     { category: 'At Risk', members: 17, percentage: 7, color: 'bg-red-500' }
   ];
 
-  const displayMetrics = metrics.length > 0 ? metrics : mockMetrics;
-  const displayActivities = memberActivities.length > 0 ? memberActivities : mockMemberActivities;
-  const displayCategories = categories.length > 0 ? categories : mockCategories;
+  const displayMetrics = metrics;
+  const displayActivities = memberActivities;  
+  const displayCategories = categories;
 
   const filteredActivities = selectedCategory === 'all' 
     ? displayActivities 

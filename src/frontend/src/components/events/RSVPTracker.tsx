@@ -45,33 +45,10 @@ export default function RSVPTracker({ eventId, eventTitle, isOpen, onClose }: RS
       });
       if (response.ok) {
         const data = await response.json();
-        setRsvps(data.rsvps);
+        setRsvps(data.rsvps || data || []);
       } else {
-        // Mock data fallback
-        setRsvps([
-          {
-            id: '1', memberName: 'Sarah Johnson', email: 'sarah@faithlink.org', phone: '(555) 234-5678',
-            attendeeCount: 2, status: 'confirmed', registrationDate: '2025-01-15T10:30:00Z',
-            specialRequests: 'Vegetarian meal', emergencyContact: 'Mike Johnson', emergencyPhone: '(555) 234-5679'
-          },
-          {
-            id: '2', memberName: 'Michael Chen', email: 'michael@faithlink.org', phone: '(555) 345-6789',
-            attendeeCount: 1, status: 'confirmed', registrationDate: '2025-01-16T14:20:00Z'
-          },
-          {
-            id: '3', memberName: 'Emily Rodriguez', email: 'emily@faithlink.org',
-            attendeeCount: 3, status: 'tentative', registrationDate: '2025-01-17T09:15:00Z',
-            specialRequests: 'Wheelchair accessible seating'
-          },
-          {
-            id: '4', memberName: 'Robert Wilson', email: 'robert@faithlink.org', phone: '(555) 456-7890',
-            attendeeCount: 1, status: 'declined', registrationDate: '2025-01-18T16:45:00Z'
-          },
-          {
-            id: '5', memberName: 'Maria Santos', email: 'maria@faithlink.org',
-            attendeeCount: 2, status: 'no-response', registrationDate: '2025-01-19T11:00:00Z'
-          }
-        ]);
+        console.error('Failed to fetch RSVPs:', response.status);
+        setRsvps([]);
       }
     } catch (error) {
       console.error('Failed to fetch RSVPs:', error);

@@ -41,43 +41,16 @@ export default function EventCheckIn({ eventId, eventTitle, isOpen, onClose }: E
           'Content-Type': 'application/json'
         }
       });
-      if (response.ok) {
         const data = await response.json();
-        setAttendees(data.attendees);
+        setAttendees(data.attendees || data || []);
       } else {
-        // Mock data fallback
-        setAttendees([
-          {
-            id: '1', memberName: 'Sarah Johnson', email: 'sarah@faithlink.org',
-            attendeeCount: 2, status: 'checked-in', checkInTime: '2025-01-19T09:45:00Z',
-            registrationId: 'reg-001'
-          },
-          {
-            id: '2', memberName: 'Michael Chen', email: 'michael@faithlink.org',
-            attendeeCount: 1, status: 'checked-in', checkInTime: '2025-01-19T09:52:00Z',
-            registrationId: 'reg-002'
-          },
-          {
-            id: '3', memberName: 'Emily Rodriguez', email: 'emily@faithlink.org',
-            attendeeCount: 3, status: 'registered', registrationId: 'reg-003'
-          },
-          {
-            id: '4', memberName: 'Robert Wilson', email: 'robert@faithlink.org',
-            attendeeCount: 1, status: 'registered', registrationId: 'reg-004'
-          },
-          {
-            id: '5', memberName: 'Maria Santos', email: 'maria@faithlink.org',
-            attendeeCount: 2, status: 'no-show', registrationId: 'reg-005'
-          },
-          {
-            id: '6', memberName: 'David Kim', email: 'david@faithlink.org',
-            attendeeCount: 1, status: 'checked-in', checkInTime: '2025-01-19T10:15:00Z',
-            registrationId: 'reg-006'
-          }
-        ]);
+        console.error('Failed to fetch attendees:', response.status);
+        setAttendees([]);
+        alert(`Failed to fetch attendees: ${response.status}`);
       }
     } catch (error) {
       console.error('Failed to fetch attendees:', error);
+      alert(`Failed to fetch attendees: ${error.message}`);
     } finally {
       setLoading(false);
     }

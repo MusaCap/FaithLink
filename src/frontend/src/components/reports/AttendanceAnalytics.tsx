@@ -72,8 +72,8 @@ const AttendanceAnalytics: React.FC<AttendanceAnalyticsProps> = ({ dateRange }) 
     { period: 'Year to Date', average: 87.4, change: 3.8, trend: 'up' }
   ];
 
-  const displayData = attendanceData.length > 0 ? attendanceData : mockAttendanceData;
-  const displayTrends = trends.length > 0 ? trends : mockTrends;
+  const displayData = attendanceData;
+  const displayTrends = trends;
 
   const filteredData = selectedService === 'all' 
     ? displayData 

@@ -201,8 +201,8 @@ const GroupHealthDashboard: React.FC<GroupHealthDashboardProps> = ({ dateRange }
     }
   ];
 
-  const displayGroups = groupsHealth.length > 0 ? groupsHealth : mockGroupsHealth;
-  const displayMetrics = healthMetrics.length > 0 ? healthMetrics : mockHealthMetrics;
+  const displayGroups = groupsHealth;
+  const displayMetrics = healthMetrics;
 
   const filteredGroups = filterStatus === 'all' 
     ? displayGroups 

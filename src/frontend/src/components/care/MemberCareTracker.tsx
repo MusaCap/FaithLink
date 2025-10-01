@@ -152,9 +152,9 @@ const MemberCareTracker: React.FC = () => {
     }
   ];
 
-  // Use mock data if no real data loaded
-  const displayCareRecords = careRecords.length > 0 ? careRecords : mockCareRecords;
-  const displayMembers = members.length > 0 ? members : mockMembersNeedingCare;
+  // Use real data from API
+  const displayCareRecords = careRecords;
+  const displayMembers = members;
 
   const filteredCareRecords = displayCareRecords.filter(record => {
     const matchesSearch = record.memberName.toLowerCase().includes(searchTerm.toLowerCase()) ||
