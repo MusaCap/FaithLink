@@ -5260,38 +5260,7 @@ app.get('/api/reports/events/export', (req, res) => {
   } catch (error) {
 });
 
-// ==========================================
-// MISSING CARE RECORD ENDPOINT FIX
-// ==========================================
-
-app.post('/api/care/records', (req, res) => {
-  console.log('Creating care record:', req.body);
-  console.log('💙 Creating care record:', req.body);
-  const { memberId, notes, careType = 'general', followUpDate } = req.body;
-  
-  if (!memberId || !notes) {
-    return res.status(400).json({
-      success: false,
-      message: 'Member ID and notes are required'
-    });
-  }
-  
-  const careRecord = {
-    id: `care-${Date.now()}`,
-    memberId,
-    notes,
-    careType,
-    followUpDate: followUpDate || null,
-    createdAt: new Date().toISOString(),
-    createdBy: 'pastor-001'
-  };
-  
-  res.status(201).json({
-    success: true,
-    message: 'Care record created successfully',
-    record: careRecord
-  });
-});
+// Duplicate endpoint removed - using the main care records endpoint above
 
 // ========================================
 // ERROR HANDLING & 404

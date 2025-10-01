@@ -49,14 +49,24 @@ const MemberCareTracker: React.FC = () => {
   const fetchCareData = async () => {
     try {
       // Fetch care records
-      const careResponse = await fetch('/api/care/records');
+      const careResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/care/records`, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
+          'Content-Type': 'application/json'
+        }
+      });
       if (careResponse.ok) {
         const careData = await careResponse.json();
         setCareRecords(careData.records || []);
       }
 
       // Fetch members needing care
-      const membersResponse = await fetch('/api/care/members-needing-care');
+      const membersResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/care/members-needing-care`, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
+          'Content-Type': 'application/json'
+        }
+      });
       if (membersResponse.ok) {
         const membersData = await membersResponse.json();
         setMembers(membersData.members || []);
