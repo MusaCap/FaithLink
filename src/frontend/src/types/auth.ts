@@ -4,6 +4,7 @@ export interface User {
   firstName: string;
   lastName: string;
   role: 'admin' | 'leader' | 'member';
+  memberNumber?: string; // Unique member number for financial system integration
   profilePhoto?: string;
   churchId?: string;
   churchName?: string;

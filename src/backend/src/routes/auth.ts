@@ -69,6 +69,7 @@ router.post('/login', async (req, res) => {
             id: true,
             firstName: true,
             lastName: true,
+            memberNumber: true,
             profilePhotoUrl: true
           }
         }
@@ -334,6 +335,7 @@ router.get('/me', async (req, res) => {
             firstName: true,
             lastName: true,
             phone: true,
+            memberNumber: true,
             profilePhotoUrl: true
           }
         }

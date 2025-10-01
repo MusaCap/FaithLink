@@ -24,6 +24,7 @@ model User {
 model Member {
   id                 String            @id @default(cuid())
   userId             String?           @unique
+  memberNumber       String?           @unique // Unique member number for financial system integration
   firstName          String
   lastName           String
   email              String            @unique
