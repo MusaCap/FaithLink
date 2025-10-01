@@ -35,7 +35,12 @@ export default function EventCheckIn({ eventId, eventTitle, isOpen, onClose }: E
 
   const fetchAttendees = async () => {
     try {
-      const response = await fetch(`/api/events/${eventId}/check-in`);
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/events/${eventId}/check-in`, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
+          'Content-Type': 'application/json'
+        }
+      });
       if (response.ok) {
         const data = await response.json();
         setAttendees(data.attendees);

@@ -57,7 +57,12 @@ export default function VolunteerSignupSystem() {
 
   const fetchOpportunities = async () => {
     try {
-      const response = await fetch('/api/volunteers/opportunities');
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/volunteers/opportunities`, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
+          'Content-Type': 'application/json'
+        }
+      });
       if (response.ok) {
         const data = await response.json();
         setOpportunities(data.opportunities);
@@ -162,7 +167,12 @@ export default function VolunteerSignupSystem() {
 
   const fetchMySignups = async () => {
     try {
-      const response = await fetch('/api/volunteers/my-signups');
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/volunteers/my-signups`, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
+          'Content-Type': 'application/json'
+        }
+      });
       if (response.ok) {
         const data = await response.json();
         setSignups(data.signups);

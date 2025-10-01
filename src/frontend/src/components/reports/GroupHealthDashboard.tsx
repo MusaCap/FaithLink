@@ -44,7 +44,12 @@ const GroupHealthDashboard: React.FC<GroupHealthDashboardProps> = ({ dateRange }
 
   const fetchGroupHealthData = async () => {
     try {
-      const response = await fetch(`/api/reports/group-health?range=${dateRange}`);
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/reports/group-health?range=${dateRange}`, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
+          'Content-Type': 'application/json'
+        }
+      });
       if (response.ok) {
         const data = await response.json();
         setGroupsHealth(data.groups || []);

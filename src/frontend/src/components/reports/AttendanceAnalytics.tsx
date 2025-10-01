@@ -35,7 +35,12 @@ const AttendanceAnalytics: React.FC<AttendanceAnalyticsProps> = ({ dateRange }) 
 
   const fetchAttendanceData = async () => {
     try {
-      const response = await fetch(`/api/reports/attendance?range=${dateRange}&service=${selectedService}`);
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/reports/attendance?range=${dateRange}&service=${selectedService}`, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
+          'Content-Type': 'application/json'
+        }
+      });
       if (response.ok) {
         const data = await response.json();
         setAttendanceData(data.attendance || []);

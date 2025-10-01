@@ -37,7 +37,12 @@ export default function RSVPTracker({ eventId, eventTitle, isOpen, onClose }: RS
 
   const fetchRSVPs = async () => {
     try {
-      const response = await fetch(`/api/events/${eventId}/rsvps`);
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/events/${eventId}/rsvps`, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
+          'Content-Type': 'application/json'
+        }
+      });
       if (response.ok) {
         const data = await response.json();
         setRsvps(data.rsvps);
