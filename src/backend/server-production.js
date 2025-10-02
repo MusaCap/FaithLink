@@ -5199,6 +5199,9 @@ app.get('/api/reports/events/export', (req, res) => {
       res.status(400).json({ error: 'Unsupported format. Use csv or json.' });
     }
   } catch (error) {
+    console.error('Events export error:', error);
+    res.status(500).json({ error: 'Failed to export events report' });
+  }
 });
 
 // Duplicate endpoint removed - using the main care records endpoint above
