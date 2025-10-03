@@ -140,7 +140,7 @@ app.get('/api/cors-test', (req, res) => {
 // In-memory bug reports storage (in production, use database)
 const bugReports = [];
 
-app.post('/api/bug-report', (req, res) => {
+app.post('/api/bug-report', async (req, res) => {
   console.log('🐛 Bug report submitted');
   const { 
     title, 
@@ -205,6 +205,76 @@ app.post('/api/bug-report', (req, res) => {
     console.warn('⚠️ HIGH Priority Bug Report:', bugReport.id, '-', bugReport.title);
   } else {
     console.log('✅ Bug report saved:', bugReport.id, '-', bugReport.title);
+  }
+  
+  // Send email notification to gp@musa.capital
+  try {
+    const nodemailer = require('nodemailer');
+    
+    // Create transporter (using Gmail SMTP - you'll need to configure with app password)
+    const transporter = nodemailer.createTransporter({
+      service: 'gmail',
+      auth: {
+        user: process.env.SMTP_USER || 'noreply@musa.capital',
+        pass: process.env.SMTP_PASS || 'your-app-password'
+      }
+    });
+    
+    const priorityEmoji = severity === 'critical' ? '🚨' : severity === 'high' ? '⚠️' : severity === 'medium' ? '🔶' : '🔵';
+    
+    const mailOptions = {
+      from: process.env.SMTP_USER || 'noreply@musa.capital',
+      to: 'gp@musa.capital',
+      subject: `${priorityEmoji} FaithLink360 Bug Report [${severity.toUpperCase()}] - ${title}`,
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; border-radius: 8px;">
+          <div style="background: ${severity === 'critical' ? '#dc2626' : severity === 'high' ? '#ea580c' : '#3b82f6'}; color: white; padding: 15px; border-radius: 8px 8px 0 0; margin: -20px -20px 20px -20px;">
+            <h2 style="margin: 0;">${priorityEmoji} Bug Report - ${severity.toUpperCase()} Priority</h2>
+            <p style="margin: 5px 0 0 0; opacity: 0.9;">Report ID: ${bugReport.id}</p>
+          </div>
+          
+          <div style="margin-bottom: 20px;">
+            <h3 style="color: #374151; margin-bottom: 8px;">📋 Bug Details</h3>
+            <p><strong>Title:</strong> ${title}</p>
+            <p><strong>Description:</strong> ${description}</p>
+            ${steps ? `<p><strong>Steps to Reproduce:</strong> ${steps}</p>` : ''}
+            ${expectedBehavior ? `<p><strong>Expected Behavior:</strong> ${expectedBehavior}</p>` : ''}
+            ${actualBehavior ? `<p><strong>Actual Behavior:</strong> ${actualBehavior}</p>` : ''}
+          </div>
+          
+          <div style="margin-bottom: 20px;">
+            <h3 style="color: #374151; margin-bottom: 8px;">👤 User Information</h3>
+            <p><strong>User:</strong> ${userEmail} (ID: ${userId})</p>
+            <p><strong>Church:</strong> ${churchName} (ID: ${churchId})</p>
+            <p><strong>Reported From:</strong> <a href="${bugReport.reportedUrl}">${bugReport.reportedUrl}</a></p>
+            <p><strong>Timestamp:</strong> ${new Date(bugReport.submittedAt).toLocaleString()}</p>
+          </div>
+          
+          <div style="margin-bottom: 20px;">
+            <h3 style="color: #374151; margin-bottom: 8px;">🔧 Technical Details</h3>
+            <p><strong>Browser:</strong> ${bugReport.browserInfo}</p>
+            <p><strong>Platform:</strong> ${platform}</p>
+            <p><strong>Viewport:</strong> ${viewport.width}x${viewport.height}</p>
+            ${stackTrace ? `<p><strong>Stack Trace:</strong> <pre style="background: #f3f4f6; padding: 10px; border-radius: 4px; overflow-x: auto;">${stackTrace}</pre></p>` : ''}
+          </div>
+          
+          <div style="background: #f9fafb; padding: 15px; border-radius: 8px; border-left: 4px solid ${severity === 'critical' ? '#dc2626' : '#3b82f6'};">
+            <p style="margin: 0;"><strong>Next Steps:</strong></p>
+            <p style="margin: 5px 0 0 0;">
+              1. Review bug report details above<br>
+              2. Access full bug report via API: <code>GET /api/bug-reports</code><br>
+              3. Update status in system once resolved
+            </p>
+          </div>
+        </div>
+      `
+    };
+    
+    await transporter.sendMail(mailOptions);
+    console.log('📧 Bug report email sent to gp@musa.capital');
+  } catch (emailError) {
+    console.error('❌ Failed to send bug report email:', emailError.message);
+    // Don't fail the bug report submission if email fails
   }
   
   res.status(201).json({
@@ -2980,7 +3050,26 @@ app.get('/api/care/prayer-requests', (req, res) => {
   console.log('🙏 Prayer requests list requested');
   res.json({
     requests: productionSeed.prayerRequests || [],
-    totalRequests: productionSeed.prayerRequests?.length || 0
+    count: productionSeed.prayerRequests?.length || 0
+  });
+});
+
+// Get individual prayer request details
+app.get('/api/care/prayer-requests/:id', (req, res) => {
+  console.log(`🙏 Prayer request details requested: ${req.params.id}`);
+  
+  if (!productionSeed.prayerRequests) {
+    return res.status(404).json({ error: 'Prayer request not found' });
+  }
+  
+  const prayerRequest = productionSeed.prayerRequests.find(pr => pr.id === req.params.id);
+  if (!prayerRequest) {
+    return res.status(404).json({ error: 'Prayer request not found' });
+  }
+  
+  res.json({
+    success: true,
+    request: prayerRequest
   });
 });
 
@@ -3047,6 +3136,89 @@ app.delete('/api/care/prayer-requests/:id', (req, res) => {
   
   productionSeed.prayerRequests.splice(requestIndex, 1);
   res.json({ message: 'Prayer request deleted successfully' });
+});
+
+// Add update to prayer request
+app.post('/api/care/prayer-requests/:id/updates', (req, res) => {
+  console.log(`🙏 Adding update to prayer request: ${req.params.id}`);
+  
+  if (!productionSeed.prayerRequests) {
+    return res.status(404).json({ error: 'Prayer request not found' });
+  }
+  
+  const requestIndex = productionSeed.prayerRequests.findIndex(r => r.id === req.params.id);
+  if (requestIndex === -1) {
+    return res.status(404).json({ error: 'Prayer request not found' });
+  }
+  
+  const { content, author } = req.body;
+  if (!content || !author) {
+    return res.status(400).json({ error: 'Content and author are required' });
+  }
+  
+  const newUpdate = {
+    id: `update-${Date.now()}`,
+    content,
+    author,
+    createdAt: new Date().toISOString()
+  };
+  
+  if (!productionSeed.prayerRequests[requestIndex].updates) {
+    productionSeed.prayerRequests[requestIndex].updates = [];
+  }
+  
+  productionSeed.prayerRequests[requestIndex].updates.push(newUpdate);
+  productionSeed.prayerRequests[requestIndex].updatedAt = new Date().toISOString();
+  
+  res.status(201).json({
+    success: true,
+    update: newUpdate,
+    message: 'Update added successfully'
+  });
+});
+
+// Assign prayer request to pastor/care team
+app.put('/api/care/prayer-requests/:id/assign', (req, res) => {
+  console.log(`🙏 Assigning prayer request: ${req.params.id}`);
+  
+  if (!productionSeed.prayerRequests) {
+    return res.status(404).json({ error: 'Prayer request not found' });
+  }
+  
+  const requestIndex = productionSeed.prayerRequests.findIndex(r => r.id === req.params.id);
+  if (requestIndex === -1) {
+    return res.status(404).json({ error: 'Prayer request not found' });
+  }
+  
+  const { assignedTo, assignedBy } = req.body;
+  if (!assignedTo) {
+    return res.status(400).json({ error: 'assignedTo is required' });
+  }
+  
+  productionSeed.prayerRequests[requestIndex].assignedTo = assignedTo;
+  productionSeed.prayerRequests[requestIndex].assignedBy = assignedBy;
+  productionSeed.prayerRequests[requestIndex].assignedAt = new Date().toISOString();
+  productionSeed.prayerRequests[requestIndex].updatedAt = new Date().toISOString();
+  
+  // Add assignment update
+  const assignmentUpdate = {
+    id: `update-${Date.now()}`,
+    content: `Prayer request assigned to ${assignedTo}`,
+    author: 'System',
+    createdAt: new Date().toISOString()
+  };
+  
+  if (!productionSeed.prayerRequests[requestIndex].updates) {
+    productionSeed.prayerRequests[requestIndex].updates = [];
+  }
+  
+  productionSeed.prayerRequests[requestIndex].updates.push(assignmentUpdate);
+  
+  res.json({
+    success: true,
+    request: productionSeed.prayerRequests[requestIndex],
+    message: 'Prayer request assigned successfully'
+  });
 });
 
 // Counseling Sessions
