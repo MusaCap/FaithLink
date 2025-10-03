@@ -3,31 +3,33 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
 model User {
-  id        String    @id @default(cuid())
-  email     String    @unique
-  password  String
-  createdAt DateTime  @default(now())
-  isActive  Boolean   @default(true)
-  updatedAt DateTime  @updatedAt
-  role      String    @default("MEMBER")
-  careLogs  CareLog[] @relation("CareGiver")
-  member    Member?
+  id         String     @id @default(cuid())
+  email      String     @unique
+  password   String
+  createdAt  DateTime   @default(now())
+  isActive   Boolean    @default(true)
+  updatedAt  DateTime   @updatedAt
+  role       String     @default("MEMBER")
+  churchId   String?
+  careLogs   CareLog[]  @relation("CareGiver")
+  member     Member?
+  activities Activity[]
 
   @@map("users")
 }
 
 model Member {
-  id                 String            @id @default(cuid())
-  userId             String?           @unique
-  memberNumber       String?           @unique // Unique member number for financial system integration
+  id                 String               @id @default(cuid())
+  userId             String?              @unique
+  memberNumber       String?              @unique // Unique member number for financial system integration
   firstName          String
   lastName           String
-  email              String            @unique
+  email              String               @unique
   phone              String?
   dateOfBirth        DateTime?
   gender             String?
@@ -36,17 +38,24 @@ model Member {
   spiritualStatus    String?
   profilePhotoUrl    String?
   notes              String?
-  isActive           Boolean           @default(true)
-  createdAt          DateTime          @default(now())
-  updatedAt          DateTime          @updatedAt
+  isActive           Boolean              @default(true)
+  churchId           String?
+  membershipStatus   String?              @default("pending")
+  role               String?              @default("member")
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime             @updatedAt
   careLogs           CareLog[]
   eventAttendances   EventAttendance[]
   groups             GroupMember[]
   journeyStages      JourneyStage[]
-  familyConnections  MemberFamily[]    @relation("MemberFamily")
-  relatedConnections MemberFamily[]    @relation("RelatedMember")
+  familyConnections  MemberFamily[]       @relation("MemberFamily")
+  relatedConnections MemberFamily[]       @relation("RelatedMember")
   tags               MemberTag[]
-  user               User?             @relation(fields: [userId], references: [id])
+  prayerRequests     PrayerRequest[]
+  counselingSessions CounselingSession[]
+  activities         Activity[]
+  church             Church?              @relation("ChurchMembers", fields: [churchId], references: [id])
+  user               User?                @relation(fields: [userId], references: [id])
 
   @@map("members")
 }
@@ -57,12 +66,14 @@ model Group {
   type        String
   description String?
   leaderId    String?
+  churchId    String?
   isActive    Boolean       @default(true)
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
   events      Event[]
   files       GroupFile[]
   members     GroupMember[]
+  church      Church?       @relation("ChurchGroups", fields: [churchId], references: [id])
 
   @@map("groups")
 }
@@ -133,6 +144,7 @@ model Event {
   dateTime     DateTime
   location     String?
   groupId      String?
+  churchId     String?
   calendarType String            @default("ONEOFF")
   createdBy    String
   isActive     Boolean           @default(true)
@@ -141,6 +153,7 @@ model Event {
   attendances  EventAttendance[]
   tags         EventTag[]
   group        Group?            @relation(fields: [groupId], references: [id])
+  church       Church?           @relation("ChurchEvents", fields: [churchId], references: [id])
 
   @@map("events")
 }
@@ -232,5 +245,123 @@ model MemberFamily {
 
   @@unique([memberId, relatedId])
   @@map("member_families")
+}
+
+model Church {
+  id           String   @id @default(cuid())
+  name         String
+  description  String?
+  address      String?
+  city         String?
+  state        String?
+  zipCode      String?
+  phone        String?
+  email        String?
+  website      String?
+  denomination String?
+  isPublic     Boolean  @default(true)
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  members      Member[] @relation("ChurchMembers")
+  groups       Group[]  @relation("ChurchGroups")
+  events       Event[]  @relation("ChurchEvents")
+
+  @@map("churches")
+}
+
+model PrayerRequest {
+  id              String          @id @default(cuid())
+  title           String
+  description     String
+  requestedBy     String
+  requestedByName String
+  category        String          
+  priority        String          @default("medium")
+  status          String          @default("active")
+  isPrivate       Boolean         @default(false)
+  assignedTo      String?
+  assignedBy      String?
+  assignedAt      DateTime?
+  prayerCount     Int             @default(0)
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  updates         PrayerUpdate[]
+  member          Member          @relation(fields: [requestedBy], references: [id], onDelete: Cascade)
+
+  @@map("prayer_requests")
+}
+
+model PrayerUpdate {
+  id               String         @id @default(cuid())
+  prayerRequestId  String
+  content          String
+  author           String
+  createdAt        DateTime       @default(now())
+  prayerRequest    PrayerRequest  @relation(fields: [prayerRequestId], references: [id], onDelete: Cascade)
+
+  @@map("prayer_updates")
+}
+
+model BugReport {
+  id               String    @id @default(cuid())
+  title            String
+  description      String
+  steps            String?
+  expectedBehavior String?
+  actualBehavior   String?
+  browserInfo      String?
+  userEmail        String
+  userId           String?
+  churchId         String?
+  churchName       String?
+  severity         String    @default("medium")
+  category         String    @default("general")
+  status           String    @default("open")
+  priority         String    @default("normal")
+  submittedAt      DateTime  @default(now())
+  reportedUrl      String?
+  stackTrace       String?
+  viewport         Json?
+  platform         String?
+  isAutomatic      Boolean   @default(false)
+  resolvedAt       DateTime?
+  resolvedBy       String?
+  resolution       String?
+
+  @@map("bug_reports")
+}
+
+model CounselingSession {
+  id            String    @id @default(cuid())
+  memberName    String
+  counselorName String
+  sessionType   String
+  status        String    @default("scheduled")
+  scheduledDate DateTime
+  duration      Int       @default(60)
+  notes         String?
+  memberId      String?
+  counselorId   String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  member        Member?   @relation(fields: [memberId], references: [id])
+
+  @@map("counseling_sessions")
+}
+
+model Activity {
+  id          String   @id @default(cuid())
+  type        String
+  title       String
+  description String?
+  memberId    String?
+  userId      String?
+  metadata    Json?
+  createdAt   DateTime @default(now())
+  member      Member?  @relation(fields: [memberId], references: [id])
+  user        User?    @relation(fields: [userId], references: [id])
+
+  @@map("activities")
 }
 
