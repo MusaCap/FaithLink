@@ -4,7 +4,7 @@
   "description": "FaithLink360 Backend API - Church Member Engagement Platform",
   "main": "src/server-prisma.ts",
   "scripts": {
-    "dev": "nodemon src/server-prisma.ts",
+    "dev": "npx ts-node src/server-prisma.ts",
     "build": "npx prisma generate && npx prisma migrate deploy",
     "start": "npx ts-node src/server-prisma.ts",
     "db:generate": "prisma generate",
