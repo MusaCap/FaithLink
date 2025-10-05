@@ -14,7 +14,8 @@ app.use(cors({
   origin: [
     'http://localhost:3000',
     'http://localhost:3001',
-    'https://subtle-semifreddo-ed7b4b.netlify.app'
+    'https://subtle-semifreddo-ed7b4b.netlify.app',
+    'https://faithlink-ntgg.onrender.com'
   ],
   credentials: true
 }));

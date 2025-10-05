@@ -17,7 +17,7 @@ services:
     region: oregon
     plan: free
     buildCommand: cd src/backend && npm install && npx prisma generate && npx prisma migrate deploy
-    startCommand: cd src/backend && npm start
+    startCommand: cd src/backend && npx ts-node src/server-simple.ts
     healthCheckPath: /health
     envVars:
       - key: DATABASE_URL
