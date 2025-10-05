@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { Request, Response } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import { PrismaClient } from '@prisma/client';
@@ -22,11 +22,11 @@ app.use(cors({
 app.use(express.json());
 
 // Health check
-app.get('/health', async (req, res) => {
+app.get('/health', async (req: Request, res: Response) => {
   try {
     // Test database connection
     const memberCount = await prisma.member.count();
-    const churchCount = await prisma.church.count();
+    const groupCount = await prisma.group.count();
     
     res.json({ 
       status: 'healthy', 
@@ -35,7 +35,7 @@ app.get('/health', async (req, res) => {
       version: '1.0.0',
       data: {
         members: memberCount,
-        churches: churchCount
+        groups: groupCount
       }
     });
   } catch (error) {
@@ -48,7 +48,7 @@ app.get('/health', async (req, res) => {
 });
 
 // Simple members endpoint
-app.get('/api/members', async (req, res) => {
+app.get('/api/members', async (req: Request, res: Response) => {
   try {
     const members = await prisma.member.findMany({
       take: 10,
@@ -57,9 +57,9 @@ app.get('/api/members', async (req, res) => {
         firstName: true,
         lastName: true,
         email: true,
-        memberNumber: true,
-        role: true,
-        membershipStatus: true
+        phone: true,
+        isActive: true,
+        createdAt: true
       }
     });
     
@@ -74,7 +74,7 @@ app.get('/api/members', async (req, res) => {
 });
 
 // Simple prayer requests endpoint
-app.get('/api/care/prayer-requests', async (req, res) => {
+app.get('/api/care/prayer-requests', async (req: Request, res: Response) => {
   try {
     const prayerRequests = await prisma.prayerRequest.findMany({
       take: 10,
@@ -99,7 +99,7 @@ app.get('/api/care/prayer-requests', async (req, res) => {
 });
 
 // 404 handler
-app.use((req, res) => {
+app.use((req: Request, res: Response) => {
   res.status(404).json({ error: 'Endpoint not found' });
 });
 
