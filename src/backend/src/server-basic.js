@@ -1,5 +1,7 @@
 const express = require('express');
 const cors = require('cors');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
 // Initialize Express app first
 const app = express();
@@ -162,6 +164,170 @@ app.get('/api/care/prayer-requests', async (req, res) => {
       error: 'Failed to fetch prayer requests',
       details: error.message 
     });
+  }
+});
+
+// Authentication endpoints
+app.post('/api/auth/login', async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    
+    if (dbConnected && prisma) {
+      // Try to authenticate with database
+      const user = await prisma.user.findUnique({
+        where: { email },
+        include: {
+          member: {
+            select: {
+              id: true,
+              firstName: true,
+              lastName: true,
+              email: true,
+              isActive: true
+            }
+          }
+        }
+      });
+
+      if (user && await bcrypt.compare(password, user.password)) {
+        // Generate JWT token
+        const token = jwt.sign(
+          { userId: user.id, email: user.email },
+          process.env.JWT_SECRET || 'fallback-secret',
+          { expiresIn: '24h' }
+        );
+
+        res.json({
+          data: {
+            accessToken: token,
+            user: {
+              id: user.id,
+              email: user.email,
+              member: user.member
+            }
+          }
+        });
+      } else {
+        res.status(401).json({ message: 'Invalid credentials' });
+      }
+    } else {
+      // Fallback authentication for demo purposes
+      if (email === 'david.johnson@faithlink360.org' && password === 'password123') {
+        const token = jwt.sign(
+          { userId: '1', email: email },
+          process.env.JWT_SECRET || 'fallback-secret',
+          { expiresIn: '24h' }
+        );
+
+        res.json({
+          data: {
+            accessToken: token,
+            user: {
+              id: '1',
+              email: email,
+              member: {
+                id: '1',
+                firstName: 'David',
+                lastName: 'Johnson',
+                email: email,
+                isActive: true
+              }
+            }
+          }
+        });
+      } else if (email === 'admin@faithlink360.org' && password === 'admin123') {
+        const token = jwt.sign(
+          { userId: '2', email: email },
+          process.env.JWT_SECRET || 'fallback-secret',
+          { expiresIn: '24h' }
+        );
+
+        res.json({
+          data: {
+            accessToken: token,
+            user: {
+              id: '2',
+              email: email,
+              member: {
+                id: '2',
+                firstName: 'Admin',
+                lastName: 'User',
+                email: email,
+                isActive: true
+              }
+            }
+          }
+        });
+      } else {
+        res.status(401).json({ message: 'Invalid credentials' });
+      }
+    }
+  } catch (error) {
+    console.error('Login error:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+app.get('/api/auth/me', async (req, res) => {
+  try {
+    const authHeader = req.headers.authorization;
+    if (!authHeader?.startsWith('Bearer ')) {
+      return res.status(401).json({ message: 'No token provided' });
+    }
+
+    const token = authHeader.substring(7);
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'fallback-secret');
+
+    if (dbConnected && prisma) {
+      const user = await prisma.user.findUnique({
+        where: { id: decoded.userId },
+        include: {
+          member: {
+            select: {
+              id: true,
+              firstName: true,
+              lastName: true,
+              email: true,
+              isActive: true
+            }
+          }
+        }
+      });
+
+      if (user) {
+        res.json({
+          data: {
+            user: {
+              id: user.id,
+              email: user.email,
+              member: user.member
+            }
+          }
+        });
+      } else {
+        res.status(404).json({ message: 'User not found' });
+      }
+    } else {
+      // Fallback user data
+      res.json({
+        data: {
+          user: {
+            id: decoded.userId,
+            email: decoded.email,
+            member: {
+              id: decoded.userId,
+              firstName: decoded.email === 'david.johnson@faithlink360.org' ? 'David' : 'Admin',
+              lastName: decoded.email === 'david.johnson@faithlink360.org' ? 'Johnson' : 'User',
+              email: decoded.email,
+              isActive: true
+            }
+          }
+        }
+      });
+    }
+  } catch (error) {
+    console.error('Auth me error:', error);
+    res.status(401).json({ message: 'Invalid token' });
   }
 });
 
