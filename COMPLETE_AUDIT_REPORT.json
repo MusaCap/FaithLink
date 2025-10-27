@@ -1,0 +1,2391 @@
+{
+  "timestamp": "2025-10-09T16:51:44.702Z",
+  "summary": {
+    "totalFiles": 306,
+    "totalLines": 87168,
+    "totalBytes": 3615897,
+    "fileTypes": 23,
+    "directories": 104
+  },
+  "projectStructure": {
+    "hasPackageJson": true,
+    "hasReadme": true,
+    "hasTests": true,
+    "hasDocumentation": true,
+    "hasFrontend": true,
+    "hasBackend": true,
+    "hasDatabase": true,
+    "features": {
+      "authentication": true,
+      "memberManagement": true,
+      "groupManagement": true,
+      "prayerRequests": true,
+      "events": true,
+      "communications": true,
+      "reporting": true,
+      "dashboard": true,
+      "journeys": true,
+      "tasks": true,
+      "volunteers": false,
+      "attendance": true
+    }
+  },
+  "fileTypes": {
+    "Environment": {
+      "files": 6,
+      "lines": 101,
+      "bytes": 3008
+    },
+    "Markdown": {
+      "files": 38,
+      "lines": 9887,
+      "bytes": 317946
+    },
+    "PowerShell": {
+      "files": 9,
+      "lines": 962,
+      "bytes": 38650
+    },
+    "JavaScript": {
+      "files": 78,
+      "lines": 30073,
+      "bytes": 1003682
+    },
+    "JSON": {
+      "files": 3,
+      "lines": 1464,
+      "bytes": 37478
+    },
+    "Docker Compose": {
+      "files": 1,
+      "lines": 85,
+      "bytes": 2220
+    },
+    "Unknown": {
+      "files": 3,
+      "lines": 948,
+      "bytes": 231860
+    },
+    "Netlify Config": {
+      "files": 1,
+      "lines": 22,
+      "bytes": 558
+    },
+    "README": {
+      "files": 1,
+      "lines": 3,
+      "bytes": 105
+    },
+    "Render Config": {
+      "files": 1,
+      "lines": 52,
+      "bytes": 1345
+    },
+    "Docker": {
+      "files": 2,
+      "lines": 57,
+      "bytes": 953
+    },
+    "Jest Config": {
+      "files": 2,
+      "lines": 73,
+      "bytes": 1906
+    },
+    "Package Config": {
+      "files": 3,
+      "lines": 171,
+      "bytes": 4785
+    },
+    "SQL": {
+      "files": 1,
+      "lines": 435,
+      "bytes": 14585
+    },
+    "TOML": {
+      "files": 1,
+      "lines": 3,
+      "bytes": 126
+    },
+    "Prisma Schema": {
+      "files": 2,
+      "lines": 581,
+      "bytes": 16467
+    },
+    "TypeScript": {
+      "files": 49,
+      "lines": 14238,
+      "bytes": 402131
+    },
+    "TypeScript Config": {
+      "files": 2,
+      "lines": 76,
+      "bytes": 1811
+    },
+    "Next.js Config": {
+      "files": 1,
+      "lines": 55,
+      "bytes": 1092
+    },
+    "TypeScript React": {
+      "files": 99,
+      "lines": 27426,
+      "bytes": 1064403
+    },
+    "CSS": {
+      "files": 1,
+      "lines": 264,
+      "bytes": 5781
+    },
+    "Tailwind Config": {
+      "files": 1,
+      "lines": 116,
+      "bytes": 3458
+    },
+    "HTML": {
+      "files": 1,
+      "lines": 76,
+      "bytes": 461547
+    }
+  },
+  "analysis": {
+    "frontend": {
+      "files": 132,
+      "lines": 32077,
+      "components": 57,
+      "pages": 41,
+      "services": 11,
+      "tests": 6,
+      "config": 5
+    },
+    "backend": {
+      "files": 47,
+      "lines": 27693,
+      "routes": 15,
+      "middleware": 2,
+      "models": 6,
+      "tests": 10,
+      "config": 3
+    },
+    "database": {
+      "files": 7,
+      "schemas": 2,
+      "migrations": 2,
+      "seeds": 2
+    },
+    "documentation": {
+      "files": 39,
+      "lines": 9890,
+      "guides": 6,
+      "reports": 7
+    },
+    "tests": {
+      "files": 66,
+      "lines": 14034,
+      "unitTests": 0,
+      "integrationTests": 15,
+      "e2eTests": 3
+    },
+    "configuration": {
+      "files": 8,
+      "packageJson": 3,
+      "envFiles": 6,
+      "configs": 8
+    },
+    "scripts": {
+      "files": 9,
+      "lines": 962,
+      "powershell": 9,
+      "javascript": 82,
+      "shell": 0
+    }
+  },
+  "codeQuality": {
+    "functions": 3425,
+    "classes": 19,
+    "interfaces": 103,
+    "types": 7,
+    "components": 110,
+    "hooks": 331,
+    "routes": 712,
+    "middleware": 0
+  },
+  "features": {
+    "implemented": [
+      "authentication",
+      "memberManagement",
+      "groupManagement",
+      "prayerRequests",
+      "events",
+      "communications",
+      "reporting",
+      "dashboard",
+      "journeys",
+      "tasks",
+      "attendance"
+    ],
+    "partiallyImplemented": [],
+    "missing": [
+      "volunteers"
+    ],
+    "deprecated": []
+  },
+  "issues": {
+    "critical": [],
+    "major": [],
+    "minor": [],
+    "warnings": []
+  },
+  "recommendations": [
+    {
+      "category": "Code Quality",
+      "priority": "medium",
+      "issue": "High number of components detected",
+      "suggestion": "Consider component organization and reusability patterns"
+    }
+  ],
+  "completenessScore": 100,
+  "files": [
+    {
+      "path": ".env",
+      "type": "Environment",
+      "lines": 21,
+      "bytes": 598,
+      "complexity": "low"
+    },
+    {
+      "path": ".env.example",
+      "type": "Environment",
+      "lines": 23,
+      "bytes": 663,
+      "complexity": "low"
+    },
+    {
+      "path": "architecture_comparison.md",
+      "type": "Markdown",
+      "lines": 325,
+      "bytes": 9800,
+      "complexity": "low"
+    },
+    {
+      "path": "BACKEND_STARTUP_FIX.md",
+      "type": "Markdown",
+      "lines": 36,
+      "bytes": 1627,
+      "complexity": "low"
+    },
+    {
+      "path": "backlog.md",
+      "type": "Markdown",
+      "lines": 185,
+      "bytes": 4709,
+      "complexity": "low"
+    },
+    {
+      "path": "boot-servers-clean.ps1",
+      "type": "PowerShell",
+      "lines": 245,
+      "bytes": 9519,
+      "complexity": "low"
+    },
+    {
+      "path": "boot-servers.ps1",
+      "type": "PowerShell",
+      "lines": 222,
+      "bytes": 8022,
+      "complexity": "low"
+    },
+    {
+      "path": "CHURCH_MEMBER_TESTING_GUIDE.md",
+      "type": "Markdown",
+      "lines": 314,
+      "bytes": 9310,
+      "complexity": "low"
+    },
+    {
+      "path": "CLIENT_DELIVERABLE_COMPLETION_REPORT.md",
+      "type": "Markdown",
+      "lines": 373,
+      "bytes": 16641,
+      "complexity": "low"
+    },
+    {
+      "path": "communication-analytics-test.js",
+      "type": "JavaScript",
+      "lines": 289,
+      "bytes": 11467,
+      "complexity": "high"
+    },
+    {
+      "path": "communications-integration-test.js",
+      "type": "JavaScript",
+      "lines": 326,
+      "bytes": 12590,
+      "complexity": "high"
+    },
+    {
+      "path": "complete-platform-audit.js",
+      "type": "JavaScript",
+      "lines": 441,
+      "bytes": 19238,
+      "complexity": "medium"
+    },
+    {
+      "path": "COMPLETE_BACKLOG_SPRINT_PLAN.md",
+      "type": "Markdown",
+      "lines": 563,
+      "bytes": 22148,
+      "complexity": "low"
+    },
+    {
+      "path": "COMPLETE_SYSTEMATIC_AUDIT.js",
+      "type": "JavaScript",
+      "lines": 734,
+      "bytes": 25320,
+      "complexity": "high"
+    },
+    {
+      "path": "comprehensive-api-analysis-results.json",
+      "type": "JSON",
+      "lines": 670,
+      "bytes": 18764,
+      "complexity": "low"
+    },
+    {
+      "path": "comprehensive-api-test.js",
+      "type": "JavaScript",
+      "lines": 195,
+      "bytes": 7360,
+      "complexity": "medium"
+    },
+    {
+      "path": "comprehensive-endpoint-audit.js",
+      "type": "JavaScript",
+      "lines": 198,
+      "bytes": 10335,
+      "complexity": "low"
+    },
+    {
+      "path": "comprehensive-endpoint-test-final.js",
+      "type": "JavaScript",
+      "lines": 177,
+      "bytes": 6868,
+      "complexity": "low"
+    },
+    {
+      "path": "comprehensive-feature-test.js",
+      "type": "JavaScript",
+      "lines": 220,
+      "bytes": 7007,
+      "complexity": "high"
+    },
+    {
+      "path": "comprehensive-frontend-analysis.js",
+      "type": "JavaScript",
+      "lines": 305,
+      "bytes": 9844,
+      "complexity": "high"
+    },
+    {
+      "path": "comprehensive-frontend-e2e-test.js",
+      "type": "JavaScript",
+      "lines": 382,
+      "bytes": 13567,
+      "complexity": "high"
+    },
+    {
+      "path": "comprehensive-platform-integration-test.js",
+      "type": "JavaScript",
+      "lines": 589,
+      "bytes": 21630,
+      "complexity": "high"
+    },
+    {
+      "path": "COMPREHENSIVE_CODEBASE_AUDIT.js",
+      "type": "JavaScript",
+      "lines": 420,
+      "bytes": 16998,
+      "complexity": "high"
+    },
+    {
+      "path": "COMPREHENSIVE_PLATFORM_ASSESSMENT_FINAL.md",
+      "type": "Markdown",
+      "lines": 272,
+      "bytes": 9308,
+      "complexity": "low"
+    },
+    {
+      "path": "corrected-audit-with-valid-ids.js",
+      "type": "JavaScript",
+      "lines": 189,
+      "bytes": 7709,
+      "complexity": "medium"
+    },
+    {
+      "path": "DATABASE_SETUP_INSTRUCTIONS.md",
+      "type": "Markdown",
+      "lines": 78,
+      "bytes": 2332,
+      "complexity": "low"
+    },
+    {
+      "path": "datamodel.md",
+      "type": "Markdown",
+      "lines": 152,
+      "bytes": 3487,
+      "complexity": "low"
+    },
+    {
+      "path": "debug-failing-posts.js",
+      "type": "JavaScript",
+      "lines": 93,
+      "bytes": 2776,
+      "complexity": "medium"
+    },
+    {
+      "path": "debug-journey-endpoint.js",
+      "type": "JavaScript",
+      "lines": 69,
+      "bytes": 2155,
+      "complexity": "low"
+    },
+    {
+      "path": "debug-test-output.js",
+      "type": "JavaScript",
+      "lines": 114,
+      "bytes": 3463,
+      "complexity": "medium"
+    },
+    {
+      "path": "DEPLOYMENT_GUIDE.md",
+      "type": "Markdown",
+      "lines": 221,
+      "bytes": 5675,
+      "complexity": "low"
+    },
+    {
+      "path": "design_foundation.md",
+      "type": "Markdown",
+      "lines": 280,
+      "bytes": 15286,
+      "complexity": "low"
+    },
+    {
+      "path": "DETAILED_GAP_ANALYSIS_REPORT.md",
+      "type": "Markdown",
+      "lines": 297,
+      "bytes": 9003,
+      "complexity": "low"
+    },
+    {
+      "path": "diagnose-deployment.ps1",
+      "type": "PowerShell",
+      "lines": 70,
+      "bytes": 3256,
+      "complexity": "low"
+    },
+    {
+      "path": "docker-compose.yml",
+      "type": "Docker Compose",
+      "lines": 85,
+      "bytes": 2220,
+      "complexity": "low"
+    },
+    {
+      "path": "enhanced-user-experience-test.js",
+      "type": "JavaScript",
+      "lines": 256,
+      "bytes": 9472,
+      "complexity": "medium"
+    },
+    {
+      "path": "events-integration-test.js",
+      "type": "JavaScript",
+      "lines": 425,
+      "bytes": 16116,
+      "complexity": "high"
+    },
+    {
+      "path": "exhaustive-audit-results.json",
+      "type": "JSON",
+      "lines": 790,
+      "bytes": 18669,
+      "complexity": "low"
+    },
+    {
+      "path": "exhaustive-platform-audit.js",
+      "type": "JavaScript",
+      "lines": 430,
+      "bytes": 20546,
+      "complexity": "high"
+    },
+    {
+      "path": "FaithLink360_Master_Plan.md",
+      "type": "Markdown",
+      "lines": 161,
+      "bytes": 5586,
+      "complexity": "low"
+    },
+    {
+      "path": "FaithLink360_Master_Plan_Complete.md",
+      "type": "Markdown",
+      "lines": 1,
+      "bytes": 0,
+      "complexity": "low"
+    },
+    {
+      "path": "FaithLink360_Master_Plan_Part2.md",
+      "type": "Markdown",
+      "lines": 176,
+      "bytes": 6761,
+      "complexity": "low"
+    },
+    {
+      "path": "FaithLink360_Master_Plan_Part3.md",
+      "type": "Markdown",
+      "lines": 88,
+      "bytes": 4477,
+      "complexity": "low"
+    },
+    {
+      "path": "final-100-percent-test.js",
+      "type": "JavaScript",
+      "lines": 98,
+      "bytes": 3252,
+      "complexity": "low"
+    },
+    {
+      "path": "final-achievement-test.js",
+      "type": "JavaScript",
+      "lines": 108,
+      "bytes": 3737,
+      "complexity": "medium"
+    },
+    {
+      "path": "final-comprehensive-audit.js",
+      "type": "JavaScript",
+      "lines": 246,
+      "bytes": 13482,
+      "complexity": "high"
+    },
+    {
+      "path": "final-integration-test-clean.js",
+      "type": "JavaScript",
+      "lines": 242,
+      "bytes": 7596,
+      "complexity": "high"
+    },
+    {
+      "path": "final-integration-test.js",
+      "type": "JavaScript",
+      "lines": 166,
+      "bytes": 5147,
+      "complexity": "medium"
+    },
+    {
+      "path": "final-journey-test.js",
+      "type": "JavaScript",
+      "lines": 37,
+      "bytes": 1096,
+      "complexity": "low"
+    },
+    {
+      "path": "FINAL_CODEBASE_ASSESSMENT.js",
+      "type": "JavaScript",
+      "lines": 324,
+      "bytes": 12099,
+      "complexity": "high"
+    },
+    {
+      "path": "FINAL_SUCCESS_REPORT.md",
+      "type": "Markdown",
+      "lines": 241,
+      "bytes": 7037,
+      "complexity": "low"
+    },
+    {
+      "path": "firebase_data_model.md",
+      "type": "Markdown",
+      "lines": 537,
+      "bytes": 13794,
+      "complexity": "high"
+    },
+    {
+      "path": "firebase_setup_steps.md",
+      "type": "Markdown",
+      "lines": 215,
+      "bytes": 6056,
+      "complexity": "low"
+    },
+    {
+      "path": "frontend-backend-functionality-map.js",
+      "type": "JavaScript",
+      "lines": 402,
+      "bytes": 16429,
+      "complexity": "high"
+    },
+    {
+      "path": "frontend-backend-integration-test.js",
+      "type": "JavaScript",
+      "lines": 178,
+      "bytes": 5823,
+      "complexity": "medium"
+    },
+    {
+      "path": "frontend-debug-console.js",
+      "type": "JavaScript",
+      "lines": 88,
+      "bytes": 2695,
+      "complexity": "low"
+    },
+    {
+      "path": "frontend-navigation-audit.md",
+      "type": "Markdown",
+      "lines": 156,
+      "bytes": 6617,
+      "complexity": "low"
+    },
+    {
+      "path": "gap-analysis-report.md",
+      "type": "Markdown",
+      "lines": 235,
+      "bytes": 7763,
+      "complexity": "low"
+    },
+    {
+      "path": "get-member-ids.js",
+      "type": "JavaScript",
+      "lines": 27,
+      "bytes": 844,
+      "complexity": "low"
+    },
+    {
+      "path": "get-templates.js",
+      "type": "JavaScript",
+      "lines": 30,
+      "bytes": 934,
+      "complexity": "low"
+    },
+    {
+      "path": "GITHUB_DEPLOYMENT_SETUP.md",
+      "type": "Markdown",
+      "lines": 268,
+      "bytes": 7711,
+      "complexity": "low"
+    },
+    {
+      "path": "group-files-messages-test.js",
+      "type": "JavaScript",
+      "lines": 297,
+      "bytes": 11120,
+      "complexity": "high"
+    },
+    {
+      "path": "integration-status-report.md",
+      "type": "Markdown",
+      "lines": 199,
+      "bytes": 8722,
+      "complexity": "low"
+    },
+    {
+      "path": "integration-test-suite.js",
+      "type": "JavaScript",
+      "lines": 238,
+      "bytes": 8026,
+      "complexity": "medium"
+    },
+    {
+      "path": "integration-test.js",
+      "type": "JavaScript",
+      "lines": 56,
+      "bytes": 1984,
+      "complexity": "low"
+    },
+    {
+      "path": "journey-integration-test-fixed.js",
+      "type": "JavaScript",
+      "lines": 332,
+      "bytes": 10569,
+      "complexity": "high"
+    },
+    {
+      "path": "journey-integration-test.js",
+      "type": "JavaScript",
+      "lines": 561,
+      "bytes": 20801,
+      "complexity": "high"
+    },
+    {
+      "path": "LICENSE",
+      "type": "Unknown",
+      "lines": 675,
+      "bytes": 35149,
+      "complexity": "low"
+    },
+    {
+      "path": "MASTER_PLAN.md",
+      "type": "Markdown",
+      "lines": 530,
+      "bytes": 19091,
+      "complexity": "low"
+    },
+    {
+      "path": "MULTI_TENANCY_GUIDE.md",
+      "type": "Markdown",
+      "lines": 184,
+      "bytes": 6447,
+      "complexity": "low"
+    },
+    {
+      "path": "netlify.toml",
+      "type": "Netlify Config",
+      "lines": 22,
+      "bytes": 558,
+      "complexity": "low"
+    },
+    {
+      "path": "pastoral-care-integration-test.js",
+      "type": "JavaScript",
+      "lines": 564,
+      "bytes": 19036,
+      "complexity": "high"
+    },
+    {
+      "path": "POSTGRESQL_DEPLOYMENT_GUIDE.md",
+      "type": "Markdown",
+      "lines": 219,
+      "bytes": 6604,
+      "complexity": "low"
+    },
+    {
+      "path": "prd.md",
+      "type": "Markdown",
+      "lines": 174,
+      "bytes": 5546,
+      "complexity": "low"
+    },
+    {
+      "path": "PRODUCTION_DEPLOYMENT_GUIDE.md",
+      "type": "Markdown",
+      "lines": 420,
+      "bytes": 11814,
+      "complexity": "low"
+    },
+    {
+      "path": "project_setup_complete.md",
+      "type": "Markdown",
+      "lines": 833,
+      "bytes": 19186,
+      "complexity": "low"
+    },
+    {
+      "path": "PROJECT_SETUP_GUIDE.md",
+      "type": "Markdown",
+      "lines": 308,
+      "bytes": 6935,
+      "complexity": "low"
+    },
+    {
+      "path": "quick-endpoint-test.js",
+      "type": "JavaScript",
+      "lines": 40,
+      "bytes": 1062,
+      "complexity": "low"
+    },
+    {
+      "path": "quick-server-check.js",
+      "type": "JavaScript",
+      "lines": 108,
+      "bytes": 3041,
+      "complexity": "medium"
+    },
+    {
+      "path": "quick-test-failing-endpoints.js",
+      "type": "JavaScript",
+      "lines": 48,
+      "bytes": 2035,
+      "complexity": "low"
+    },
+    {
+      "path": "quick-test.js",
+      "type": "JavaScript",
+      "lines": 42,
+      "bytes": 1127,
+      "complexity": "low"
+    },
+    {
+      "path": "QUICK_DEPLOY.md",
+      "type": "Markdown",
+      "lines": 196,
+      "bytes": 5360,
+      "complexity": "low"
+    },
+    {
+      "path": "QUICK_TEST_REFERENCE.md",
+      "type": "Markdown",
+      "lines": 57,
+      "bytes": 1449,
+      "complexity": "low"
+    },
+    {
+      "path": "README.md",
+      "type": "README",
+      "lines": 3,
+      "bytes": 105,
+      "complexity": "low"
+    },
+    {
+      "path": "render.yaml",
+      "type": "Render Config",
+      "lines": 52,
+      "bytes": 1345,
+      "complexity": "low"
+    },
+    {
+      "path": "reports-analytics-integration-test.js",
+      "type": "JavaScript",
+      "lines": 495,
+      "bytes": 19661,
+      "complexity": "high"
+    },
+    {
+      "path": "run-integration-tests.ps1",
+      "type": "PowerShell",
+      "lines": 90,
+      "bytes": 4386,
+      "complexity": "low"
+    },
+    {
+      "path": "scripts\\fix-seed-data-church-ids.js",
+      "type": "JavaScript",
+      "lines": 55,
+      "bytes": 1919,
+      "complexity": "low"
+    },
+    {
+      "path": "scripts\\test-multi-tenancy.js",
+      "type": "JavaScript",
+      "lines": 196,
+      "bytes": 6708,
+      "complexity": "high"
+    },
+    {
+      "path": "SECURITY_AUDIT_REPORT.md",
+      "type": "Markdown",
+      "lines": 306,
+      "bytes": 9720,
+      "complexity": "low"
+    },
+    {
+      "path": "simple-connectivity-test.js",
+      "type": "JavaScript",
+      "lines": 86,
+      "bytes": 2458,
+      "complexity": "medium"
+    },
+    {
+      "path": "simple-test.js",
+      "type": "JavaScript",
+      "lines": 87,
+      "bytes": 2457,
+      "complexity": "low"
+    },
+    {
+      "path": "Sprint1_Kickoff_Guide.md",
+      "type": "Markdown",
+      "lines": 408,
+      "bytes": 11542,
+      "complexity": "low"
+    },
+    {
+      "path": "Sprint5_Production_Validation.md",
+      "type": "Markdown",
+      "lines": 261,
+      "bytes": 11136,
+      "complexity": "low"
+    },
+    {
+      "path": "sprintplan.md",
+      "type": "Markdown",
+      "lines": 229,
+      "bytes": 4533,
+      "complexity": "low"
+    },
+    {
+      "path": "src\\backend\\.env",
+      "type": "Environment",
+      "lines": 13,
+      "bytes": 374,
+      "complexity": "low"
+    },
+    {
+      "path": "src\\backend\\.env.development",
+      "type": "Environment",
+      "lines": 15,
+      "bytes": 417,
+      "complexity": "low"
+    },
+    {
+      "path": "src\\backend\\.env.example",
+      "type": "Environment",
+      "lines": 20,
+      "bytes": 594,
+      "complexity": "low"
+    },
+    {
+      "path": "src\\backend\\data\\production-seed.js",
+      "type": "JavaScript",
+      "lines": 608,
+      "bytes": 19401,
+      "complexity": "low"
+    },
+    {
+      "path": "src\\backend\\debug-server.js",
+      "type": "JavaScript",
+      "lines": 65,
+      "bytes": 1545,
+      "complexity": "low"
+    },
+    {
+      "path": "src\\backend\\Dockerfile.dev",
+      "type": "Docker",
+      "lines": 31,
+      "bytes": 522,
+      "complexity": "low"
+    },
+    {
+      "path": "src\\backend\\jest.config.js",
+      "type": "Jest Config",
+      "lines": 27,
+      "bytes": 577,
+      "complexity": "low"
+    },
+    {
+      "path": "src\\backend\\middleware\\security.js",
+      "type": "JavaScript",
+      "lines": 382,
+      "bytes": 10653,
+      "complexity": "high"
+    },
+    {
+      "path": "src\\backend\\minimal-server.js",
+      "type": "JavaScript",
+      "lines": 40,
+      "bytes": 1047,
+      "complexity": "low"
+    },
+    {
+      "path": "src\\backend\\package.json",
+      "type": "Package Config",
+      "lines": 76,
+      "bytes": 2207,
+      "complexity": "low"
+    },
+    {
+      "path": "src\\backend\\prisma\\dev.db",
+      "type": "Unknown",
+      "lines": 271,
+      "bytes": 196608,
+      "complexity": "low"
+    },
+    {
+      "path": "src\\backend\\prisma\\migrations\\20251005134644_init\\migration.sql",
+      "type": "SQL",
+      "lines": 435,
+      "bytes": 14585,
+      "complexity": "low"
+    },
+    {
+      "path": "src\\backend\\prisma\\migrations\\migration_lock.toml",
+      "type": "TOML",
+      "lines": 3,
+      "bytes": 126,
+      "complexity": "low"
+    },
+    {
+      "path": "src\\backend\\prisma\\schema.prisma",
+      "type": "Prisma Schema",
+      "lines": 368,
+      "bytes": 11615,
+      "complexity": "low"
+    },
+    {
+      "path": "src\\backend\\prisma\\schema.test.prisma",
+      "type": "Prisma Schema",
+      "lines": 213,
+      "bytes": 4852,
+      "complexity": "low"
+    },
+    {
+      "path": "src\\backend\\prisma\\seed.ts",
+      "type": "TypeScript",
+      "lines": 273,
+      "bytes": 7121,
+      "complexity": "medium"
+    },
+    {
+      "path": "src\\backend\\routes\\members.ts",
+      "type": "TypeScript",
+      "lines": 583,
+      "bytes": 18119,
+      "complexity": "high"
+    },
+    {
+      "path": "src\\backend\\scripts\\setup-database.js",
+      "type": "JavaScript",
+      "lines": 71,
+      "bytes": 2923,
+      "complexity": "low"
+    },
+    {
+      "path": "src\\backend\\server-fixed.js",
+      "type": "JavaScript",
+      "lines": 9008,
+      "bytes": 287521,
+      "complexity": "high"
+    },
+    {
+      "path": "src\\backend\\server-production.js",
+      "type": "JavaScript",
+      "lines": 5419,
+      "bytes": 170075,
+      "complexity": "high"
+    },
+    {
+      "path": "src\\backend\\simple-server-debug.js",
+      "type": "JavaScript",
+      "lines": 44,
+      "bytes": 1144,
+      "complexity": "low"
+    },
+    {
+      "path": "src\\backend\\simple-server.js",
+      "type": "JavaScript",
+      "lines": 456,
+      "bytes": 10877,
+      "complexity": "medium"
+    },
+    {
+      "path": "src\\backend\\src\\database\\seed.ts",
+      "type": "TypeScript",
+      "lines": 164,
+      "bytes": 4432,
+      "complexity": "low"
+    },
+    {
+      "path": "src\\backend\\src\\middleware\\auth.ts",
+      "type": "TypeScript",
+      "lines": 167,
+      "bytes": 4312,
+      "complexity": "low"
+    },
+    {
+      "path": "src\\backend\\src\\routes\\attendance.ts",
+      "type": "TypeScript",
+      "lines": 340,
+      "bytes": 9253,
+      "complexity": "medium"
+    },
+    {
+      "path": "src\\backend\\src\\routes\\auth.ts",
+      "type": "TypeScript",
+      "lines": 368,
+      "bytes": 9314,
+      "complexity": "high"
+    },
+    {
+      "path": "src\\backend\\src\\routes\\care.ts",
+      "type": "TypeScript",
+      "lines": 515,
+      "bytes": 16109,
+      "complexity": "medium"
+    },
+    {
+      "path": "src\\backend\\src\\routes\\events.ts",
+      "type": "TypeScript",
+      "lines": 498,
+      "bytes": 14397,
+      "complexity": "medium"
+    },
+    {
+      "path": "src\\backend\\src\\routes\\groups.ts",
+      "type": "TypeScript",
+      "lines": 527,
+      "bytes": 13245,
+      "complexity": "high"
+    },
+    {
+      "path": "src\\backend\\src\\routes\\journeys.ts",
+      "type": "TypeScript",
+      "lines": 764,
+      "bytes": 20382,
+      "complexity": "high"
+    },
+    {
+      "path": "src\\backend\\src\\routes\\members.ts",
+      "type": "TypeScript",
+      "lines": 411,
+      "bytes": 12414,
+      "complexity": "high"
+    },
+    {
+      "path": "src\\backend\\src\\routes\\members_minimal.ts",
+      "type": "TypeScript",
+      "lines": 64,
+      "bytes": 1721,
+      "complexity": "low"
+    },
+    {
+      "path": "src\\backend\\src\\routes\\__tests__\\attendance.test.ts",
+      "type": "TypeScript",
+      "lines": 608,
+      "bytes": 16386,
+      "complexity": "high"
+    },
+    {
+      "path": "src\\backend\\src\\routes\\__tests__\\auth.test.ts",
+      "type": "TypeScript",
+      "lines": 272,
+      "bytes": 7284,
+      "complexity": "high"
+    },
+    {
+      "path": "src\\backend\\src\\routes\\__tests__\\care.test.ts",
+      "type": "TypeScript",
+      "lines": 807,
+      "bytes": 22473,
+      "complexity": "high"
+    },
+    {
+      "path": "src\\backend\\src\\routes\\__tests__\\events.test.ts",
+      "type": "TypeScript",
+      "lines": 782,
+      "bytes": 21955,
+      "complexity": "high"
+    },
+    {
+      "path": "src\\backend\\src\\routes\\__tests__\\groups.test.ts",
+      "type": "TypeScript",
+      "lines": 422,
+      "bytes": 11422,
+      "complexity": "medium"
+    },
+    {
+      "path": "src\\backend\\src\\routes\\__tests__\\journeys.test.ts",
+      "type": "TypeScript",
+      "lines": 508,
+      "bytes": 14121,
+      "complexity": "high"
+    },
+    {
+      "path": "src\\backend\\src\\server-basic.js",
+      "type": "JavaScript",
+      "lines": 347,
+      "bytes": 9643,
+      "complexity": "medium"
+    },
+    {
+      "path": "src\\backend\\src\\server-prisma.ts",
+      "type": "TypeScript",
+      "lines": 589,
+      "bytes": 16697,
+      "complexity": "high"
+    },
+    {
+      "path": "src\\backend\\src\\server-production.js",
+      "type": "JavaScript",
+      "lines": 163,
+      "bytes": 4208,
+      "complexity": "low"
+    },
+    {
+      "path": "src\\backend\\src\\server-simple.ts",
+      "type": "TypeScript",
+      "lines": 134,
+      "bytes": 3374,
+      "complexity": "low"
+    },
+    {
+      "path": "src\\backend\\src\\server.ts",
+      "type": "TypeScript",
+      "lines": 285,
+      "bytes": 8796,
+      "complexity": "low"
+    },
+    {
+      "path": "src\\backend\\src\\__tests__\\fixtures\\testData.ts",
+      "type": "TypeScript",
+      "lines": 283,
+      "bytes": 7495,
+      "complexity": "low"
+    },
+    {
+      "path": "src\\backend\\src\\__tests__\\helpers\\testDb.ts",
+      "type": "TypeScript",
+      "lines": 194,
+      "bytes": 5528,
+      "complexity": "low"
+    },
+    {
+      "path": "src\\backend\\src\\__tests__\\setup.ts",
+      "type": "TypeScript",
+      "lines": 28,
+      "bytes": 660,
+      "complexity": "low"
+    },
+    {
+      "path": "src\\backend\\tsconfig.json",
+      "type": "TypeScript Config",
+      "lines": 32,
+      "bytes": 844,
+      "complexity": "low"
+    },
+    {
+      "path": "src\\frontend\\.env.local",
+      "type": "Environment",
+      "lines": 9,
+      "bytes": 362,
+      "complexity": "low"
+    },
+    {
+      "path": "src\\frontend\\Dockerfile.dev",
+      "type": "Docker",
+      "lines": 26,
+      "bytes": 431,
+      "complexity": "low"
+    },
+    {
+      "path": "src\\frontend\\frontend-fixed.js",
+      "type": "JavaScript",
+      "lines": 85,
+      "bytes": 3047,
+      "complexity": "low"
+    },
+    {
+      "path": "src\\frontend\\jest.config.js",
+      "type": "Jest Config",
+      "lines": 46,
+      "bytes": 1329,
+      "complexity": "low"
+    },
+    {
+      "path": "src\\frontend\\jest.setup.js",
+      "type": "JavaScript",
+      "lines": 43,
+      "bytes": 849,
+      "complexity": "low"
+    },
+    {
+      "path": "src\\frontend\\next-env.d.ts",
+      "type": "TypeScript",
+      "lines": 6,
+      "bytes": 228,
+      "complexity": "low"
+    },
+    {
+      "path": "src\\frontend\\next.config.js",
+      "type": "Next.js Config",
+      "lines": 55,
+      "bytes": 1092,
+      "complexity": "low"
+    },
+    {
+      "path": "src\\frontend\\package.json",
+      "type": "Package Config",
+      "lines": 67,
+      "bytes": 1832,
+      "complexity": "low"
+    },
+    {
+      "path": "src\\frontend\\postcss.config.js",
+      "type": "JavaScript",
+      "lines": 7,
+      "bytes": 82,
+      "complexity": "low"
+    },
+    {
+      "path": "src\\frontend\\src\\app\\activity\\page.tsx",
+      "type": "TypeScript React",
+      "lines": 249,
+      "bytes": 8307,
+      "complexity": "medium"
+    },
+    {
+      "path": "src\\frontend\\src\\app\\care\\page.tsx",
+      "type": "TypeScript React",
+      "lines": 389,
+      "bytes": 16529,
+      "complexity": "medium"
+    },
+    {
+      "path": "src\\frontend\\src\\app\\communications\\new\\page.tsx",
+      "type": "TypeScript React",
+      "lines": 391,
+      "bytes": 15816,
+      "complexity": "medium"
+    },
+    {
+      "path": "src\\frontend\\src\\app\\communications\\page.tsx",
+      "type": "TypeScript React",
+      "lines": 562,
+      "bytes": 25948,
+      "complexity": "medium"
+    },
+    {
+      "path": "src\\frontend\\src\\app\\contact\\page.tsx",
+      "type": "TypeScript React",
+      "lines": 180,
+      "bytes": 7175,
+      "complexity": "low"
+    },
+    {
+      "path": "src\\frontend\\src\\app\\dashboard\\page.tsx",
+      "type": "TypeScript React",
+      "lines": 40,
+      "bytes": 1138,
+      "complexity": "low"
+    },
+    {
+      "path": "src\\frontend\\src\\app\\demo\\page.tsx",
+      "type": "TypeScript React",
+      "lines": 72,
+      "bytes": 3041,
+      "complexity": "low"
+    },
+    {
+      "path": "src\\frontend\\src\\app\\events\\new\\page.tsx",
+      "type": "TypeScript React",
+      "lines": 308,
+      "bytes": 11965,
+      "complexity": "low"
+    },
+    {
+      "path": "src\\frontend\\src\\app\\events\\page.tsx",
+      "type": "TypeScript React",
+      "lines": 312,
+      "bytes": 11979,
+      "complexity": "medium"
+    },
+    {
+      "path": "src\\frontend\\src\\app\\features\\page.tsx",
+      "type": "TypeScript React",
+      "lines": 77,
+      "bytes": 3069,
+      "complexity": "low"
+    },
+    {
+      "path": "src\\frontend\\src\\app\\forgot-password\\page.tsx",
+      "type": "TypeScript React",
+      "lines": 159,
+      "bytes": 5770,
+      "complexity": "low"
+    },
+    {
+      "path": "src\\frontend\\src\\app\\globals.css",
+      "type": "CSS",
+      "lines": 264,
+      "bytes": 5781,
+      "complexity": "low"
+    },
+    {
+      "path": "src\\frontend\\src\\app\\groups\\new\\page.tsx",
+      "type": "TypeScript React",
+      "lines": 25,
+      "bytes": 794,
+      "complexity": "low"
+    },
+    {
+      "path": "src\\frontend\\src\\app\\groups\\page.tsx",
+      "type": "TypeScript React",
+      "lines": 17,
+      "bytes": 411,
+      "complexity": "low"
+    },
+    {
+      "path": "src\\frontend\\src\\app\\groups\\[id]\\attendance\\new\\page.tsx",
+      "type": "TypeScript React",
+      "lines": 59,
+      "bytes": 2146,
+      "complexity": "low"
+    },
+    {
+      "path": "src\\frontend\\src\\app\\groups\\[id]\\attendance\\page.tsx",
+      "type": "TypeScript React",
+      "lines": 21,
+      "bytes": 627,
+      "complexity": "low"
+    },
+    {
+      "path": "src\\frontend\\src\\app\\groups\\[id]\\attendance\\[sessionId]\\page.tsx",
+      "type": "TypeScript React",
+      "lines": 22,
+      "bytes": 726,
+      "complexity": "low"
+    },
+    {
+      "path": "src\\frontend\\src\\app\\groups\\[id]\\edit\\page.tsx",
+      "type": "TypeScript React",
+      "lines": 29,
+      "bytes": 934,
+      "complexity": "low"
+    },
+    {
+      "path": "src\\frontend\\src\\app\\groups\\[id]\\page.tsx",
+      "type": "TypeScript React",
+      "lines": 21,
+      "bytes": 564,
+      "complexity": "low"
+    },
+    {
+      "path": "src\\frontend\\src\\app\\help\\page.tsx",
+      "type": "TypeScript React",
+      "lines": 188,
+      "bytes": 7495,
+      "complexity": "low"
+    },
+    {
+      "path": "src\\frontend\\src\\app\\journey\\page.tsx",
+      "type": "TypeScript React",
+      "lines": 319,
+      "bytes": 12300,
+      "complexity": "low"
+    },
+    {
+      "path": "src\\frontend\\src\\app\\journey-templates\\new\\page.tsx",
+      "type": "TypeScript React",
+      "lines": 25,
+      "bytes": 842,
+      "complexity": "low"
+    },
+    {
+      "path": "src\\frontend\\src\\app\\journey-templates\\page.tsx",
+      "type": "TypeScript React",
+      "lines": 17,
+      "bytes": 480,
+      "complexity": "low"
+    },
+    {
+      "path": "src\\frontend\\src\\app\\journey-templates\\[id]\\page.tsx",
+      "type": "TypeScript React",
+      "lines": 206,
+      "bytes": 8573,
+      "complexity": "low"
+    },
+    {
+      "path": "src\\frontend\\src\\app\\journeys\\assign\\page.tsx",
+      "type": "TypeScript React",
+      "lines": 25,
+      "bytes": 833,
+      "complexity": "low"
+    },
+    {
+      "path": "src\\frontend\\src\\app\\journeys\\page.tsx",
+      "type": "TypeScript React",
+      "lines": 17,
+      "bytes": 438,
+      "complexity": "low"
+    },
+    {
+      "path": "src\\frontend\\src\\app\\journeys\\[id]\\page.tsx",
+      "type": "TypeScript React",
+      "lines": 21,
+      "bytes": 587,
+      "complexity": "low"
+    },
+    {
+      "path": "src\\frontend\\src\\app\\layout.tsx",
+      "type": "TypeScript React",
+      "lines": 82,
+      "bytes": 2357,
+      "complexity": "low"
+    },
+    {
+      "path": "src\\frontend\\src\\app\\login\\page.tsx",
+      "type": "TypeScript React",
+      "lines": 159,
+      "bytes": 6126,
+      "complexity": "low"
+    },
+    {
+      "path": "src\\frontend\\src\\app\\members\\new\\page.tsx",
+      "type": "TypeScript React",
+      "lines": 15,
+      "bytes": 329,
+      "complexity": "low"
+    },
+    {
+      "path": "src\\frontend\\src\\app\\members\\page.tsx",
+      "type": "TypeScript React",
+      "lines": 65,
+      "bytes": 2624,
+      "complexity": "low"
+    },
+    {
+      "path": "src\\frontend\\src\\app\\members\\[id]\\edit\\page.tsx",
+      "type": "TypeScript React",
+      "lines": 116,
+      "bytes": 3470,
+      "complexity": "low"
+    },
+    {
+      "path": "src\\frontend\\src\\app\\members\\[id]\\page.tsx",
+      "type": "TypeScript React",
+      "lines": 400,
+      "bytes": 15136,
+      "complexity": "low"
+    },
+    {
+      "path": "src\\frontend\\src\\app\\page.tsx",
+      "type": "TypeScript React",
+      "lines": 309,
+      "bytes": 12402,
+      "complexity": "low"
+    },
+    {
+      "path": "src\\frontend\\src\\app\\pricing\\page.tsx",
+      "type": "TypeScript React",
+      "lines": 174,
+      "bytes": 6240,
+      "complexity": "low"
+    },
+    {
+      "path": "src\\frontend\\src\\app\\privacy\\page.tsx",
+      "type": "TypeScript React",
+      "lines": 138,
+      "bytes": 6088,
+      "complexity": "low"
+    },
+    {
+      "path": "src\\frontend\\src\\app\\profile\\page.tsx",
+      "type": "TypeScript React",
+      "lines": 212,
+      "bytes": 8892,
+      "complexity": "low"
+    },
+    {
+      "path": "src\\frontend\\src\\app\\register\\page.tsx",
+      "type": "TypeScript React",
+      "lines": 348,
+      "bytes": 13509,
+      "complexity": "low"
+    },
+    {
+      "path": "src\\frontend\\src\\app\\reports\\page.tsx",
+      "type": "TypeScript React",
+      "lines": 367,
+      "bytes": 15980,
+      "complexity": "medium"
+    },
+    {
+      "path": "src\\frontend\\src\\app\\settings\\page.tsx",
+      "type": "TypeScript React",
+      "lines": 228,
+      "bytes": 9183,
+      "complexity": "low"
+    },
+    {
+      "path": "src\\frontend\\src\\app\\tasks\\page.tsx",
+      "type": "TypeScript React",
+      "lines": 238,
+      "bytes": 9368,
+      "complexity": "medium"
+    },
+    {
+      "path": "src\\frontend\\src\\components\\attendance\\AttendanceForm.tsx",
+      "type": "TypeScript React",
+      "lines": 398,
+      "bytes": 15123,
+      "complexity": "medium"
+    },
+    {
+      "path": "src\\frontend\\src\\components\\attendance\\AttendanceHistory.tsx",
+      "type": "TypeScript React",
+      "lines": 445,
+      "bytes": 18047,
+      "complexity": "medium"
+    },
+    {
+      "path": "src\\frontend\\src\\components\\attendance\\AttendanceSessionDetail.tsx",
+      "type": "TypeScript React",
+      "lines": 430,
+      "bytes": 15863,
+      "complexity": "medium"
+    },
+    {
+      "path": "src\\frontend\\src\\components\\attendance\\__tests__\\AttendanceForm.test.tsx",
+      "type": "TypeScript React",
+      "lines": 34,
+      "bytes": 833,
+      "complexity": "low"
+    },
+    {
+      "path": "src\\frontend\\src\\components\\auth\\ChurchSelection.tsx",
+      "type": "TypeScript React",
+      "lines": 262,
+      "bytes": 10229,
+      "complexity": "low"
+    },
+    {
+      "path": "src\\frontend\\src\\components\\auth\\ProtectedRoute.tsx",
+      "type": "TypeScript React",
+      "lines": 79,
+      "bytes": 1975,
+      "complexity": "low"
+    },
+    {
+      "path": "src\\frontend\\src\\components\\auth\\RoleSelection.tsx",
+      "type": "TypeScript React",
+      "lines": 209,
+      "bytes": 7558,
+      "complexity": "low"
+    },
+    {
+      "path": "src\\frontend\\src\\components\\BugReportButton.tsx",
+      "type": "TypeScript React",
+      "lines": 33,
+      "bytes": 983,
+      "complexity": "low"
+    },
+    {
+      "path": "src\\frontend\\src\\components\\BugReportModal.tsx",
+      "type": "TypeScript React",
+      "lines": 272,
+      "bytes": 9760,
+      "complexity": "low"
+    },
+    {
+      "path": "src\\frontend\\src\\components\\care\\CounselingScheduler.tsx",
+      "type": "TypeScript React",
+      "lines": 514,
+      "bytes": 20715,
+      "complexity": "low"
+    },
+    {
+      "path": "src\\frontend\\src\\components\\care\\MemberCareTracker.tsx",
+      "type": "TypeScript React",
+      "lines": 421,
+      "bytes": 17987,
+      "complexity": "medium"
+    },
+    {
+      "path": "src\\frontend\\src\\components\\care\\PrayerRequestForm.tsx",
+      "type": "TypeScript React",
+      "lines": 286,
+      "bytes": 11120,
+      "complexity": "low"
+    },
+    {
+      "path": "src\\frontend\\src\\components\\communications\\AnnouncementBuilder.tsx",
+      "type": "TypeScript React",
+      "lines": 544,
+      "bytes": 22418,
+      "complexity": "medium"
+    },
+    {
+      "path": "src\\frontend\\src\\components\\communications\\EmailCampaignBuilder.tsx",
+      "type": "TypeScript React",
+      "lines": 597,
+      "bytes": 23757,
+      "complexity": "medium"
+    },
+    {
+      "path": "src\\frontend\\src\\components\\dashboard\\AdminDashboard.tsx",
+      "type": "TypeScript React",
+      "lines": 222,
+      "bytes": 10240,
+      "complexity": "low"
+    },
+    {
+      "path": "src\\frontend\\src\\components\\dashboard\\GroupLeaderDashboard.tsx",
+      "type": "TypeScript React",
+      "lines": 218,
+      "bytes": 10609,
+      "complexity": "low"
+    },
+    {
+      "path": "src\\frontend\\src\\components\\dashboard\\MemberDashboard.tsx",
+      "type": "TypeScript React",
+      "lines": 226,
+      "bytes": 9419,
+      "complexity": "low"
+    },
+    {
+      "path": "src\\frontend\\src\\components\\dashboard\\PastorDashboard.tsx",
+      "type": "TypeScript React",
+      "lines": 197,
+      "bytes": 9793,
+      "complexity": "low"
+    },
+    {
+      "path": "src\\frontend\\src\\components\\events\\EventCheckIn.tsx",
+      "type": "TypeScript React",
+      "lines": 353,
+      "bytes": 14727,
+      "complexity": "medium"
+    },
+    {
+      "path": "src\\frontend\\src\\components\\events\\EventRegistrationModal.tsx",
+      "type": "TypeScript React",
+      "lines": 283,
+      "bytes": 10559,
+      "complexity": "low"
+    },
+    {
+      "path": "src\\frontend\\src\\components\\events\\RSVPTracker.tsx",
+      "type": "TypeScript React",
+      "lines": 312,
+      "bytes": 13036,
+      "complexity": "medium"
+    },
+    {
+      "path": "src\\frontend\\src\\components\\groups\\GroupDetail.tsx",
+      "type": "TypeScript React",
+      "lines": 473,
+      "bytes": 19689,
+      "complexity": "medium"
+    },
+    {
+      "path": "src\\frontend\\src\\components\\groups\\GroupEditForm.tsx",
+      "type": "TypeScript React",
+      "lines": 68,
+      "bytes": 1682,
+      "complexity": "low"
+    },
+    {
+      "path": "src\\frontend\\src\\components\\groups\\GroupFiles.tsx",
+      "type": "TypeScript React",
+      "lines": 355,
+      "bytes": 13102,
+      "complexity": "medium"
+    },
+    {
+      "path": "src\\frontend\\src\\components\\groups\\GroupForm.tsx",
+      "type": "TypeScript React",
+      "lines": 468,
+      "bytes": 17216,
+      "complexity": "medium"
+    },
+    {
+      "path": "src\\frontend\\src\\components\\groups\\GroupList.tsx",
+      "type": "TypeScript React",
+      "lines": 431,
+      "bytes": 17955,
+      "complexity": "medium"
+    },
+    {
+      "path": "src\\frontend\\src\\components\\groups\\GroupMessages.tsx",
+      "type": "TypeScript React",
+      "lines": 397,
+      "bytes": 14483,
+      "complexity": "high"
+    },
+    {
+      "path": "src\\frontend\\src\\components\\groups\\__tests__\\GroupForm.test.tsx",
+      "type": "TypeScript React",
+      "lines": 27,
+      "bytes": 622,
+      "complexity": "low"
+    },
+    {
+      "path": "src\\frontend\\src\\components\\journey\\DailyDevotionsTracker.tsx",
+      "type": "TypeScript React",
+      "lines": 500,
+      "bytes": 19253,
+      "complexity": "medium"
+    },
+    {
+      "path": "src\\frontend\\src\\components\\journey\\JourneyAssignForm.tsx",
+      "type": "TypeScript React",
+      "lines": 469,
+      "bytes": 18134,
+      "complexity": "medium"
+    },
+    {
+      "path": "src\\frontend\\src\\components\\journey\\JourneyProgress.tsx",
+      "type": "TypeScript React",
+      "lines": 468,
+      "bytes": 19789,
+      "complexity": "medium"
+    },
+    {
+      "path": "src\\frontend\\src\\components\\journey\\JourneyTemplateForm.tsx",
+      "type": "TypeScript React",
+      "lines": 583,
+      "bytes": 23167,
+      "complexity": "medium"
+    },
+    {
+      "path": "src\\frontend\\src\\components\\journey\\JourneyTemplateList.tsx",
+      "type": "TypeScript React",
+      "lines": 526,
+      "bytes": 21900,
+      "complexity": "high"
+    },
+    {
+      "path": "src\\frontend\\src\\components\\journey\\MemberJourneyList.tsx",
+      "type": "TypeScript React",
+      "lines": 465,
+      "bytes": 19404,
+      "complexity": "medium"
+    },
+    {
+      "path": "src\\frontend\\src\\components\\journey\\ServingRoleFinder.tsx",
+      "type": "TypeScript React",
+      "lines": 435,
+      "bytes": 17286,
+      "complexity": "medium"
+    },
+    {
+      "path": "src\\frontend\\src\\components\\journey\\SpiritualGiftsAssessment.tsx",
+      "type": "TypeScript React",
+      "lines": 494,
+      "bytes": 16430,
+      "complexity": "medium"
+    },
+    {
+      "path": "src\\frontend\\src\\components\\journey\\__tests__\\JourneyTemplateForm.test.tsx",
+      "type": "TypeScript React",
+      "lines": 27,
+      "bytes": 686,
+      "complexity": "low"
+    },
+    {
+      "path": "src\\frontend\\src\\components\\layout\\DashboardLayout.tsx",
+      "type": "TypeScript React",
+      "lines": 204,
+      "bytes": 7206,
+      "complexity": "low"
+    },
+    {
+      "path": "src\\frontend\\src\\components\\members\\BulkMemberUpload.tsx",
+      "type": "TypeScript React",
+      "lines": 513,
+      "bytes": 19725,
+      "complexity": "high"
+    },
+    {
+      "path": "src\\frontend\\src\\components\\members\\EnhancedMemberProfile.tsx",
+      "type": "TypeScript React",
+      "lines": 770,
+      "bytes": 26003,
+      "complexity": "high"
+    },
+    {
+      "path": "src\\frontend\\src\\components\\members\\MemberForm.tsx",
+      "type": "TypeScript React",
+      "lines": 722,
+      "bytes": 27167,
+      "complexity": "medium"
+    },
+    {
+      "path": "src\\frontend\\src\\components\\members\\MemberList.tsx",
+      "type": "TypeScript React",
+      "lines": 503,
+      "bytes": 19422,
+      "complexity": "medium"
+    },
+    {
+      "path": "src\\frontend\\src\\components\\members\\MemberSelfServicePortal.tsx",
+      "type": "TypeScript React",
+      "lines": 538,
+      "bytes": 21840,
+      "complexity": "medium"
+    },
+    {
+      "path": "src\\frontend\\src\\components\\members\\VolunteerSignupSystem.tsx",
+      "type": "TypeScript React",
+      "lines": 557,
+      "bytes": 22061,
+      "complexity": "medium"
+    },
+    {
+      "path": "src\\frontend\\src\\components\\mobile\\MobileCards.tsx",
+      "type": "TypeScript React",
+      "lines": 182,
+      "bytes": 5639,
+      "complexity": "low"
+    },
+    {
+      "path": "src\\frontend\\src\\components\\navigation\\MobileNavigation.tsx",
+      "type": "TypeScript React",
+      "lines": 190,
+      "bytes": 6690,
+      "complexity": "low"
+    },
+    {
+      "path": "src\\frontend\\src\\components\\onboarding\\NewUserWelcome.tsx",
+      "type": "TypeScript React",
+      "lines": 187,
+      "bytes": 7506,
+      "complexity": "low"
+    },
+    {
+      "path": "src\\frontend\\src\\components\\onboarding\\OnboardingFlow.tsx",
+      "type": "TypeScript React",
+      "lines": 681,
+      "bytes": 23184,
+      "complexity": "high"
+    },
+    {
+      "path": "src\\frontend\\src\\components\\onboarding\\OnboardingPrompt.tsx",
+      "type": "TypeScript React",
+      "lines": 77,
+      "bytes": 2625,
+      "complexity": "low"
+    },
+    {
+      "path": "src\\frontend\\src\\components\\onboarding\\OnboardingTooltips.tsx",
+      "type": "TypeScript React",
+      "lines": 306,
+      "bytes": 9662,
+      "complexity": "medium"
+    },
+    {
+      "path": "src\\frontend\\src\\components\\reports\\AttendanceAnalytics.tsx",
+      "type": "TypeScript React",
+      "lines": 357,
+      "bytes": 15108,
+      "complexity": "medium"
+    },
+    {
+      "path": "src\\frontend\\src\\components\\reports\\ExportButton.tsx",
+      "type": "TypeScript React",
+      "lines": 116,
+      "bytes": 4007,
+      "complexity": "low"
+    },
+    {
+      "path": "src\\frontend\\src\\components\\reports\\GroupHealthDashboard.tsx",
+      "type": "TypeScript React",
+      "lines": 509,
+      "bytes": 19269,
+      "complexity": "medium"
+    },
+    {
+      "path": "src\\frontend\\src\\components\\reports\\MemberEngagementMetrics.tsx",
+      "type": "TypeScript React",
+      "lines": 492,
+      "bytes": 19410,
+      "complexity": "medium"
+    },
+    {
+      "path": "src\\frontend\\src\\components\\settings\\SystemPreferences.tsx",
+      "type": "TypeScript React",
+      "lines": 498,
+      "bytes": 20622,
+      "complexity": "low"
+    },
+    {
+      "path": "src\\frontend\\src\\components\\settings\\UserRoleManager.tsx",
+      "type": "TypeScript React",
+      "lines": 366,
+      "bytes": 14732,
+      "complexity": "medium"
+    },
+    {
+      "path": "src\\frontend\\src\\components\\tasks\\TaskCreateForm.tsx",
+      "type": "TypeScript React",
+      "lines": 292,
+      "bytes": 10120,
+      "complexity": "medium"
+    },
+    {
+      "path": "src\\frontend\\src\\contexts\\AuthContext.tsx",
+      "type": "TypeScript React",
+      "lines": 149,
+      "bytes": 4047,
+      "complexity": "medium"
+    },
+    {
+      "path": "src\\frontend\\src\\contexts\\DemoContext.tsx",
+      "type": "TypeScript React",
+      "lines": 94,
+      "bytes": 2618,
+      "complexity": "low"
+    },
+    {
+      "path": "src\\frontend\\src\\hooks\\useOnboarding.ts",
+      "type": "TypeScript",
+      "lines": 124,
+      "bytes": 3635,
+      "complexity": "medium"
+    },
+    {
+      "path": "src\\frontend\\src\\services\\attendanceService.ts",
+      "type": "TypeScript",
+      "lines": 267,
+      "bytes": 7882,
+      "complexity": "high"
+    },
+    {
+      "path": "src\\frontend\\src\\services\\authService.ts",
+      "type": "TypeScript",
+      "lines": 142,
+      "bytes": 4388,
+      "complexity": "medium"
+    },
+    {
+      "path": "src\\frontend\\src\\services\\dashboardService.ts",
+      "type": "TypeScript",
+      "lines": 210,
+      "bytes": 5807,
+      "complexity": "medium"
+    },
+    {
+      "path": "src\\frontend\\src\\services\\errorService.ts",
+      "type": "TypeScript",
+      "lines": 340,
+      "bytes": 10025,
+      "complexity": "medium"
+    },
+    {
+      "path": "src\\frontend\\src\\services\\groupService.ts",
+      "type": "TypeScript",
+      "lines": 268,
+      "bytes": 10469,
+      "complexity": "medium"
+    },
+    {
+      "path": "src\\frontend\\src\\services\\journeyService.ts",
+      "type": "TypeScript",
+      "lines": 469,
+      "bytes": 13758,
+      "complexity": "high"
+    },
+    {
+      "path": "src\\frontend\\src\\services\\memberService.ts",
+      "type": "TypeScript",
+      "lines": 242,
+      "bytes": 8373,
+      "complexity": "medium"
+    },
+    {
+      "path": "src\\frontend\\src\\services\\taskService.ts",
+      "type": "TypeScript",
+      "lines": 225,
+      "bytes": 5898,
+      "complexity": "medium"
+    },
+    {
+      "path": "src\\frontend\\src\\services\\__tests__\\groupService.test.ts",
+      "type": "TypeScript",
+      "lines": 21,
+      "bytes": 488,
+      "complexity": "low"
+    },
+    {
+      "path": "src\\frontend\\src\\services\\__tests__\\journeyService.test.ts",
+      "type": "TypeScript",
+      "lines": 21,
+      "bytes": 508,
+      "complexity": "low"
+    },
+    {
+      "path": "src\\frontend\\src\\services\\__tests__\\simple.test.ts",
+      "type": "TypeScript",
+      "lines": 6,
+      "bytes": 110,
+      "complexity": "low"
+    },
+    {
+      "path": "src\\frontend\\src\\types\\attendance.ts",
+      "type": "TypeScript",
+      "lines": 107,
+      "bytes": 2157,
+      "complexity": "low"
+    },
+    {
+      "path": "src\\frontend\\src\\types\\auth.ts",
+      "type": "TypeScript",
+      "lines": 54,
+      "bytes": 1093,
+      "complexity": "low"
+    },
+    {
+      "path": "src\\frontend\\src\\types\\group.ts",
+      "type": "TypeScript",
+      "lines": 155,
+      "bytes": 3350,
+      "complexity": "low"
+    },
+    {
+      "path": "src\\frontend\\src\\types\\index.ts",
+      "type": "TypeScript",
+      "lines": 342,
+      "bytes": 5961,
+      "complexity": "low"
+    },
+    {
+      "path": "src\\frontend\\src\\types\\journey.ts",
+      "type": "TypeScript",
+      "lines": 289,
+      "bytes": 6468,
+      "complexity": "low"
+    },
+    {
+      "path": "src\\frontend\\src\\types\\member.ts",
+      "type": "TypeScript",
+      "lines": 147,
+      "bytes": 3470,
+      "complexity": "low"
+    },
+    {
+      "path": "src\\frontend\\src\\utils\\api.ts",
+      "type": "TypeScript",
+      "lines": 53,
+      "bytes": 1546,
+      "complexity": "low"
+    },
+    {
+      "path": "src\\frontend\\src\\utils\\index.ts",
+      "type": "TypeScript",
+      "lines": 149,
+      "bytes": 3356,
+      "complexity": "low"
+    },
+    {
+      "path": "src\\frontend\\src\\utils\\permissions.ts",
+      "type": "TypeScript",
+      "lines": 252,
+      "bytes": 8831,
+      "complexity": "low"
+    },
+    {
+      "path": "src\\frontend\\tailwind.config.js",
+      "type": "Tailwind Config",
+      "lines": 116,
+      "bytes": 3458,
+      "complexity": "low"
+    },
+    {
+      "path": "src\\frontend\\tsconfig.json",
+      "type": "TypeScript Config",
+      "lines": 44,
+      "bytes": 967,
+      "complexity": "low"
+    },
+    {
+      "path": "start-frontend.js",
+      "type": "JavaScript",
+      "lines": 47,
+      "bytes": 1171,
+      "complexity": "low"
+    },
+    {
+      "path": "start-platform.ps1",
+      "type": "PowerShell",
+      "lines": 126,
+      "bytes": 4919,
+      "complexity": "low"
+    },
+    {
+      "path": "tasks-integration-test.js",
+      "type": "JavaScript",
+      "lines": 535,
+      "bytes": 17822,
+      "complexity": "high"
+    },
+    {
+      "path": "tech_stack_analysis.md",
+      "type": "Markdown",
+      "lines": 133,
+      "bytes": 5330,
+      "complexity": "low"
+    },
+    {
+      "path": "test-api-integration.js",
+      "type": "JavaScript",
+      "lines": 190,
+      "bytes": 5195,
+      "complexity": "medium"
+    },
+    {
+      "path": "test-auth-workflow.js",
+      "type": "JavaScript",
+      "lines": 157,
+      "bytes": 3904,
+      "complexity": "medium"
+    },
+    {
+      "path": "test-backend-endpoints.ps1",
+      "type": "PowerShell",
+      "lines": 63,
+      "bytes": 2285,
+      "complexity": "low"
+    },
+    {
+      "path": "test-basic-server.js",
+      "type": "JavaScript",
+      "lines": 29,
+      "bytes": 771,
+      "complexity": "low"
+    },
+    {
+      "path": "test-connectivity.js",
+      "type": "JavaScript",
+      "lines": 73,
+      "bytes": 2373,
+      "complexity": "low"
+    },
+    {
+      "path": "test-failing-endpoints.js",
+      "type": "JavaScript",
+      "lines": 61,
+      "bytes": 1834,
+      "complexity": "low"
+    },
+    {
+      "path": "test-final-2-endpoints.js",
+      "type": "JavaScript",
+      "lines": 73,
+      "bytes": 2161,
+      "complexity": "low"
+    },
+    {
+      "path": "test-frontend-backend-connection.js",
+      "type": "JavaScript",
+      "lines": 135,
+      "bytes": 3593,
+      "complexity": "low"
+    },
+    {
+      "path": "test-functional-crud.js",
+      "type": "JavaScript",
+      "lines": 207,
+      "bytes": 6465,
+      "complexity": "medium"
+    },
+    {
+      "path": "test-group-creation.js",
+      "type": "JavaScript",
+      "lines": 68,
+      "bytes": 2117,
+      "complexity": "low"
+    },
+    {
+      "path": "test-journey-with-debug.js",
+      "type": "JavaScript",
+      "lines": 47,
+      "bytes": 1450,
+      "complexity": "low"
+    },
+    {
+      "path": "test-member-creation.js",
+      "type": "JavaScript",
+      "lines": 46,
+      "bytes": 1213,
+      "complexity": "low"
+    },
+    {
+      "path": "test-platform-access.js",
+      "type": "JavaScript",
+      "lines": 157,
+      "bytes": 4303,
+      "complexity": "medium"
+    },
+    {
+      "path": "test-priority-endpoints.js",
+      "type": "JavaScript",
+      "lines": 119,
+      "bytes": 3725,
+      "complexity": "low"
+    },
+    {
+      "path": "test-production-endpoints.js",
+      "type": "JavaScript",
+      "lines": 77,
+      "bytes": 2963,
+      "complexity": "low"
+    },
+    {
+      "path": "test-production.ps1",
+      "type": "PowerShell",
+      "lines": 54,
+      "bytes": 2410,
+      "complexity": "low"
+    },
+    {
+      "path": "test-specific-endpoints.js",
+      "type": "JavaScript",
+      "lines": 110,
+      "bytes": 4860,
+      "complexity": "medium"
+    },
+    {
+      "path": "tests\\e2e\\groups.e2e.test.ts",
+      "type": "TypeScript",
+      "lines": 281,
+      "bytes": 9910,
+      "complexity": "medium"
+    },
+    {
+      "path": "tests\\e2e\\journey-templates.e2e.test.ts",
+      "type": "TypeScript",
+      "lines": 391,
+      "bytes": 15120,
+      "complexity": "high"
+    },
+    {
+      "path": "tests\\package.json",
+      "type": "Package Config",
+      "lines": 28,
+      "bytes": 746,
+      "complexity": "low"
+    },
+    {
+      "path": "tests\\playwright-report\\index.html",
+      "type": "HTML",
+      "lines": 76,
+      "bytes": 461547,
+      "complexity": "low"
+    },
+    {
+      "path": "tests\\playwright.config.ts",
+      "type": "TypeScript",
+      "lines": 91,
+      "bytes": 2290,
+      "complexity": "low"
+    },
+    {
+      "path": "tests\\test-results\\.last-run.json",
+      "type": "JSON",
+      "lines": 4,
+      "bytes": 45,
+      "complexity": "low"
+    },
+    {
+      "path": "tests\\test-results.xml",
+      "type": "Unknown",
+      "lines": 2,
+      "bytes": 103,
+      "complexity": "low"
+    },
+    {
+      "path": "UAT_READINESS_REPORT.md",
+      "type": "Markdown",
+      "lines": 256,
+      "bytes": 9403,
+      "complexity": "low"
+    },
+    {
+      "path": "verify-frontend-integration.js",
+      "type": "JavaScript",
+      "lines": 201,
+      "bytes": 5148,
+      "complexity": "medium"
+    },
+    {
+      "path": "verify-nodejs.ps1",
+      "type": "PowerShell",
+      "lines": 28,
+      "bytes": 918,
+      "complexity": "low"
+    },
+    {
+      "path": "wake-up-service.ps1",
+      "type": "PowerShell",
+      "lines": 64,
+      "bytes": 2935,
+      "complexity": "low"
+    }
+  ]
+}

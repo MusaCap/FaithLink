@@ -42,6 +42,7 @@ model Member {
   churchId           String?
   membershipStatus   String?              @default("pending")
   role               String?              @default("member")
+  deaconId           String?              // Assigned deacon for pastoral care
   createdAt          DateTime             @default(now())
   updatedAt          DateTime             @updatedAt
   careLogs           CareLog[]
@@ -56,8 +57,39 @@ model Member {
   activities         Activity[]
   church             Church?              @relation("ChurchMembers", fields: [churchId], references: [id])
   user               User?                @relation(fields: [userId], references: [id])
+  volunteer          Volunteer?           // One-to-one relationship with volunteer profile
+  coordinatedOpportunities VolunteerOpportunity[] @relation("OpportunityCoordinator")
+  assignedDeacon     Deacon?              @relation("DeaconMembers", fields: [deaconId], references: [id])
+  deaconProfile      Deacon?              @relation("DeaconMemberProfile") // If this member is also a deacon
 
   @@map("members")
+}
+
+model Deacon {
+  id          String   @id @default(cuid())
+  firstName   String
+  lastName    String
+  email       String   @unique
+  phone       String?
+  isActive    Boolean  @default(true)
+  churchId    String?
+  memberId    String?  @unique // Optional link to member profile if deacon is also a member
+  
+  // Deacon-specific fields
+  ordainedDate DateTime?
+  specialties  String[] // Areas of specialty (counseling, youth, seniors, etc.)
+  maxMembers   Int?     // Maximum number of members they can handle
+  notes        String?
+  
+  // Relationships
+  assignedMembers Member[] @relation("DeaconMembers")
+  church          Church?  @relation("ChurchDeacons", fields: [churchId], references: [id])
+  member          Member?  @relation("DeaconMemberProfile", fields: [memberId], references: [id])
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("deacons")
 }
 
 model Group {
@@ -266,6 +298,8 @@ model Church {
   members      Member[] @relation("ChurchMembers")
   groups       Group[]  @relation("ChurchGroups")
   events       Event[]  @relation("ChurchEvents")
+  volunteerOpportunities VolunteerOpportunity[] @relation("ChurchVolunteerOpportunities")
+  deacons      Deacon[] @relation("ChurchDeacons")
 
   @@map("churches")
 }
@@ -363,5 +397,273 @@ model Activity {
   user        User?    @relation(fields: [userId], references: [id])
 
   @@map("activities")
+}
+
+// VOLUNTEER MANAGEMENT MODELS
+
+model Volunteer {
+  id              String   @id @default(cuid())
+  memberId        String   @unique
+  member          Member   @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  
+  // Profile Information
+  skills          String[] // Array of skills (e.g., ["music", "teaching", "childcare"])
+  interests       String[] // Areas of interest
+  availability    Json     // Weekly availability schedule
+  maxHoursPerWeek Int?     // Time commitment limit
+  
+  // Preferences
+  preferredMinistries String[] // Preferred ministry areas
+  transportationAvailable Boolean @default(false)
+  willingToTravel Boolean @default(false)
+  
+  // Status Tracking
+  isActive        Boolean  @default(true)
+  backgroundCheck BackgroundCheckStatus @default(NOT_REQUIRED)
+  emergencyContact Json    // Emergency contact info
+  notes           String?  // Coordinator notes
+  
+  // Relationships
+  opportunities   VolunteerOpportunityAssignment[]
+  signups         VolunteerSignup[]
+  hours          VolunteerHour[]
+  trainingCompletions VolunteerTrainingCompletion[]
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  @@map("volunteers")
+}
+
+model VolunteerOpportunity {
+  id              String   @id @default(cuid())
+  
+  // Basic Information
+  title           String
+  description     String
+  ministry        String   // Which ministry area
+  location        String?
+  contactEmail    String?
+  contactPhone    String?
+  
+  // Requirements
+  skillsRequired  String[] // Required skills
+  minAge          Int?     // Minimum age requirement
+  maxAge          Int?     // Maximum age requirement
+  backgroundCheckRequired Boolean @default(false)
+  trainingRequired String[] // Required training
+  
+  // Scheduling
+  startDate       DateTime
+  endDate         DateTime?
+  isRecurring     Boolean  @default(false)
+  recurringSchedule Json?   // Recurring schedule details
+  estimatedHours  Float?   // Estimated hours per occurrence
+  
+  // Capacity
+  maxVolunteers   Int?     // Capacity limit
+  currentVolunteers Int   @default(0)
+  
+  // Status and Priority
+  isActive        Boolean  @default(true)
+  urgency         VolunteerPriority @default(NORMAL)
+  status          OpportunityStatus @default(OPEN)
+  
+  // Relationships
+  coordinator     Member   @relation("OpportunityCoordinator", fields: [coordinatorId], references: [id])
+  coordinatorId   String
+  church          Church?  @relation("ChurchVolunteerOpportunities", fields: [churchId], references: [id])
+  churchId        String?
+  
+  volunteers      VolunteerOpportunityAssignment[]
+  signups         VolunteerSignup[]
+  hours          VolunteerHour[]
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  @@map("volunteer_opportunities")
+}
+
+model VolunteerOpportunityAssignment {
+  id              String   @id @default(cuid())
+  
+  volunteerId     String
+  volunteer       Volunteer @relation(fields: [volunteerId], references: [id], onDelete: Cascade)
+  opportunityId   String
+  opportunity     VolunteerOpportunity @relation(fields: [opportunityId], references: [id], onDelete: Cascade)
+  
+  // Assignment Details
+  assignedBy      String   // Member ID who made the assignment
+  assignedDate    DateTime @default(now())
+  role            String?  // Specific role within the opportunity
+  
+  isActive        Boolean  @default(true)
+  
+  @@unique([volunteerId, opportunityId])
+  @@map("volunteer_opportunity_assignments")
+}
+
+model VolunteerSignup {
+  id              String   @id @default(cuid())
+  
+  volunteerId     String
+  volunteer       Volunteer @relation(fields: [volunteerId], references: [id], onDelete: Cascade)
+  opportunityId   String
+  opportunity     VolunteerOpportunity @relation(fields: [opportunityId], references: [id], onDelete: Cascade)
+  
+  // Signup Details
+  status          SignupStatus @default(PENDING)
+  message         String?      // Message from volunteer
+  specialRequests String?      // Special requests or accommodations
+  
+  // Scheduling
+  scheduledDate   DateTime?
+  scheduledStartTime DateTime?
+  scheduledEndTime   DateTime?
+  estimatedHours  Float?
+  
+  // Confirmation
+  confirmedAt     DateTime?
+  confirmedBy     String?      // Member ID who confirmed
+  declinedAt      DateTime?
+  declinedReason  String?
+  
+  // Completion
+  completedAt     DateTime?
+  actualHours     Float?
+  feedback        String?      // Volunteer feedback
+  rating          Int?         // 1-5 star rating
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  @@unique([volunteerId, opportunityId, scheduledDate])
+  @@map("volunteer_signups")
+}
+
+model VolunteerHour {
+  id              String   @id @default(cuid())
+  
+  volunteerId     String
+  volunteer       Volunteer @relation(fields: [volunteerId], references: [id], onDelete: Cascade)
+  opportunityId   String?
+  opportunity     VolunteerOpportunity? @relation(fields: [opportunityId], references: [id])
+  
+  // Time Tracking
+  date            DateTime
+  startTime       DateTime?
+  endTime         DateTime?
+  hoursWorked     Float
+  description     String
+  
+  // Categories
+  category        String   // Type of volunteer work
+  ministry        String?  // Ministry area
+  
+  // Verification
+  isVerified      Boolean  @default(false)
+  verifiedBy      String?  // Member ID who verified
+  verifiedAt      DateTime?
+  verificationNotes String?
+  
+  // Additional Info
+  location        String?
+  notes           String?
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  @@map("volunteer_hours")
+}
+
+model VolunteerTraining {
+  id              String   @id @default(cuid())
+  
+  // Training Information
+  name            String
+  description     String?
+  category        String   // Training category
+  isRequired      Boolean  @default(false)
+  validityPeriod  Int?     // Months until expiration
+  
+  // Content
+  materials       Json?    // Training materials/links
+  requirements    String?  // Prerequisites
+  estimatedDuration Int?   // Minutes
+  
+  // Status
+  isActive        Boolean  @default(true)
+  
+  // Relationships
+  completions     VolunteerTrainingCompletion[]
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  @@map("volunteer_trainings")
+}
+
+model VolunteerTrainingCompletion {
+  id              String   @id @default(cuid())
+  
+  volunteerId     String
+  volunteer       Volunteer @relation(fields: [volunteerId], references: [id], onDelete: Cascade)
+  trainingId      String
+  training        VolunteerTraining @relation(fields: [trainingId], references: [id], onDelete: Cascade)
+  
+  // Completion Details
+  completedAt     DateTime
+  expiresAt       DateTime?
+  score           Float?   // If applicable
+  notes           String?
+  
+  // Verification
+  verifiedBy      String?  // Member ID who verified
+  certificateUrl  String?  // Link to certificate
+  
+  createdAt       DateTime @default(now())
+  
+  @@unique([volunteerId, trainingId])
+  @@map("volunteer_training_completions")
+}
+
+// ENUMS FOR VOLUNTEER SYSTEM
+
+enum BackgroundCheckStatus {
+  NOT_REQUIRED
+  REQUIRED
+  PENDING
+  IN_PROGRESS
+  APPROVED
+  EXPIRED
+  REJECTED
+}
+
+enum VolunteerPriority {
+  LOW
+  NORMAL
+  HIGH
+  URGENT
+}
+
+enum OpportunityStatus {
+  DRAFT
+  OPEN
+  FILLED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+  ON_HOLD
+}
+
+enum SignupStatus {
+  PENDING
+  CONFIRMED
+  DECLINED
+  WAITLISTED
+  COMPLETED
+  NO_SHOW
+  CANCELLED
 }
 

@@ -81,7 +81,16 @@ app.get('/api/members', async (req, res) => {
           firstName: true,
           lastName: true,
           email: true,
-          isActive: true
+          isActive: true,
+          deaconId: true,
+          assignedDeacon: {
+            select: {
+              id: true,
+              firstName: true,
+              lastName: true,
+              email: true
+            }
+          }
         }
       });
       
@@ -262,6 +271,32 @@ app.get('/api/auth/me', async (req, res) => {
     res.status(401).json({ message: 'Invalid token' });
   }
 });
+
+// Volunteer Management Routes
+if (dbConnected) {
+  try {
+    const volunteerRoutes = require('./routes/volunteers');
+    const volunteerOpportunityRoutes = require('./routes/volunteer-opportunities');
+    
+    app.use('/api/volunteers', volunteerRoutes);
+    app.use('/api/volunteer-opportunities', volunteerOpportunityRoutes);
+    
+    console.log('✅ Volunteer routes loaded successfully');
+  } catch (error) {
+    console.log('⚠️ Volunteer routes not available:', error.message);
+  }
+}
+
+// Deacon Management Routes
+if (dbConnected) {
+  try {
+    const deaconRoutes = require('./routes/deacons');
+    app.use('/api/deacons', deaconRoutes);
+    console.log('✅ Deacon routes loaded successfully');
+  } catch (error) {
+    console.log('⚠️ Deacon routes not available:', error.message);
+  }
+}
 
 // Basic info endpoint
 app.get('/api/info', (req, res) => {

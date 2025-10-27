@@ -31,6 +31,15 @@ interface MemberProfile {
     transferDate?: string;
     previousChurch?: string;
   };
+  // Assigned Deacon for Pastoral Care
+  assignedDeacon?: {
+    id: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+    phone?: string;
+    specialties?: string[];
+  };
   // Demographics
   demographics: {
     dateOfBirth?: string;
@@ -525,6 +534,51 @@ function MembershipTab({ profile, editing, onUpdate }: any) {
           <p className="text-gray-900 capitalize">
             {profile.membershipInfo?.membershipType || 'Regular'}
           </p>
+        </div>
+
+        {/* Assigned Deacon */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            <Heart className="w-4 h-4 inline mr-1" />
+            Assigned Deacon
+          </label>
+          {profile.assignedDeacon ? (
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+              <div className="flex items-start justify-between">
+                <div>
+                  <p className="font-medium text-blue-900">
+                    {profile.assignedDeacon.firstName} {profile.assignedDeacon.lastName}
+                  </p>
+                  <div className="text-sm text-blue-700 space-y-1 mt-1">
+                    <div className="flex items-center">
+                      <Mail className="w-3 h-3 mr-1" />
+                      <a href={`mailto:${profile.assignedDeacon.email}`} className="hover:underline">
+                        {profile.assignedDeacon.email}
+                      </a>
+                    </div>
+                    {profile.assignedDeacon.phone && (
+                      <div className="flex items-center">
+                        <Phone className="w-3 h-3 mr-1" />
+                        <a href={`tel:${profile.assignedDeacon.phone}`} className="hover:underline">
+                          {profile.assignedDeacon.phone}
+                        </a>
+                      </div>
+                    )}
+                    {profile.assignedDeacon.specialties && profile.assignedDeacon.specialties.length > 0 && (
+                      <div className="flex items-start mt-2">
+                        <Star className="w-3 h-3 mr-1 mt-0.5 flex-shrink-0" />
+                        <span className="text-xs">
+                          Specialties: {profile.assignedDeacon.specialties.join(', ')}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <p className="text-gray-500 italic">No deacon assigned</p>
+          )}
         </div>
       </div>
     </div>

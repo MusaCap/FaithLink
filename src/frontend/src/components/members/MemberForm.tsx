@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { Member, MemberFormData, MemberCreateRequest, MemberUpdateRequest } from '../../types/member';
 import { memberService } from '../../services/memberService';
+import { deaconService } from '../../services/deaconService';
 
 interface MemberFormProps {
   member?: Member;
@@ -44,6 +45,7 @@ export default function MemberForm({ member, onSave, onCancel }: MemberFormProps
     joinDate: new Date(),
     tags: [],
     notes: '',
+    deaconId: '', // Assigned deacon for pastoral care
     emergencyContact: {
       name: '',
       relationship: '',
@@ -70,6 +72,8 @@ export default function MemberForm({ member, onSave, onCancel }: MemberFormProps
   const [newTag, setNewTag] = useState('');
   const [profilePhotoFile, setProfilePhotoFile] = useState<File | null>(null);
   const [profilePhotoPreview, setProfilePhotoPreview] = useState<string>('');
+  const [deacons, setDeacons] = useState<{ id: string; name: string; email: string; memberCount: number }[]>([]);
+  const [loadingDeacons, setLoadingDeacons] = useState(false);
 
   // Initialize form with existing member data
   useEffect(() => {
@@ -78,6 +82,24 @@ export default function MemberForm({ member, onSave, onCancel }: MemberFormProps
       setProfilePhotoPreview(member.profilePhoto || '');
     }
   }, [member]);
+
+  // Load deacons for dropdown
+  useEffect(() => {
+    const loadDeacons = async () => {
+      try {
+        setLoadingDeacons(true);
+        const deaconList = await deaconService.getDeaconsForDropdown();
+        setDeacons(deaconList);
+      } catch (error) {
+        console.error('Error loading deacons:', error);
+        // Don't show error for deacons, just continue without them
+      } finally {
+        setLoadingDeacons(false);
+      }
+    };
+
+    loadDeacons();
+  }, []);
 
   const handleInputChange = (field: string, value: any) => {
     setFormData(prev => {
@@ -165,6 +187,7 @@ export default function MemberForm({ member, onSave, onCancel }: MemberFormProps
           membershipStatus: formData.membershipStatus,
           tags: formData.tags,
           notes: formData.notes,
+          deaconId: formData.deaconId,
           emergencyContact: formData.emergencyContact,
           preferences: formData.preferences
         };
@@ -388,6 +411,33 @@ export default function MemberForm({ member, onSave, onCancel }: MemberFormProps
                 <option value="inactive">Inactive</option>
                 <option value="visitor">Visitor</option>
               </select>
+            </div>
+
+            {/* Assigned Deacon */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Assigned Deacon
+                <span className="text-sm text-gray-500 font-normal ml-1">(Optional)</span>
+              </label>
+              <select
+                value={formData.deaconId || ''}
+                onChange={(e) => handleInputChange('deaconId', e.target.value || undefined)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                disabled={loadingDeacons}
+              >
+                <option value="">No deacon assigned</option>
+                {deacons.map((deacon) => (
+                  <option key={deacon.id} value={deacon.id}>
+                    {deacon.name} ({deacon.memberCount} members)
+                  </option>
+                ))}
+              </select>
+              {loadingDeacons && (
+                <p className="text-sm text-gray-500 mt-1">Loading deacons...</p>
+              )}
+              <p className="text-sm text-gray-500 mt-1">
+                Assign a deacon for pastoral care and member support
+              </p>
             </div>
           </div>
 
