@@ -78,7 +78,48 @@ export default function MemberForm({ member, onSave, onCancel }: MemberFormProps
   // Initialize form with existing member data
   useEffect(() => {
     if (member) {
-      setFormData(member);
+      setFormData({
+        firstName: member.firstName || '',
+        lastName: member.lastName || '',
+        email: member.email || '',
+        memberNumber: member.memberNumber || '',
+        phone: member.phone || '',
+        dateOfBirth: member.dateOfBirth || undefined,
+        address: {
+          street: member.address?.street || '',
+          city: member.address?.city || '',
+          state: member.address?.state || '',
+          zipCode: member.address?.zipCode || '',
+          country: member.address?.country || 'United States'
+        },
+        profilePhoto: member.profilePhoto || '',
+        membershipStatus: member.membershipStatus || 'pending',
+        joinDate: member.joinDate || new Date(),
+        tags: member.tags || [],
+        notes: member.notes || '',
+        deaconId: member.deaconId || '',
+        emergencyContact: {
+          name: member.emergencyContact?.name || '',
+          relationship: member.emergencyContact?.relationship || '',
+          phone: member.emergencyContact?.phone || '',
+          email: member.emergencyContact?.email || ''
+        },
+        spiritualJourney: {
+          baptismDate: member.spiritualJourney?.baptismDate || undefined,
+          salvationDate: member.spiritualJourney?.salvationDate || undefined,
+          currentStage: member.spiritualJourney?.currentStage || '',
+          notes: member.spiritualJourney?.notes || ''
+        },
+        groupMemberships: member.groupMemberships || [],
+        attendance: member.attendance || [],
+        careHistory: member.careHistory || [],
+        preferences: {
+          communicationMethod: member.preferences?.communicationMethod || 'email',
+          newsletter: member.preferences?.newsletter ?? true,
+          eventNotifications: member.preferences?.eventNotifications ?? true,
+          privacyLevel: member.preferences?.privacyLevel || 'members'
+        }
+      });
       setProfilePhotoPreview(member.profilePhoto || '');
     }
   }, [member]);
@@ -447,7 +488,7 @@ export default function MemberForm({ member, onSave, onCancel }: MemberFormProps
               Tags
             </label>
             <div className="flex flex-wrap gap-2 mb-3">
-              {formData.tags.map((tag, index) => (
+              {formData.tags && formData.tags.length > 0 ? formData.tags.map((tag, index) => (
                 <span
                   key={index}
                   className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-blue-100 text-blue-800"
@@ -461,7 +502,9 @@ export default function MemberForm({ member, onSave, onCancel }: MemberFormProps
                     <X size={14} />
                   </button>
                 </span>
-              ))}
+              )) : (
+                <p className="text-gray-500 text-sm">No tags added</p>
+              )}
             </div>
             <div className="flex space-x-2">
               <input

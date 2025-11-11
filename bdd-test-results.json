@@ -1,0 +1,100 @@
+{
+  "timestamp": "2025-11-10T22:18:38.698Z",
+  "duration": 689,
+  "summary": {
+    "total": 22,
+    "passed": 22,
+    "failed": 0,
+    "passRate": 100
+  },
+  "results": [
+    {
+      "test": "should successfully authenticate with valid admin credentials",
+      "status": "passed"
+    },
+    {
+      "test": "should reject invalid authentication attempts",
+      "status": "passed"
+    },
+    {
+      "test": "should handle logout successfully",
+      "status": "passed"
+    },
+    {
+      "test": "should return members list with proper structure",
+      "status": "passed"
+    },
+    {
+      "test": "should return member statistics",
+      "status": "passed"
+    },
+    {
+      "test": "should return individual member details",
+      "status": "passed"
+    },
+    {
+      "test": "should return deacons for dropdown selection",
+      "status": "passed"
+    },
+    {
+      "test": "should return individual deacon details",
+      "status": "passed"
+    },
+    {
+      "test": "should return journey templates with milestones",
+      "status": "passed"
+    },
+    {
+      "test": "should return member journeys without errors",
+      "status": "passed"
+    },
+    {
+      "test": "should return events list",
+      "status": "passed"
+    },
+    {
+      "test": "should return event registrations",
+      "status": "passed"
+    },
+    {
+      "test": "should return dashboard statistics",
+      "status": "passed"
+    },
+    {
+      "test": "should return healthy system status",
+      "status": "passed"
+    },
+    {
+      "test": "should return system information",
+      "status": "passed"
+    },
+    {
+      "test": "should return Groups data successfully",
+      "status": "passed"
+    },
+    {
+      "test": "should return Prayer Requests data successfully",
+      "status": "passed"
+    },
+    {
+      "test": "should return Communications data successfully",
+      "status": "passed"
+    },
+    {
+      "test": "should return Tasks data successfully",
+      "status": "passed"
+    },
+    {
+      "test": "should return Reports data successfully",
+      "status": "passed"
+    },
+    {
+      "test": "should return Settings data successfully",
+      "status": "passed"
+    },
+    {
+      "test": "should return Activity Feed data successfully",
+      "status": "passed"
+    }
+  ]
+}

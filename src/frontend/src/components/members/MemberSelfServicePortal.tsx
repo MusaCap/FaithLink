@@ -392,7 +392,7 @@ ${profile?.prayerRequests?.map(p => `- ${p.title} (${p.status}) - ${p.date}`).jo
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Groups</label>
-                <p className="text-gray-900">{profile.groups.join(', ') || 'None'}</p>
+                <p className="text-gray-900">{profile.groups && profile.groups.length > 0 ? profile.groups.join(', ') : 'None'}</p>
               </div>
             </div>
           </div>
@@ -408,7 +408,7 @@ ${profile?.prayerRequests?.map(p => `- ${p.title} (${p.status}) - ${p.date}`).jo
               My Prayer Requests
             </h3>
             <div className="space-y-3">
-              {profile.prayerRequests.map((request) => (
+              {profile.prayerRequests && profile.prayerRequests.length > 0 ? profile.prayerRequests.map((request) => (
                 <div key={request.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                   <div>
                     <h4 className="font-medium text-gray-900">{request.title}</h4>
@@ -422,7 +422,9 @@ ${profile?.prayerRequests?.map(p => `- ${p.title} (${p.status}) - ${p.date}`).jo
                     {request.status}
                   </span>
                 </div>
-              ))}
+              )) : (
+                <p className="text-gray-500 italic">No prayer requests found</p>
+              )}
             </div>
           </div>
 
@@ -433,7 +435,7 @@ ${profile?.prayerRequests?.map(p => `- ${p.title} (${p.status}) - ${p.date}`).jo
               Upcoming Events
             </h3>
             <div className="space-y-3">
-              {profile.upcomingEvents.map((event) => (
+              {profile.upcomingEvents && profile.upcomingEvents.length > 0 ? profile.upcomingEvents.map((event) => (
                 <div key={event.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                   <div>
                     <h4 className="font-medium text-gray-900">{event.title}</h4>
@@ -454,7 +456,9 @@ ${profile?.prayerRequests?.map(p => `- ${p.title} (${p.status}) - ${p.date}`).jo
                     {event.registered ? 'Registered' : 'Not Registered'}
                   </span>
                 </div>
-              ))}
+              )) : (
+                <p className="text-gray-500 italic">No upcoming events found</p>
+              )}
             </div>
           </div>
         </div>
@@ -467,7 +471,7 @@ ${profile?.prayerRequests?.map(p => `- ${p.title} (${p.status}) - ${p.date}`).jo
             My Spiritual Journeys
           </h3>
           <div className="space-y-4">
-            {profile.journeys.map((journey) => (
+            {profile.journeys && profile.journeys.length > 0 ? profile.journeys.map((journey) => (
               <div key={journey.id} className="p-4 border border-gray-200 rounded-lg">
                 <div className="flex items-center justify-between mb-2">
                   <h4 className="font-medium text-gray-900">{journey.title}</h4>
@@ -487,7 +491,9 @@ ${profile?.prayerRequests?.map(p => `- ${p.title} (${p.status}) - ${p.date}`).jo
                 </div>
                 <p className="text-sm text-gray-500 mt-1">{journey.progress}% complete</p>
               </div>
-            ))}
+            )) : (
+              <p className="text-gray-500 text-center py-8">No spiritual journeys found</p>
+            )}
           </div>
         </div>
       )}

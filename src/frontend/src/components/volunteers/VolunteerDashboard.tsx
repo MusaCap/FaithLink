@@ -168,8 +168,8 @@ export default function VolunteerDashboard() {
             setUpcomingCommitments(commitments);
             setStats(prev => ({
               ...prev,
-              totalOpportunities: oppData.opportunities.length,
-              monthlyOpportunities: commitments.length
+              totalOpportunities: oppData.opportunities?.length || 0,
+              monthlyOpportunities: commitments?.length || 0
             }));
           }
 
@@ -374,9 +374,9 @@ export default function VolunteerDashboard() {
                       {skill}
                     </Badge>
                   ))}
-                  {volunteerProfile.skills.length > 3 && (
+                  {volunteerProfile.skills && volunteerProfile.skills.length > 3 && (
                     <Badge variant="outline" className="text-xs">
-                      +{volunteerProfile.skills.length - 3}
+                      +{(volunteerProfile.skills?.length || 0) - 3}
                     </Badge>
                   )}
                 </div>
@@ -394,11 +394,11 @@ export default function VolunteerDashboard() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Calendar className="h-5 w-5" />
-              My Upcoming Commitments ({upcomingCommitments.length})
+              My Upcoming Commitments ({upcomingCommitments?.length || 0})
             </CardTitle>
           </CardHeader>
           <CardContent>
-            {upcomingCommitments.length === 0 ? (
+            {(!upcomingCommitments || upcomingCommitments.length === 0) ? (
               <div className="text-center py-8 text-gray-500">
                 <Calendar className="h-12 w-12 mx-auto mb-4 text-gray-300" />
                 <p>No upcoming commitments</p>
@@ -435,9 +435,9 @@ export default function VolunteerDashboard() {
                     </div>
                   </div>
                 ))}
-                {upcomingCommitments.length > 3 && (
+                {upcomingCommitments && upcomingCommitments.length > 3 && (
                   <Button variant="outline" className="w-full mt-4">
-                    View All Commitments ({upcomingCommitments.length})
+                    View All Commitments ({upcomingCommitments?.length || 0})
                   </Button>
                 )}
               </div>
@@ -457,7 +457,7 @@ export default function VolunteerDashboard() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            {availableOpportunities.length === 0 ? (
+            {(!availableOpportunities || availableOpportunities.length === 0) ? (
               <div className="text-center py-8 text-gray-500">
                 <Target className="h-12 w-12 mx-auto mb-4 text-gray-300" />
                 <p>No matching opportunities found</p>

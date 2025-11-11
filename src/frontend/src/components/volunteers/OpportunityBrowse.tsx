@@ -216,7 +216,7 @@ export default function OpportunityBrowse({
     return volunteerService.matchVolunteerToOpportunity(volunteer, opportunity);
   };
 
-  if (loading && opportunities.length === 0) {
+  if (loading && (!opportunities || opportunities.length === 0)) {
     return (
       <div className="flex items-center justify-center min-h-64">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
@@ -235,7 +235,7 @@ export default function OpportunityBrowse({
             Volunteer Opportunities
           </h2>
           <p className="text-gray-600 mt-1">
-            Showing {opportunities.length} of {total} opportunities
+            Showing {opportunities?.length || 0} of {total} opportunities
             {showMatchScore && ' • Showing match scores based on your profile'}
           </p>
         </div>
@@ -503,7 +503,7 @@ export default function OpportunityBrowse({
           );
         })}
 
-        {opportunities.length === 0 && !loading && (
+        {(!opportunities || opportunities.length === 0) && !loading && (
           <Card>
             <CardContent className="pt-6">
               <div className="text-center py-8 text-gray-500">

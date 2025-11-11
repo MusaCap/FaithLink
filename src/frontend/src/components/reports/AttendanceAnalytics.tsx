@@ -156,7 +156,7 @@ const AttendanceAnalytics: React.FC<AttendanceAnalyticsProps> = ({ dateRange }) 
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600">Total Services</p>
-              <p className="text-2xl font-bold text-gray-900">{filteredData.length}</p>
+              <p className="text-2xl font-bold text-gray-900">{filteredData?.length || 0}</p>
             </div>
             <Users className="w-8 h-8 text-green-500" />
           </div>

@@ -1,1 +1,12 @@
-{}
+{
+  "/members/[id]/edit/page": "app/members/[id]/edit/page.js",
+  "/members/new/page": "app/members/new/page.js",
+  "/journeys/[id]/page": "app/journeys/[id]/page.js",
+  "/journeys/page": "app/journeys/page.js",
+  "/admin/members/page": "app/admin/members/page.js",
+  "/journey-templates/page": "app/journey-templates/page.js",
+  "/journey-templates/new/page": "app/journey-templates/new/page.js",
+  "/reports/page": "app/reports/page.js",
+  "/communications/page": "app/communications/page.js",
+  "/events/page": "app/events/page.js"
+}

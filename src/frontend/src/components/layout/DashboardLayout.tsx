@@ -45,6 +45,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
     if (user?.role === 'admin' || user?.role === 'pastor') {
       return [
         ...baseItems,
+        { name: 'Admin Members', href: '/admin/members', icon: Settings },
         { name: 'Groups', href: '/groups', icon: UserPlus },
         { name: 'Journey Templates', href: '/journey-templates', icon: BookOpen },
         { name: 'Member Journeys', href: '/journeys', icon: Target },
