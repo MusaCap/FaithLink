@@ -39,21 +39,6 @@ export default function DemoPage() {
           </p>
         </div>
 
-        <div className="bg-white border-2 border-primary-200 rounded-xl p-8 mb-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4 text-center">Demo Login Credentials</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-2xl mx-auto">
-            <div className="bg-primary-50 p-4 rounded-lg">
-              <h3 className="font-semibold text-primary-900 mb-2">Admin Access</h3>
-              <p className="text-sm text-primary-700 mb-1">Email: admin@faithlink360.com</p>
-              <p className="text-sm text-primary-700">Password: admin123</p>
-            </div>
-            <div className="bg-blue-50 p-4 rounded-lg">
-              <h3 className="font-semibold text-blue-900 mb-2">Pastor Access</h3>
-              <p className="text-sm text-blue-700 mb-1">Email: pastor@faithlink360.com</p>
-              <p className="text-sm text-blue-700">Password: admin123</p>
-            </div>
-          </div>
-        </div>
 
         <div className="text-center">
           <Link

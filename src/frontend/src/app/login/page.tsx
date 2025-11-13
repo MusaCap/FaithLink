@@ -142,16 +142,6 @@ export default function LoginPage() {
             </p>
           </div>
         </form>
-
-        {/* Demo Account */}
-        <div className="mt-6 p-4 bg-neutral-50 rounded-md">
-          <h3 className="text-sm font-medium text-neutral-900 mb-2">Demo Accounts</h3>
-          <div className="space-y-2 text-xs text-neutral-600">
-            <p><strong>Admin:</strong> admin@demo.faithlink360.com / password</p>
-            <p><strong>Pastor:</strong> pastor@demo.faithlink360.com / password</p>
-            <p><strong>Member:</strong> member@demo.faithlink360.com / password</p>
-          </div>
-        </div>
       </div>
     </div>
   );
