@@ -1,0 +1,154 @@
+{
+  "totalExpected": 21,
+  "working": 20,
+  "missing": 1,
+  "successRate": 95.2,
+  "missingEndpoints": [
+    "/api/"
+  ],
+  "workingEndpoints": [
+    {
+      "method": "DELETE",
+      "endpoint": "/api/a",
+      "status": 404,
+      "url": "/api/a"
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/auth/forgot-password",
+      "status": 404,
+      "url": "/api/auth/forgot-password"
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/bug-report",
+      "status": 404,
+      "url": "/api/bug-report"
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/error-report",
+      "status": 404,
+      "url": "/api/error-report"
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/events",
+      "status": 200,
+      "url": "/api/events"
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/events/:id/check-in/:id",
+      "status": 404,
+      "url": "/api/events/1/check-in/1"
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/events/:id/check-in/:id/no-show",
+      "status": 404,
+      "url": "/api/events/1/check-in/1/no-show"
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/events/:id/register",
+      "status": 404,
+      "url": "/api/events/1/register"
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/events/:id/rsvps/:id",
+      "status": 200,
+      "url": "/api/events/1/rsvps/1"
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/journeys/member-journeys",
+      "status": 200,
+      "url": "/api/journeys/member-journeys"
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/members/:id",
+      "status": 200,
+      "url": "/api/members/1"
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/members/bulk-upload",
+      "status": 200,
+      "url": "/api/members/bulk-upload"
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/members/onboarding-complete",
+      "status": 200,
+      "url": "/api/members/onboarding-complete"
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/members/self-service/notifications",
+      "status": 200,
+      "url": "/api/members/self-service/notifications"
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/members/self-service/profile",
+      "status": 200,
+      "url": "/api/members/self-service/profile"
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/settings/church",
+      "status": 200,
+      "url": "/api/settings/church"
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/settings/system",
+      "status": 200,
+      "url": "/api/settings/system"
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/settings/users",
+      "status": 200,
+      "url": "/api/settings/users"
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/settings/users/:id",
+      "status": 404,
+      "url": "/api/settings/users/1"
+    },
+    {
+      "method": "GET",
+      "endpoint": "/api/volunteers/signup",
+      "status": 404,
+      "url": "/api/volunteers/signup"
+    }
+  ],
+  "allExpectedEndpoints": [
+    "/api/a",
+    "/api/",
+    "/api/events",
+    "/api/events/:id/register",
+    "/api/auth/forgot-password",
+    "/api/journeys/member-journeys",
+    "/api/settings/church",
+    "/api/bug-report",
+    "/api/events/:id/check-in/:id",
+    "/api/events/:id/check-in/:id/no-show",
+    "/api/events/:id/rsvps/:id",
+    "/api/members/bulk-upload",
+    "/api/members/:id",
+    "/api/members/self-service/notifications",
+    "/api/members/self-service/profile",
+    "/api/volunteers/signup",
+    "/api/members/onboarding-complete",
+    "/api/settings/system",
+    "/api/settings/users",
+    "/api/settings/users/:id",
+    "/api/error-report"
+  ]
+}

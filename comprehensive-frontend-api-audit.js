@@ -9,7 +9,7 @@ const fs = require('fs');
 const path = require('path');
 const axios = require('axios');
 
-const BASE_URL = 'http://localhost:8000';
+const BASE_URL = 'https://faithlink-ntgg.onrender.com';
 const FRONTEND_DIR = './src/frontend/src';
 
 class ComprehensiveFrontendApiAudit {

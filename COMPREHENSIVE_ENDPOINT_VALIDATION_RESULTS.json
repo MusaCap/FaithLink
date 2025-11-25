@@ -1,0 +1,573 @@
+{
+  "working": [
+    {
+      "method": "POST",
+      "path": "/api/auth/forgot-password",
+      "status": 200,
+      "success": true,
+      "data": {
+        "success": true,
+        "message": "Password reset link sent to your email (demo mode)",
+        "resetToken": "demo-reset-token-1763338545148",
+        "source": "demo"
+      },
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/api/auth/register",
+      "status": 200,
+      "success": true,
+      "data": {
+        "success": true,
+        "user": {
+          "id": "user-1763338545337",
+          "firstName": "Test",
+          "lastName": "User",
+          "email": "test@example.com",
+          "role": "member",
+          "isActive": true,
+          "churchId": "church-1",
+          "churchName": "First Community Church",
+          "joinCode": "DEMO2024",
+          "createdAt": "2025-11-17T00:15:45.337Z"
+        },
+        "token": "demo-jwt-token-1763338545337",
+        "message": "Registration successful (demo mode)",
+        "source": "demo"
+      },
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/api/auth/login",
+      "status": 200,
+      "success": true,
+      "data": {
+        "success": true,
+        "user": {
+          "id": "1",
+          "firstName": "David",
+          "lastName": "Johnson",
+          "email": "pastor@faithlink360.org",
+          "role": "pastor",
+          "churchId": "church-1",
+          "churchName": "First Community Church"
+        },
+        "token": "demo-jwt-token-1763338545564",
+        "message": "Login successful (demo mode)",
+        "source": "demo"
+      },
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/api/auth/me",
+      "status": 200,
+      "success": true,
+      "data": {
+        "success": true,
+        "user": {
+          "id": "1",
+          "firstName": "David",
+          "lastName": "Johnson",
+          "email": "pastor@faithlink360.org",
+          "role": "pastor",
+          "churchId": "church-1",
+          "churchName": "First Community Church"
+        },
+        "source": "demo"
+      },
+      "requiresAuth": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/auth/logout",
+      "status": 200,
+      "success": true,
+      "data": {
+        "success": true,
+        "message": "Logout successful"
+      },
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/api/churches",
+      "status": 200,
+      "success": true,
+      "data": {
+        "success": true,
+        "churches": [
+          {
+            "id": "church-1",
+            "name": "First Community Church",
+            "description": "A welcoming community church serving Springfield and surrounding areas. We believe in building authentic relationships and growing together in faith.",
+            "location": "Springfield, IL",
+            "denomination": "Non-denominational",
+            "size": "Medium (100-500)",
+            "founded": "1985",
+            "website": "https://firstcommunity.church",
+            "memberCount": 3,
+            "joinCode": "DEMO2024"
+          }
+        ],
+        "source": "demo"
+      },
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/api/churches",
+      "status": 200,
+      "success": true,
+      "data": {
+        "success": true,
+        "church": {
+          "id": "church-1763338546319",
+          "name": "Test Community Church",
+          "description": "A test church community",
+          "location": "Test City, TX",
+          "denomination": "Non-denominational",
+          "size": "Small (1-100)",
+          "website": "",
+          "founded": "2025",
+          "memberCount": 1,
+          "joinCode": "CHURCH546319",
+          "isPublic": true,
+          "createdAt": "2025-11-17T00:15:46.319Z"
+        },
+        "message": "Church created successfully (simulated)",
+        "source": "demo"
+      },
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/api/events/1/register",
+      "status": 200,
+      "success": true,
+      "data": {
+        "success": true,
+        "registration": {
+          "id": "reg-1763338546497",
+          "eventId": "1",
+          "memberId": "1",
+          "notes": "Looking forward to this event",
+          "numberOfGuests": 2,
+          "status": "registered",
+          "registeredAt": "2025-11-17T00:15:46.497Z",
+          "member": {
+            "firstName": "John",
+            "lastName": "Doe",
+            "email": "john.doe@example.com"
+          }
+        },
+        "message": "Successfully registered for event",
+        "source": "demo"
+      },
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/api/events/1/check-in/1",
+      "status": 200,
+      "success": true,
+      "data": {
+        "success": true,
+        "checkIn": {
+          "id": "checkin-1763338546682",
+          "eventId": "1",
+          "memberId": "1",
+          "checkedInAt": "2025-11-17T00:15:46.682Z",
+          "notes": "Checked in successfully",
+          "checkedInBy": "admin",
+          "member": {
+            "firstName": "John",
+            "lastName": "Doe",
+            "memberNumber": "10001"
+          }
+        },
+        "message": "Member successfully checked in",
+        "source": "demo"
+      },
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/api/events/1/check-in/1/no-show",
+      "status": 200,
+      "success": true,
+      "data": {
+        "success": true,
+        "noShow": {
+          "id": "noshow-1763338546873",
+          "eventId": "1",
+          "memberId": "1",
+          "reason": "Family emergency",
+          "markedAt": "2025-11-17T00:15:46.873Z",
+          "markedBy": "admin",
+          "member": {
+            "firstName": "John",
+            "lastName": "Doe",
+            "memberNumber": "10001"
+          }
+        },
+        "message": "Member marked as no-show",
+        "source": "demo"
+      },
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/api/events/1/rsvps/1",
+      "status": 200,
+      "success": true,
+      "data": {
+        "success": true,
+        "rsvp": {
+          "id": "rsvp-1-1",
+          "eventId": "1",
+          "memberId": "1",
+          "response": "yes",
+          "numberOfGuests": 2,
+          "dietaryRestrictions": "",
+          "specialRequests": "",
+          "respondedAt": "2025-11-17T00:15:47.057Z",
+          "member": {
+            "id": "1",
+            "firstName": "John",
+            "lastName": "Doe",
+            "email": "john.doe@example.com"
+          },
+          "event": {
+            "id": "1",
+            "title": "Sunday Service",
+            "date": "2025-11-17T10:00:00.000Z"
+          }
+        },
+        "source": "demo"
+      },
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/api/members/bulk-upload",
+      "status": 200,
+      "success": true,
+      "data": {
+        "success": true,
+        "results": {
+          "successful": 2,
+          "failed": 0,
+          "total": 2,
+          "createdMembers": [
+            {
+              "id": "bulk-1763338547241-0",
+              "firstName": "John",
+              "lastName": "Smith",
+              "email": "john.smith@example.com",
+              "phone": "555-0123",
+              "memberNumber": "10000",
+              "isActive": true,
+              "createdAt": "2025-11-17T00:15:47.241Z"
+            },
+            {
+              "id": "bulk-1763338547241-1",
+              "firstName": "Jane",
+              "lastName": "Doe",
+              "email": "jane.doe@example.com",
+              "phone": "555-0124",
+              "memberNumber": "10001",
+              "isActive": true,
+              "createdAt": "2025-11-17T00:15:47.241Z"
+            }
+          ],
+          "errors": []
+        },
+        "message": "Bulk upload completed: 2 successful, 0 failed",
+        "source": "demo"
+      },
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/api/members/onboarding-complete",
+      "status": 200,
+      "success": true,
+      "data": {
+        "success": true,
+        "onboarding": {
+          "id": "onboarding-1763338547438",
+          "memberId": "1",
+          "completedSteps": [
+            "profile_setup",
+            "church_tour"
+          ],
+          "completedAt": "2025-11-17T00:15:47.438Z",
+          "feedback": "Great onboarding experience!",
+          "progress": 100
+        },
+        "message": "Onboarding completed successfully",
+        "source": "demo"
+      },
+      "requiresAuth": false
+    },
+    {
+      "method": "PUT",
+      "path": "/api/members/self-service/profile",
+      "status": 200,
+      "success": true,
+      "data": {
+        "success": true,
+        "member": {
+          "id": "1",
+          "phone": "555-123-4567",
+          "address": "123 Main St, Springfield, IL 62701",
+          "emergencyContact": {
+            "name": "Jane Smith",
+            "relationship": "Spouse",
+            "phone": "555-987-6543"
+          },
+          "preferences": {
+            "emailNotifications": true,
+            "smsNotifications": false,
+            "newsletter": true,
+            "eventReminders": true
+          },
+          "updatedAt": "2025-11-17T00:15:47.638Z"
+        },
+        "message": "Profile updated successfully",
+        "source": "demo"
+      },
+      "requiresAuth": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/members/self-service/notifications",
+      "status": 200,
+      "success": true,
+      "data": {
+        "success": true,
+        "notifications": [
+          {
+            "id": "1",
+            "type": "deacon_assignment",
+            "title": "Deacon Assigned",
+            "message": "John Wesley has been assigned as your deacon for pastoral care.",
+            "date": "2025-11-17T00:15:47.816Z",
+            "read": false
+          }
+        ]
+      },
+      "requiresAuth": true
+    },
+    {
+      "method": "GET",
+      "path": "/api/settings/church",
+      "status": 200,
+      "success": true,
+      "data": {
+        "success": true,
+        "settings": {
+          "name": "Faith Community Church",
+          "churchName": "Faith Community Church",
+          "address": {
+            "street": "123 Church Street",
+            "city": "Faithville",
+            "state": "CA",
+            "zipCode": "90210"
+          }
+        }
+      },
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/api/settings/system",
+      "status": 200,
+      "success": true,
+      "data": {
+        "success": true,
+        "settings": {
+          "general": {
+            "churchName": "First Community Church",
+            "timezone": "America/Chicago",
+            "dateFormat": "MM/DD/YYYY",
+            "timeFormat": "12h",
+            "language": "en-US"
+          },
+          "features": {
+            "memberRegistration": true,
+            "eventRegistration": true,
+            "groupManagement": true,
+            "attendanceTracking": true,
+            "communicationTools": true,
+            "reportingAnalytics": true
+          },
+          "notifications": {
+            "emailEnabled": true,
+            "smsEnabled": false,
+            "pushNotifications": true,
+            "weeklyDigest": true
+          },
+          "security": {
+            "requireStrongPasswords": true,
+            "twoFactorAuth": false,
+            "sessionTimeout": 30,
+            "maxLoginAttempts": 5
+          },
+          "backup": {
+            "autoBackup": true,
+            "backupFrequency": "daily",
+            "retentionPeriod": 30,
+            "lastBackup": "2025-11-17T00:15:48.264Z"
+          }
+        },
+        "source": "demo"
+      },
+      "requiresAuth": false
+    },
+    {
+      "method": "GET",
+      "path": "/api/settings/users",
+      "status": 200,
+      "success": true,
+      "data": {
+        "success": true,
+        "users": [
+          {
+            "id": "1",
+            "email": "admin@faithlink360.org",
+            "role": "admin",
+            "firstName": "Admin",
+            "lastName": "User",
+            "isActive": true
+          }
+        ],
+        "count": 1
+      },
+      "requiresAuth": true
+    },
+    {
+      "method": "PUT",
+      "path": "/api/settings/users/1",
+      "status": 200,
+      "success": true,
+      "data": {
+        "success": true,
+        "user": {
+          "id": "1",
+          "role": "leader",
+          "permissions": [
+            "read_members",
+            "read_events",
+            "manage_groups"
+          ],
+          "isActive": true,
+          "notes": "Promoted to leader role",
+          "firstName": "John",
+          "lastName": "Doe",
+          "email": "john.doe@example.com",
+          "updatedAt": "2025-11-17T00:15:48.608Z",
+          "updatedBy": "admin"
+        },
+        "message": "User settings updated successfully",
+        "source": "demo"
+      },
+      "requiresAuth": true
+    },
+    {
+      "method": "POST",
+      "path": "/api/volunteers/signup",
+      "status": 200,
+      "success": true,
+      "data": {
+        "success": true,
+        "signup": {
+          "id": "signup-1763338548785",
+          "opportunityId": "opp-1",
+          "memberId": "1",
+          "availabilityDays": [
+            "Saturday",
+            "Sunday"
+          ],
+          "skills": [
+            "Customer Service",
+            "Organization"
+          ],
+          "notes": "Excited to serve in this ministry!",
+          "status": "pending",
+          "signedUpAt": "2025-11-17T00:15:48.785Z",
+          "opportunity": {
+            "id": "opp-1",
+            "title": "Children's Ministry Helper",
+            "department": "Children's Ministry",
+            "timeCommitment": "2 hours/week"
+          },
+          "member": {
+            "id": "1",
+            "firstName": "John",
+            "lastName": "Doe",
+            "email": "john.doe@example.com"
+          }
+        },
+        "message": "Volunteer signup submitted successfully",
+        "source": "demo"
+      },
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/api/bug-report",
+      "status": 200,
+      "success": true,
+      "data": {
+        "success": true,
+        "bugReport": {
+          "id": "bug-1763338548954",
+          "title": "Test Bug Report",
+          "description": "This is a test bug report to validate the endpoint",
+          "steps": "1. Navigate to page\n2. Click button\n3. See error",
+          "userAgent": "Mozilla/5.0 Test Browser",
+          "url": "/test-page",
+          "userId": "1",
+          "status": "open",
+          "priority": "medium",
+          "reportedAt": "2025-11-17T00:15:48.954Z",
+          "ticketNumber": "BUG-548954"
+        },
+        "message": "Bug report submitted successfully",
+        "source": "demo"
+      },
+      "requiresAuth": false
+    },
+    {
+      "method": "POST",
+      "path": "/api/error-report",
+      "status": 200,
+      "success": true,
+      "data": {
+        "success": true,
+        "errorReport": {
+          "id": "error-1763338549138",
+          "errorMessage": "Test error message",
+          "stackTrace": "Error stack trace here",
+          "userAgent": "Mozilla/5.0 Test Browser",
+          "url": "/test-page",
+          "userId": "1",
+          "timestamp": "2025-11-17T00:15:44.504Z",
+          "status": "new",
+          "reportedAt": "2025-11-17T00:15:49.138Z",
+          "errorId": "ERR-549138"
+        },
+        "message": "Error report logged successfully",
+        "source": "demo"
+      },
+      "requiresAuth": false
+    }
+  ],
+  "errors": [],
+  "authentication": [],
+  "validation": []
+}

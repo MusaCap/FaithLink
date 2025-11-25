@@ -7,7 +7,7 @@
 
 const axios = require('axios');
 
-const BASE_URL = 'http://localhost:8000';
+const BASE_URL = 'https://faithlink-ntgg.onrender.com';
 
 class ComprehensiveEndpointValidator {
   constructor() {
