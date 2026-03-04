@@ -214,7 +214,7 @@ export function withPermission(
       return (
         <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-md">
           <p className="text-yellow-800 text-sm">
-            You don't have permission to access this feature. 
+            You don&apos;t have permission to access this feature. 
             Contact your administrator if you need access.
           </p>
         </div>

@@ -72,7 +72,9 @@ export default function SystemPreferences() {
   
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [saveMessage, setSaveMessage] = useState<{type: 'success' | 'error', text: string} | null>(null);
   const [activeSection, setActiveSection] = useState('notifications');
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
   useEffect(() => {
     fetchSystemSettings();
@@ -80,10 +82,15 @@ export default function SystemPreferences() {
 
   const fetchSystemSettings = async () => {
     try {
-      const response = await fetch('/api/settings/system');
+      const response = await fetch(`${API_URL}/api/settings/system`, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
+          'Content-Type': 'application/json'
+        }
+      });
       if (response.ok) {
         const data = await response.json();
-        setSettings(data.settings);
+        if (data.settings) setSettings(prev => ({ ...prev, ...data.settings }));
       }
     } catch (error) {
       console.error('Failed to fetch system settings:', error);
@@ -95,13 +102,24 @@ export default function SystemPreferences() {
   const saveSettings = async () => {
     setSaving(true);
     try {
-      await fetch('/api/settings/system', {
+      const response = await fetch(`${API_URL}/api/settings/system`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
+          'Content-Type': 'application/json'
+        },
         body: JSON.stringify(settings)
       });
+      if (response.ok) {
+        setSaveMessage({ type: 'success', text: 'System settings saved successfully!' });
+        setTimeout(() => setSaveMessage(null), 3000);
+      } else {
+        throw new Error('Save failed');
+      }
     } catch (error) {
       console.error('Failed to save settings:', error);
+      setSaveMessage({ type: 'error', text: 'Failed to save settings. Please try again.' });
+      setTimeout(() => setSaveMessage(null), 3000);
     } finally {
       setSaving(false);
     }
@@ -174,6 +192,12 @@ export default function SystemPreferences() {
             <span>{saving ? 'Saving...' : 'Save Settings'}</span>
           </button>
         </div>
+
+        {saveMessage && (
+          <div className={`mb-4 p-3 rounded-lg text-sm font-medium ${saveMessage.type === 'success' ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-red-50 text-red-700 border border-red-200'}`}>
+            {saveMessage.text}
+          </div>
+        )}
 
         <div className="flex space-x-1 bg-gray-100 p-1 rounded-lg">
           {[

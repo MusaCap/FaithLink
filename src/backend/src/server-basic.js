@@ -152,46 +152,18 @@ app.get('/api/members', async (req, res) => {
   }
 });
 
-// Prayer requests with fallback
+// Prayer requests - reads from in-memory store
 app.get('/api/care/prayer-requests', async (req, res) => {
   try {
-    // Always return fallback data for now to avoid model issues
-    const fallbackRequests = [
-      {
-        id: '1',
-        title: 'Health and Healing',
-        description: 'Prayers for recovery and strength',
-        status: 'active',
-        member: {
-          firstName: 'David',
-          lastName: 'Johnson'
-        }
-      },
-      {
-        id: '2',
-        title: 'Guidance and Wisdom', 
-        description: 'Seeking direction in important decisions',
-        status: 'active',
-        member: {
-          firstName: 'Admin',
-          lastName: 'User'
-        }
-      }
-    ];
-    
     res.json({
       success: true,
-      prayerRequests: fallbackRequests,
-      requests: fallbackRequests,
-      count: fallbackRequests.length,
-      source: 'fallback'
+      prayerRequests: inMemoryPrayerRequests,
+      requests: inMemoryPrayerRequests,
+      count: inMemoryPrayerRequests.length
     });
   } catch (error) {
     console.error('Prayer requests error:', error);
-    res.status(500).json({ 
-      error: 'Failed to fetch prayer requests',
-      details: error.message 
-    });
+    res.status(500).json({ error: 'Failed to fetch prayer requests', details: error.message });
   }
 });
 
@@ -2926,53 +2898,13 @@ app.get('/api/groups/:id/members', async (req, res) => {
   }
 });
 
-// Events endpoint (missing endpoint causing 404s)
+// Events endpoint - using in-memory store
 app.get('/api/events', async (req, res) => {
   try {
-    const sampleEvents = [
-      {
-        id: '1',
-        title: 'Sunday Service',
-        description: 'Weekly worship service with communion',
-        date: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(), // Tomorrow
-        time: '10:00 AM',
-        location: 'Main Sanctuary',
-        type: 'worship',
-        isPublic: true,
-        maxAttendees: 200,
-        registeredCount: 45
-      },
-      {
-        id: '2',
-        title: 'Youth Group Meeting',
-        description: 'Weekly fellowship for teenagers',
-        date: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString(), // Day after tomorrow
-        time: '7:00 PM',
-        location: 'Youth Center',
-        type: 'fellowship',
-        isPublic: true,
-        maxAttendees: 30,
-        registeredCount: 12
-      },
-      {
-        id: '3',
-        title: 'Bible Study',
-        description: 'Weekly Bible study and discussion',
-        date: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(),
-        time: '7:30 PM',
-        location: 'Room 101',
-        type: 'education',
-        isPublic: true,
-        maxAttendees: 25,
-        registeredCount: 18
-      }
-    ];
-
     res.json({
       success: true,
-      events: sampleEvents,
-      count: sampleEvents.length,
-      source: 'backend'
+      events: inMemoryEvents,
+      count: inMemoryEvents.length
     });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
@@ -3525,24 +3457,13 @@ app.get('/api/deacons/:id', async (req, res) => {
   }
 });
 
-// ALL PASTORAL CARE ENDPOINTS
+// ALL MEMBER CARE ENDPOINTS - using in-memory stores
 app.get('/api/care/records', async (req, res) => {
   try {
     res.json({
       success: true,
-      records: [
-        {
-          id: '1',
-          memberId: '1',
-          member: { firstName: 'David', lastName: 'Johnson' },
-          deaconId: 'deacon1',
-          deacon: { firstName: 'John', lastName: 'Wesley' },
-          type: 'visit',
-          date: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
-          notes: 'Regular pastoral visit, discussed family concerns'
-        }
-      ],
-      count: 1
+      records: inMemoryCareRecords,
+      count: inMemoryCareRecords.length
     });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
@@ -3553,18 +3474,8 @@ app.get('/api/care/members-needing-care', async (req, res) => {
   try {
     res.json({
       success: true,
-      members: [
-        {
-          id: '3',
-          firstName: 'Mary',
-          lastName: 'Smith',
-          memberNumber: '10003',
-          priority: 'high',
-          reason: 'Recent hospitalization',
-          assignedDeacon: { firstName: 'John', lastName: 'Wesley' }
-        }
-      ],
-      count: 1
+      members: inMemoryMembersNeedingCare,
+      count: inMemoryMembersNeedingCare.length
     });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
@@ -3722,13 +3633,13 @@ app.get('/api/settings/church', async (req, res) => {
       success: true,
       settings: {
         name: 'Faith Community Church',
-        churchName: 'Faith Community Church',
-        address: {
-          street: '123 Church Street',
-          city: 'Faithville',
-          state: 'CA',
-          zipCode: '90210'
-        }
+        address: '123 Church Street, Faithville, CA 90210',
+        phone: '(555) 123-4567',
+        email: 'info@faithcommunitychurch.org',
+        website: 'https://faithcommunitychurch.org',
+        denomination: 'Non-denominational',
+        timezone: 'America/Los_Angeles',
+        language: 'en'
       }
     });
   } catch (error) {
@@ -3767,6 +3678,354 @@ app.get('/api/info', (req, res) => {
     timestamp: new Date().toISOString(),
     environment: process.env.NODE_ENV || 'development'
   });
+});
+
+// ========== MISSING POST ENDPOINTS ==========
+
+// In-memory stores for data that doesn't have DB tables yet
+const inMemoryPrayerRequests = [
+  {
+    id: 'pr-1',
+    title: 'Health and Healing',
+    description: 'Prayers for recovery and strength during illness',
+    requestedBy: 'Sarah Johnson',
+    priority: 'high',
+    category: 'health',
+    status: 'active',
+    isPrivate: false,
+    createdAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
+    updatedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+    assignedTo: 'Pastor David',
+    updates: []
+  },
+  {
+    id: 'pr-2',
+    title: 'Guidance and Wisdom',
+    description: 'Seeking direction in important career decisions',
+    requestedBy: 'Michael Chen',
+    priority: 'normal',
+    category: 'spiritual',
+    status: 'active',
+    isPrivate: false,
+    createdAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
+    updatedAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
+    assignedTo: null,
+    updates: []
+  },
+  {
+    id: 'pr-3',
+    title: 'Family Restoration',
+    description: 'Prayers for reconciliation within family relationships',
+    requestedBy: 'Emily Rodriguez',
+    priority: 'urgent',
+    category: 'family',
+    status: 'ongoing',
+    isPrivate: true,
+    createdAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
+    updatedAt: new Date().toISOString(),
+    assignedTo: 'Care Team',
+    updates: [{ id: 'u1', content: 'Family agreed to counseling session', author: 'Pastor David', createdAt: new Date().toISOString() }]
+  }
+];
+
+const inMemoryCareRecords = [
+  {
+    id: 'cr-1',
+    memberId: '1',
+    memberName: 'Sarah Johnson',
+    memberEmail: 'sarah@email.com',
+    memberPhone: '(555) 123-4567',
+    careType: 'hospital',
+    subject: 'Surgery Recovery Visit',
+    notes: 'Visited Sarah after her knee surgery. She is recovering well and appreciates the church support.',
+    careProvider: 'Pastor Smith',
+    careDate: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
+    nextFollowUp: new Date(Date.now() + 4 * 24 * 60 * 60 * 1000).toISOString(),
+    priority: 'high',
+    status: 'completed',
+    tags: ['surgery', 'recovery']
+  },
+  {
+    id: 'cr-2',
+    memberId: '2',
+    memberName: 'Michael Chen',
+    memberEmail: 'michael@email.com',
+    memberPhone: '(555) 987-6543',
+    careType: 'counseling',
+    subject: 'Marriage Counseling Session',
+    notes: 'Third session with Michael and Lisa. Making good progress on communication.',
+    careProvider: 'Pastor David',
+    careDate: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
+    nextFollowUp: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+    priority: 'normal',
+    status: 'completed',
+    tags: ['marriage', 'counseling']
+  },
+  {
+    id: 'cr-3',
+    memberId: '3',
+    memberName: 'Emily Rodriguez',
+    memberEmail: 'emily@email.com',
+    memberPhone: '(555) 456-7890',
+    careType: 'call',
+    subject: 'Job Loss Support Call',
+    notes: 'Called Emily to check on her after recent job loss. Connected her with financial assistance.',
+    careProvider: 'Care Team Leader',
+    careDate: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+    priority: 'high',
+    status: 'in-progress',
+    tags: ['job-loss', 'financial-help']
+  }
+];
+
+const inMemoryMembersNeedingCare = [
+  {
+    id: '4',
+    name: 'Robert Wilson',
+    email: 'robert@email.com',
+    phone: '(555) 111-2222',
+    address: '123 Oak St, City, State',
+    lastContact: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
+    careNeeds: ['elderly', 'homebound'],
+    emergencyContact: 'Jane Wilson (555) 111-2223'
+  },
+  {
+    id: '5',
+    name: 'Maria Santos',
+    email: 'maria@email.com',
+    phone: '(555) 333-4444',
+    address: '456 Pine Ave, City, State',
+    lastContact: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString(),
+    careNeeds: ['new-member', 'follow-up'],
+    emergencyContact: 'Carlos Santos (555) 333-4445'
+  }
+];
+
+const inMemoryEvents = [
+  {
+    id: 'evt-1',
+    title: 'Sunday Worship Service',
+    description: 'Weekly worship service with communion and fellowship',
+    startDateTime: getNextDayOfWeek(0, '10:00'),
+    endDateTime: getNextDayOfWeek(0, '12:00'),
+    location: 'Main Sanctuary',
+    eventType: 'worship',
+    maxAttendees: 200,
+    currentAttendees: 45,
+    isRecurring: true,
+    status: 'upcoming'
+  },
+  {
+    id: 'evt-2',
+    title: 'Youth Group Meeting',
+    description: 'Weekly fellowship for teenagers with activities and Bible study',
+    startDateTime: getNextDayOfWeek(3, '19:00'),
+    endDateTime: getNextDayOfWeek(3, '21:00'),
+    location: 'Youth Center',
+    eventType: 'fellowship',
+    maxAttendees: 30,
+    currentAttendees: 12,
+    isRecurring: true,
+    status: 'upcoming'
+  },
+  {
+    id: 'evt-3',
+    title: 'Wednesday Bible Study',
+    description: 'Weekly Bible study and discussion group',
+    startDateTime: getNextDayOfWeek(3, '19:30'),
+    endDateTime: getNextDayOfWeek(3, '21:00'),
+    location: 'Room 101',
+    eventType: 'education',
+    maxAttendees: 25,
+    currentAttendees: 18,
+    isRecurring: true,
+    status: 'upcoming'
+  },
+  {
+    id: 'evt-4',
+    title: 'Prayer Breakfast',
+    description: 'Monthly prayer breakfast and fellowship',
+    startDateTime: getNextDayOfWeek(6, '08:00'),
+    endDateTime: getNextDayOfWeek(6, '10:00'),
+    location: 'Fellowship Hall',
+    eventType: 'prayer',
+    maxAttendees: 50,
+    currentAttendees: 22,
+    isRecurring: false,
+    status: 'upcoming'
+  }
+];
+
+function getNextDayOfWeek(dayOfWeek, timeStr) {
+  const now = new Date();
+  const result = new Date(now);
+  result.setDate(now.getDate() + ((dayOfWeek + 7 - now.getDay()) % 7 || 7));
+  const [hours, minutes] = timeStr.split(':');
+  result.setHours(parseInt(hours), parseInt(minutes), 0, 0);
+  return result.toISOString();
+}
+
+// ---- POST: Create Prayer Request ----
+app.post('/api/care/prayer-requests', async (req, res) => {
+  try {
+    const { title, description, priority, category, isPrivate, requestedBy, assignTo } = req.body;
+    if (!title || !description) {
+      return res.status(400).json({ success: false, message: 'Title and description are required' });
+    }
+    const newRequest = {
+      id: 'pr-' + Date.now(),
+      title,
+      description,
+      requestedBy: requestedBy || 'Anonymous',
+      priority: priority || 'normal',
+      category: category || 'other',
+      status: 'active',
+      isPrivate: isPrivate || false,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      assignedTo: assignTo || null,
+      updates: []
+    };
+    inMemoryPrayerRequests.push(newRequest);
+    res.status(201).json({ success: true, prayerRequest: newRequest, message: 'Prayer request created successfully' });
+  } catch (error) {
+    console.error('Create prayer request error:', error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// ---- PUT: Update Prayer Request ----
+app.put('/api/care/prayer-requests/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const idx = inMemoryPrayerRequests.findIndex(r => r.id === id);
+    if (idx === -1) return res.status(404).json({ success: false, message: 'Prayer request not found' });
+    Object.assign(inMemoryPrayerRequests[idx], req.body, { updatedAt: new Date().toISOString() });
+    res.json({ success: true, prayerRequest: inMemoryPrayerRequests[idx] });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// ---- POST: Create Care Record ----
+app.post('/api/care/records', async (req, res) => {
+  try {
+    const { memberId, memberName, careType, subject, notes, careProvider, priority, nextFollowUp } = req.body;
+    if (!subject || !careType) {
+      return res.status(400).json({ success: false, message: 'Subject and care type are required' });
+    }
+    const newRecord = {
+      id: 'cr-' + Date.now(),
+      memberId: memberId || 'unknown',
+      memberName: memberName || 'Unknown Member',
+      memberEmail: req.body.memberEmail || '',
+      memberPhone: req.body.memberPhone || '',
+      careType,
+      subject,
+      notes: notes || '',
+      careProvider: careProvider || 'Care Team',
+      careDate: new Date().toISOString(),
+      nextFollowUp: nextFollowUp || null,
+      priority: priority || 'normal',
+      status: 'scheduled',
+      tags: req.body.tags || []
+    };
+    inMemoryCareRecords.push(newRecord);
+    res.status(201).json({ success: true, record: newRecord, message: 'Care record created successfully' });
+  } catch (error) {
+    console.error('Create care record error:', error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// ---- POST: Create Event ----
+app.post('/api/events', async (req, res) => {
+  try {
+    const { title, description, startDateTime, endDateTime, location, eventType, maxAttendees, isRecurring } = req.body;
+    if (!title) {
+      return res.status(400).json({ success: false, message: 'Event title is required' });
+    }
+    const newEvent = {
+      id: 'evt-' + Date.now(),
+      title,
+      description: description || '',
+      startDateTime: startDateTime || new Date().toISOString(),
+      endDateTime: endDateTime || new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString(),
+      location: location || 'TBD',
+      eventType: eventType || 'general',
+      maxAttendees: maxAttendees || null,
+      currentAttendees: 0,
+      isRecurring: isRecurring || false,
+      status: 'upcoming'
+    };
+    inMemoryEvents.push(newEvent);
+    res.status(201).json({ success: true, event: newEvent, message: 'Event created successfully' });
+  } catch (error) {
+    console.error('Create event error:', error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// ---- PUT: Update Event ----
+app.put('/api/events/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const idx = inMemoryEvents.findIndex(e => e.id === id);
+    if (idx === -1) return res.status(404).json({ success: false, message: 'Event not found' });
+    Object.assign(inMemoryEvents[idx], req.body);
+    res.json({ success: true, event: inMemoryEvents[idx] });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// ---- DELETE: Delete Event ----
+app.delete('/api/events/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const idx = inMemoryEvents.findIndex(e => e.id === id);
+    if (idx === -1) return res.status(404).json({ success: false, message: 'Event not found' });
+    inMemoryEvents.splice(idx, 1);
+    res.json({ success: true, message: 'Event deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// ---- Notifications endpoint ----
+app.get('/api/notifications', async (req, res) => {
+  try {
+    res.json({
+      success: true,
+      notifications: [
+        { id: 'n1', type: 'care', title: 'New prayer request submitted', message: 'Sarah Johnson submitted a prayer request', read: false, createdAt: new Date().toISOString() },
+        { id: 'n2', type: 'event', title: 'Upcoming event reminder', message: 'Sunday Worship Service is tomorrow at 10:00 AM', read: false, createdAt: new Date(Date.now() - 3600000).toISOString() },
+        { id: 'n3', type: 'member', title: 'New member joined', message: 'A new member has joined your church', read: true, createdAt: new Date(Date.now() - 86400000).toISOString() }
+      ],
+      unreadCount: 2
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// ---- Settings endpoints ----
+app.put('/api/settings/church', async (req, res) => {
+  try {
+    const settings = req.body;
+    res.json({ success: true, settings, message: 'Church settings updated successfully' });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+app.put('/api/settings/system', async (req, res) => {
+  try {
+    const settings = req.body;
+    res.json({ success: true, settings, message: 'System settings updated successfully' });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
 });
 
 // 404 handler

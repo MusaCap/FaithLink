@@ -7,12 +7,14 @@ import {
   X, 
   Home, 
   Users, 
+  Heart,
   Calendar, 
   BarChart3, 
   Settings,
   ChevronRight,
   Bell,
-  Search
+  Search,
+  Church
 } from 'lucide-react';
 
 interface MobileNavigationProps {
@@ -29,22 +31,28 @@ const navigationItems = [
     description: 'Overview and quick stats'
   },
   {
-    name: 'Members',
-    href: '/members',
-    icon: Users,
-    description: 'Manage church members'
+    name: 'Member Care',
+    href: '/care',
+    icon: Heart,
+    description: 'Prayer requests and care cases'
   },
   {
-    name: 'Groups',
-    href: '/groups',
-    icon: Users,
-    description: 'Small groups and teams'
-  },
-  {
-    name: 'Events',
+    name: 'Church Calendar',
     href: '/events',
     icon: Calendar,
     description: 'Church events and calendar'
+  },
+  {
+    name: 'My Membership',
+    href: '/members',
+    icon: Users,
+    description: 'View and update your membership'
+  },
+  {
+    name: 'Ministries',
+    href: '/groups',
+    icon: Church,
+    description: 'Ministry groups and teams'
   },
   {
     name: 'Reports',

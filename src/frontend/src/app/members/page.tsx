@@ -16,8 +16,8 @@ export default function MembersPage() {
         <div className="p-6">
           {/* Page Header */}
           <div className="mb-6">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">Members</h1>
-            <p className="text-gray-600">Manage your profile, volunteer opportunities, and spiritual growth</p>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">My Membership</h1>
+            <p className="text-gray-600">View and update your profile, volunteer opportunities, and church involvement</p>
           </div>
 
           {/* Tab Navigation */}

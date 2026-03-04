@@ -27,7 +27,6 @@ dist/
 # OS
 .DS_Store
 Thumbs.db
-{{ ... }}
 *.sqlite
 
 # Coverage
@@ -49,7 +48,6 @@ coverage/
 tests/test-results/
 tests/playwright-report/
 
-{{ ... }}
 # Cache files
 *.cache
 

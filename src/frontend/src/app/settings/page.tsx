@@ -30,6 +30,8 @@ export default function SettingsPage() {
   });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [saveMessage, setSaveMessage] = useState<{type: 'success' | 'error', text: string} | null>(null);
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
   useEffect(() => {
     fetchSettings();
@@ -37,7 +39,12 @@ export default function SettingsPage() {
 
   const fetchSettings = async () => {
     try {
-      const response = await fetch('/api/settings/church');
+      const response = await fetch(`${API_URL}/api/settings/church`, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
+          'Content-Type': 'application/json'
+        }
+      });
       if (response.ok) {
         const data = await response.json();
         setChurchSettings(data.settings);
@@ -52,13 +59,24 @@ export default function SettingsPage() {
   const saveChurchSettings = async () => {
     setSaving(true);
     try {
-      await fetch('/api/settings/church', {
+      const response = await fetch(`${API_URL}/api/settings/church`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
+          'Content-Type': 'application/json'
+        },
         body: JSON.stringify(churchSettings)
       });
+      if (response.ok) {
+        setSaveMessage({ type: 'success', text: 'Church settings saved successfully!' });
+        setTimeout(() => setSaveMessage(null), 3000);
+      } else {
+        throw new Error('Save failed');
+      }
     } catch (error) {
       console.error('Failed to save settings:', error);
+      setSaveMessage({ type: 'error', text: 'Failed to save settings. Please try again.' });
+      setTimeout(() => setSaveMessage(null), 3000);
     } finally {
       setSaving(false);
     }
@@ -127,6 +145,12 @@ export default function SettingsPage() {
               <span>{saving ? 'Saving...' : 'Save Changes'}</span>
             </button>
           </div>
+
+          {saveMessage && (
+            <div className={`mb-4 p-3 rounded-lg text-sm font-medium ${saveMessage.type === 'success' ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-red-50 text-red-700 border border-red-200'}`}>
+              {saveMessage.text}
+            </div>
+          )}
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>

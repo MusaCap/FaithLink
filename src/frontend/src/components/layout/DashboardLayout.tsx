@@ -18,7 +18,9 @@ import {
   Home,
   UserPlus,
   Target,
-  BookOpen
+  BookOpen,
+  Bell,
+  Church
 } from 'lucide-react';
 
 interface DashboardLayoutProps {
@@ -37,21 +39,15 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   };
 
   const getNavigationItems = () => {
-    const baseItems = [
-      { name: 'Dashboard', href: '/dashboard', icon: Home },
-      { name: 'Members', href: '/members', icon: Users },
-    ];
-
     if (user?.role === 'admin' || user?.role === 'pastor') {
       return [
-        ...baseItems,
-        { name: 'Admin Members', href: '/admin/members', icon: Settings },
-        { name: 'Groups', href: '/groups', icon: UserPlus },
-        { name: 'Journey Templates', href: '/journey-templates', icon: BookOpen },
-        { name: 'Member Journeys', href: '/journeys', icon: Target },
-        { name: 'Events', href: '/events', icon: Calendar },
+        { name: 'Dashboard', href: '/dashboard', icon: Home },
+        { name: 'Member Care', href: '/care', icon: Heart },
+        { name: 'Church Calendar', href: '/events', icon: Calendar },
+        { name: 'Member Management', href: '/admin/members', icon: Users },
+        { name: 'Ministries', href: '/groups', icon: Church },
+        { name: 'New Member Intake', href: '/journey-templates', icon: BookOpen },
         { name: 'Communications', href: '/communications', icon: MessageSquare },
-        { name: 'Care', href: '/care', icon: Heart },
         { name: 'Reports', href: '/reports', icon: BarChart3 },
         { name: 'Settings', href: '/settings', icon: Settings },
       ];
@@ -59,20 +55,21 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
 
     if (user?.role === 'group_leader') {
       return [
-        ...baseItems,
-        { name: 'My Groups', href: '/groups', icon: UserPlus },
-        { name: 'Member Journeys', href: '/journeys', icon: Target },
-        { name: 'Events', href: '/events', icon: Calendar },
-        { name: 'Care', href: '/care', icon: Heart },
+        { name: 'Dashboard', href: '/dashboard', icon: Home },
+        { name: 'Member Care', href: '/care', icon: Heart },
+        { name: 'Church Calendar', href: '/events', icon: Calendar },
+        { name: 'My Membership', href: '/members', icon: User },
+        { name: 'Ministries', href: '/groups', icon: Church },
       ];
     }
 
     // Member role
     return [
-      ...baseItems,
-      { name: 'My Groups', href: '/groups', icon: UserPlus },
-      { name: 'My Journeys', href: '/journeys', icon: Target },
-      { name: 'Events', href: '/events', icon: Calendar },
+      { name: 'Dashboard', href: '/dashboard', icon: Home },
+      { name: 'Member Care', href: '/care', icon: Heart },
+      { name: 'Church Calendar', href: '/events', icon: Calendar },
+      { name: 'My Membership', href: '/members', icon: User },
+      { name: 'Ministries', href: '/groups', icon: Church },
     ];
   };
 

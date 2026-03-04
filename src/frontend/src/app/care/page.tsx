@@ -126,8 +126,8 @@ export default function CarePage() {
           <div className="flex items-center space-x-3">
             <Heart className="w-8 h-8 text-red-500" />
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Pastoral Care</h1>
-              <p className="text-gray-600">Managing prayer requests, member care, and counseling</p>
+              <h1 className="text-3xl font-bold text-gray-900">Member Care</h1>
+              <p className="text-gray-600">Prayer requests, care cases, and counseling support</p>
             </div>
           </div>
           <div className="flex space-x-3">
@@ -363,11 +363,23 @@ export default function CarePage() {
       {showPrayerForm && (
         <PrayerRequestForm
           onClose={() => setShowPrayerForm(false)}
-          onSubmit={(requestData) => {
-            // Handle form submission
-            console.log('New prayer request:', requestData);
-            fetchPrayerRequests();
-            setShowPrayerForm(false);
+          onSubmit={async (requestData) => {
+            try {
+              const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/care/prayer-requests`, {
+                method: 'POST',
+                headers: {
+                  'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(requestData)
+              });
+              if (!response.ok) throw new Error('Failed to create prayer request');
+              await fetchPrayerRequests();
+              setShowPrayerForm(false);
+            } catch (error) {
+              console.error('Error creating prayer request:', error);
+              alert('Failed to create prayer request. Please try again.');
+            }
           }}
         />
       )}
@@ -375,11 +387,23 @@ export default function CarePage() {
       {showCounselingScheduler && (
         <CounselingScheduler
           onClose={() => setShowCounselingScheduler(false)}
-          onSubmit={(sessionData) => {
-            // Handle session scheduling
-            console.log('New counseling session:', sessionData);
-            fetchCounselingSessions();
-            setShowCounselingScheduler(false);
+          onSubmit={async (sessionData) => {
+            try {
+              const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/care/records`, {
+                method: 'POST',
+                headers: {
+                  'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ ...sessionData, careType: 'counseling', subject: `Counseling: ${sessionData.memberName || 'Session'}` })
+              });
+              if (!response.ok) throw new Error('Failed to schedule session');
+              await fetchCounselingSessions();
+              setShowCounselingScheduler(false);
+            } catch (error) {
+              console.error('Error scheduling session:', error);
+              alert('Failed to schedule session. Please try again.');
+            }
           }}
         />
       )}
