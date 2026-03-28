@@ -34,7 +34,9 @@ interface CounselingSession {
   counselorName: string;
   sessionType: 'individual' | 'couple' | 'family' | 'group';
   status: 'scheduled' | 'completed' | 'cancelled' | 'no-show';
-  scheduledDate: string;
+  scheduledDate?: string;
+  sessionDate?: string;
+  sessionTime?: string;
   duration: number;
   notes?: string;
 }
@@ -50,6 +52,10 @@ export default function CarePage() {
   const [filterStatus, setFilterStatus] = useState('all');
   const [loading, setLoading] = useState(true);
   const [selectedRequest, setSelectedRequest] = useState<PrayerRequest | null>(null);
+  const [updateContent, setUpdateContent] = useState('');
+  const [showUpdateModal, setShowUpdateModal] = useState<string | null>(null);
+  const [showAssignModal, setShowAssignModal] = useState<string | null>(null);
+  const [assigneeName, setAssigneeName] = useState('');
 
   useEffect(() => {
     fetchPrayerRequests();
@@ -289,11 +295,17 @@ export default function CarePage() {
                         View Details
                       </button>
                       <span className="text-gray-300">|</span>
-                      <button className="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                      <button
+                        onClick={() => { setShowUpdateModal(request.id); setUpdateContent(''); }}
+                        className="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                      >
                         Add Update
                       </button>
                       <span className="text-gray-300">|</span>
-                      <button className="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                      <button
+                        onClick={() => { setShowAssignModal(request.id); setAssigneeName(request.assignedTo || ''); }}
+                        className="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                      >
                         Assign
                       </button>
                     </div>
@@ -338,7 +350,7 @@ export default function CarePage() {
                             {session.sessionType} session with {session.counselorName}
                           </p>
                           <p className="text-sm text-gray-500">
-                            {new Date(session.scheduledDate).toLocaleString()}
+                            {new Date(session.scheduledDate || session.sessionDate || '').toLocaleDateString()}{session.sessionTime ? ` at ${session.sessionTime}` : ''}
                           </p>
                         </div>
                         <span className={`px-2 py-1 text-xs font-medium rounded-full ${
@@ -389,13 +401,13 @@ export default function CarePage() {
           onClose={() => setShowCounselingScheduler(false)}
           onSubmit={async (sessionData) => {
             try {
-              const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/care/records`, {
+              const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/care/counseling-sessions`, {
                 method: 'POST',
                 headers: {
                   'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
                   'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ ...sessionData, careType: 'counseling', subject: `Counseling: ${sessionData.memberName || 'Session'}` })
+                body: JSON.stringify(sessionData)
               });
               if (!response.ok) throw new Error('Failed to schedule session');
               await fetchCounselingSessions();
@@ -406,6 +418,109 @@ export default function CarePage() {
             }
           }}
         />
+      )}
+      {/* Add Update Modal */}
+      {showUpdateModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md">
+            <h3 className="text-lg font-semibold mb-4">Add Prayer Update</h3>
+            <textarea
+              value={updateContent}
+              onChange={(e) => setUpdateContent(e.target.value)}
+              placeholder="Enter your update..."
+              className="w-full p-3 border border-gray-300 rounded-lg mb-4 h-32 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            />
+            <div className="flex justify-end space-x-3">
+              <button onClick={() => setShowUpdateModal(null)} className="px-4 py-2 text-gray-600 hover:text-gray-800">Cancel</button>
+              <button
+                onClick={async () => {
+                  try {
+                    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/care/prayer-requests/${showUpdateModal}`, {
+                      method: 'PUT',
+                      headers: { 'Authorization': `Bearer ${localStorage.getItem('auth_token')}`, 'Content-Type': 'application/json' },
+                      body: JSON.stringify({ updates: [{ content: updateContent, author: 'Current User', createdAt: new Date().toISOString() }] })
+                    });
+                    if (response.ok) { await fetchPrayerRequests(); setShowUpdateModal(null); }
+                  } catch (error) { console.error('Error adding update:', error); }
+                }}
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+              >Save Update</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Assign Modal */}
+      {showAssignModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md">
+            <h3 className="text-lg font-semibold mb-4">Assign Prayer Request</h3>
+            <input
+              type="text"
+              value={assigneeName}
+              onChange={(e) => setAssigneeName(e.target.value)}
+              placeholder="Enter name to assign to..."
+              className="w-full p-3 border border-gray-300 rounded-lg mb-4 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            />
+            <div className="flex justify-end space-x-3">
+              <button onClick={() => setShowAssignModal(null)} className="px-4 py-2 text-gray-600 hover:text-gray-800">Cancel</button>
+              <button
+                onClick={async () => {
+                  try {
+                    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/care/prayer-requests/${showAssignModal}`, {
+                      method: 'PUT',
+                      headers: { 'Authorization': `Bearer ${localStorage.getItem('auth_token')}`, 'Content-Type': 'application/json' },
+                      body: JSON.stringify({ assignedTo: assigneeName })
+                    });
+                    if (response.ok) { await fetchPrayerRequests(); setShowAssignModal(null); }
+                  } catch (error) { console.error('Error assigning request:', error); }
+                }}
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+              >Assign</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* View Details Modal */}
+      {selectedRequest && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-full max-w-lg max-h-[80vh] overflow-y-auto">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold">{selectedRequest.title}</h3>
+              <button onClick={() => setSelectedRequest(null)} className="text-gray-400 hover:text-gray-600 text-xl">&times;</button>
+            </div>
+            <div className="space-y-3">
+              <p className="text-gray-700">{selectedRequest.description}</p>
+              <div className="flex items-center space-x-4 text-sm text-gray-500">
+                <span className={`px-2 py-1 text-xs font-medium border rounded-full ${getPriorityColor(selectedRequest.priority)}`}>{selectedRequest.priority}</span>
+                <span className="capitalize">{selectedRequest.category}</span>
+                <span>{selectedRequest.status}</span>
+              </div>
+              <div className="text-sm text-gray-600">
+                <p>Requested by: {selectedRequest.requestedBy}</p>
+                <p>Created: {new Date(selectedRequest.createdAt).toLocaleString()}</p>
+                {selectedRequest.assignedTo && <p>Assigned to: {selectedRequest.assignedTo}</p>}
+              </div>
+              {selectedRequest.updates && selectedRequest.updates.length > 0 && (
+                <div className="mt-4">
+                  <h4 className="font-medium mb-2">Updates</h4>
+                  <div className="space-y-2">
+                    {selectedRequest.updates.map((update, idx) => (
+                      <div key={idx} className="bg-gray-50 p-3 rounded-lg">
+                        <p className="text-sm text-gray-700">{update.content}</p>
+                        <p className="text-xs text-gray-500 mt-1">{update.author} - {new Date(update.createdAt).toLocaleString()}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+            <div className="mt-6 flex justify-end">
+              <button onClick={() => setSelectedRequest(null)} className="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300">Close</button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

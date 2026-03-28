@@ -37,7 +37,7 @@ export default function BugReportModal({ isOpen, onClose }: BugReportModalProps)
     setIsSubmitting(true);
 
     try {
-      const response = await fetch('/api/bug-report', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/bug-report`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -201,10 +201,21 @@ export default function TasksPage() {
               </div>
               
               <div className="flex items-center gap-2 ml-4">
-                <button className="text-gray-400 hover:text-gray-600 p-2">
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
-                  </svg>
+                {task.status !== 'completed' && (
+                  <button
+                    onClick={() => handleStatusChange(task.id, task.status === 'pending' ? 'in_progress' : 'completed')}
+                    className="text-green-600 hover:text-green-800 p-2"
+                    title={task.status === 'pending' ? 'Start Task' : 'Complete Task'}
+                  >
+                    <CheckCircle className="w-4 h-4" />
+                  </button>
+                )}
+                <button
+                  onClick={() => handleDeleteTask(task.id)}
+                  className="text-red-400 hover:text-red-600 p-2"
+                  title="Delete Task"
+                >
+                  <Trash2 className="w-4 h-4" />
                 </button>
               </div>
             </div>

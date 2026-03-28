@@ -59,9 +59,9 @@ export default function EventCheckIn({ eventId, eventTitle, isOpen, onClose }: E
 
   const handleCheckIn = async (attendeeId: string) => {
     try {
-      const response = await fetch(`/api/events/${eventId}/check-in/${attendeeId}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/events/${eventId}/check-in/${attendeeId}`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('auth_token')}`, 'Content-Type': 'application/json' },
         body: JSON.stringify({ checkInTime: new Date().toISOString() })
       });
       
@@ -79,8 +79,9 @@ export default function EventCheckIn({ eventId, eventTitle, isOpen, onClose }: E
 
   const handleUndoCheckIn = async (attendeeId: string) => {
     try {
-      const response = await fetch(`/api/events/${eventId}/check-in/${attendeeId}`, {
-        method: 'DELETE'
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/events/${eventId}/check-in/${attendeeId}`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('auth_token')}` }
       });
       
       if (response.ok) {
@@ -97,8 +98,9 @@ export default function EventCheckIn({ eventId, eventTitle, isOpen, onClose }: E
 
   const markAsNoShow = async (attendeeId: string) => {
     try {
-      const response = await fetch(`/api/events/${eventId}/check-in/${attendeeId}/no-show`, {
-        method: 'POST'
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/events/${eventId}/check-in/${attendeeId}/no-show`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('auth_token')}` }
       });
       
       if (response.ok) {

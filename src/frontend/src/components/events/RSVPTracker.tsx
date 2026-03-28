@@ -59,7 +59,7 @@ export default function RSVPTracker({ eventId, eventTitle, isOpen, onClose }: RS
 
   const updateRSVPStatus = async (rsvpId: string, newStatus: RSVP['status']) => {
     try {
-      const response = await fetch(`/api/events/${eventId}/rsvps/${rsvpId}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/events/${eventId}/rsvps/${rsvpId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: newStatus })

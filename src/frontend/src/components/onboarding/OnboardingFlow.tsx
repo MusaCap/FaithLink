@@ -124,7 +124,7 @@ export default function OnboardingFlow({ onComplete, onSkip, showSkip = true }: 
     setIsLoading(true);
     try {
       // Save onboarding completion to backend
-      await fetch('/api/members/onboarding-complete', {
+      await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/members/onboarding-complete`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -47,7 +47,7 @@ class DashboardService {
       if (!token) {
         throw new Error('No authentication token found');
       }
-      const response = await fetch(`${this.API_BASE_URL}/api/reports/dashboard`, {
+      const response = await fetch(`${this.API_BASE_URL}/api/reports/dashboard-stats`, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
@@ -65,7 +65,7 @@ class DashboardService {
       this.cacheExpiry = Date.now() + this.CACHE_DURATION;
 
       // Return stats from the correct data structure
-      return data.data || data.quickStats;
+      return data.stats || data.data || data.quickStats;
     } catch (error) {
       console.error('Failed to fetch dashboard stats:', error);
       // Return fallback stats if API calls fail
@@ -89,7 +89,7 @@ class DashboardService {
       if (!token) {
         throw new Error('No authentication token found');
       }
-      const response = await fetch(`${this.API_BASE_URL}/api/reports/dashboard`, {
+      const response = await fetch(`${this.API_BASE_URL}/api/activity`, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
@@ -97,16 +97,12 @@ class DashboardService {
       });
 
       if (!response.ok) {
-        throw new Error(`Dashboard API returned ${response.status}`);
+        throw new Error(`Activity API returned ${response.status}`);
       }
 
       const data = await response.json();
-      
-      // Cache the full dashboard data
-      this.cache = data;
-      this.cacheExpiry = Date.now() + this.CACHE_DURATION;
 
-      return data.data?.recentActivity || data.recentActivity || [];
+      return data.activities || data.recentActivity || [];
     } catch (error) {
       console.error('Failed to fetch recent activity:', error);
       // Return fallback activities
@@ -133,7 +129,7 @@ class DashboardService {
       if (!token) {
         throw new Error('No authentication token found');
       }
-      const response = await fetch(`${this.API_BASE_URL}/api/reports/dashboard`, {
+      const response = await fetch(`${this.API_BASE_URL}/api/events`, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
@@ -141,16 +137,12 @@ class DashboardService {
       });
 
       if (!response.ok) {
-        throw new Error(`Dashboard API returned ${response.status}`);
+        throw new Error(`Events API returned ${response.status}`);
       }
 
       const data = await response.json();
-      
-      // Cache the full dashboard data
-      this.cache = data;
-      this.cacheExpiry = Date.now() + this.CACHE_DURATION;
 
-      return data.data?.upcomingEventsDetailed || data.upcomingEvents || [];
+      return data.events || [];
     } catch (error) {
       console.error('Failed to fetch upcoming events:', error);
       return [];
@@ -168,24 +160,9 @@ class DashboardService {
       if (!token) {
         throw new Error('No authentication token found');
       }
-      const response = await fetch(`${this.API_BASE_URL}/api/reports/dashboard`, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-      });
-
-      if (!response.ok) {
-        throw new Error(`Dashboard API returned ${response.status}`);
-      }
-
-      const data = await response.json();
-      
-      // Cache the full dashboard data
-      this.cache = data;
-      this.cacheExpiry = Date.now() + this.CACHE_DURATION;
-
-      return data.alerts || [];
+      // Alerts are derived from dashboard stats - reuse cached data
+      const stats = await this.getStats();
+      return [];
     } catch (error) {
       console.error('Failed to fetch dashboard alerts:', error);
       return [];

@@ -61,6 +61,10 @@ export default function CommunicationsPage() {
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [showCampaignModal, setShowCampaignModal] = useState(false);
   const [showAnnouncementModal, setShowAnnouncementModal] = useState(false);
+  const [newAnnouncement, setNewAnnouncement] = useState({
+    title: '', content: '', priority: 'normal', targetAudience: ['all'],
+    channels: ['dashboard'], startDate: new Date().toISOString().split('T')[0], endDate: ''
+  });
 
   useEffect(() => {
     fetchCommunications();
@@ -361,13 +365,13 @@ export default function CommunicationsPage() {
                           </td>
                           <td className="px-6 py-4 text-sm font-medium">
                             <div className="flex items-center space-x-2">
-                              <button className="text-blue-600 hover:text-blue-900">
+                              <button onClick={() => alert(`Campaign: ${campaign.title}\nSubject: ${campaign.subject}\nStatus: ${campaign.status}\nRecipients: ${campaign.recipients}`)} className="text-blue-600 hover:text-blue-900" title="View">
                                 <Eye className="w-4 h-4" />
                               </button>
-                              <button className="text-green-600 hover:text-green-900">
+                              <button onClick={() => alert('Campaign editing coming soon')} className="text-green-600 hover:text-green-900" title="Edit">
                                 <Edit className="w-4 h-4" />
                               </button>
-                              <button className="text-red-600 hover:text-red-900">
+                              <button onClick={async () => { if (!confirm(`Delete campaign "${campaign.title}"?`)) return; setCampaigns(prev => prev.filter(c => c.id !== campaign.id)); }} className="text-red-600 hover:text-red-900" title="Delete">
                                 <Trash2 className="w-4 h-4" />
                               </button>
                             </div>
@@ -462,11 +466,13 @@ export default function CommunicationsPage() {
             <div className="bg-white rounded-lg p-6 w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto">
               <h2 className="text-xl font-bold mb-4">Create New Announcement</h2>
               
-              <form className="space-y-4">
+              <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Title *</label>
                   <input
                     type="text"
+                    value={newAnnouncement.title}
+                    onChange={(e) => setNewAnnouncement(prev => ({ ...prev, title: e.target.value }))}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     placeholder="Announcement title"
                   />
@@ -476,6 +482,8 @@ export default function CommunicationsPage() {
                   <label className="block text-sm font-medium text-gray-700 mb-2">Content *</label>
                   <textarea
                     rows={4}
+                    value={newAnnouncement.content}
+                    onChange={(e) => setNewAnnouncement(prev => ({ ...prev, content: e.target.value }))}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     placeholder="Announcement content"
                   />
@@ -484,7 +492,11 @@ export default function CommunicationsPage() {
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Priority</label>
-                    <select className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <select
+                      value={newAnnouncement.priority}
+                      onChange={(e) => setNewAnnouncement(prev => ({ ...prev, priority: e.target.value }))}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
                       <option value="normal">Normal</option>
                       <option value="high">High</option>
                       <option value="urgent">Urgent</option>
@@ -493,7 +505,11 @@ export default function CommunicationsPage() {
                   
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Target Audience</label>
-                    <select className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <select
+                      value={newAnnouncement.targetAudience[0]}
+                      onChange={(e) => setNewAnnouncement(prev => ({ ...prev, targetAudience: [e.target.value] }))}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
                       <option value="all">All Members</option>
                       <option value="members">Members Only</option>
                       <option value="visitors">Visitors</option>
@@ -509,8 +525,16 @@ export default function CommunicationsPage() {
                       <label key={channel} className="flex items-center">
                         <input
                           type="checkbox"
+                          checked={newAnnouncement.channels.includes(channel as any)}
+                          onChange={(e) => {
+                            setNewAnnouncement(prev => ({
+                              ...prev,
+                              channels: e.target.checked
+                                ? [...prev.channels, channel]
+                                : prev.channels.filter(c => c !== channel)
+                            }));
+                          }}
                           className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                          defaultChecked={channel === 'dashboard'}
                         />
                         <span className="ml-2 text-sm text-gray-900 capitalize">{channel}</span>
                       </label>
@@ -523,8 +547,9 @@ export default function CommunicationsPage() {
                     <label className="block text-sm font-medium text-gray-700 mb-2">Start Date</label>
                     <input
                       type="date"
+                      value={newAnnouncement.startDate}
+                      onChange={(e) => setNewAnnouncement(prev => ({ ...prev, startDate: e.target.value }))}
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      defaultValue={new Date().toISOString().split('T')[0]}
                     />
                   </div>
                   
@@ -532,6 +557,8 @@ export default function CommunicationsPage() {
                     <label className="block text-sm font-medium text-gray-700 mb-2">End Date</label>
                     <input
                       type="date"
+                      value={newAnnouncement.endDate}
+                      onChange={(e) => setNewAnnouncement(prev => ({ ...prev, endDate: e.target.value }))}
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                   </div>
@@ -546,7 +573,26 @@ export default function CommunicationsPage() {
                   Cancel
                 </button>
                 <button
-                  onClick={() => setShowAnnouncementModal(false)}
+                  onClick={async () => {
+                    if (!newAnnouncement.title || !newAnnouncement.content) {
+                      alert('Title and content are required'); return;
+                    }
+                    try {
+                      const token = localStorage.getItem('auth_token');
+                      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/communications/announcements`, {
+                        method: 'POST',
+                        headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+                        body: JSON.stringify(newAnnouncement)
+                      });
+                      if (!response.ok) throw new Error('Failed to create announcement');
+                      await fetchCommunications();
+                      setShowAnnouncementModal(false);
+                      setNewAnnouncement({ title: '', content: '', priority: 'normal', targetAudience: ['all'], channels: ['dashboard'], startDate: new Date().toISOString().split('T')[0], endDate: '' });
+                    } catch (error) {
+                      console.error('Error creating announcement:', error);
+                      alert('Failed to create announcement. Please try again.');
+                    }
+                  }}
                   className="px-4 py-2 text-sm font-medium text-white bg-green-600 border border-transparent rounded-md hover:bg-green-700"
                 >
                   Create Announcement

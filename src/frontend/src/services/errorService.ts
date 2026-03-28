@@ -192,7 +192,7 @@ class ErrorService {
 
   // Send error report to backend
   private async sendErrorReport(errorReport: ErrorReport): Promise<void> {
-    await fetch('/api/error-report', {
+    await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/error-report`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -281,7 +281,7 @@ class ErrorService {
   ): Promise<void> {
     const user = this.getCurrentUser();
     
-    await fetch('/api/bug-report', {
+    await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/bug-report`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

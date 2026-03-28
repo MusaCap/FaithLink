@@ -116,7 +116,9 @@ export default function MemberSelfServicePortal() {
 
   const fetchNotificationSettings = async () => {
     try {
-      const response = await fetch('/api/members/self-service/notifications');
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/members/self-service/notifications`, {
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('auth_token')}` }
+      });
       if (response.ok) {
         const data = await response.json();
         setNotifications(data.settings);
@@ -128,9 +130,9 @@ export default function MemberSelfServicePortal() {
 
   const saveProfile = async () => {
     try {
-      const response = await fetch('/api/members/self-service/profile', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/members/self-service/profile`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('auth_token')}`, 'Content-Type': 'application/json' },
         body: JSON.stringify(editForm)
       });
       
@@ -145,9 +147,9 @@ export default function MemberSelfServicePortal() {
 
   const saveNotifications = async () => {
     try {
-      await fetch('/api/members/self-service/notifications', {
+      await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/members/self-service/notifications`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('auth_token')}`, 'Content-Type': 'application/json' },
         body: JSON.stringify(notifications)
       });
     } catch (error) {

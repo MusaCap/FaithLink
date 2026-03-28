@@ -43,6 +43,13 @@ describe('🎯 FaithLink360 Complete API Coverage Test Suite', function() {
     } else {
       console.log('⚠️  More work needed to achieve target coverage');
     }
+    
+    // Print failing endpoints
+    const failures = Object.entries(testResults.endpoints).filter(([, v]) => v.startsWith('FAIL'));
+    if (failures.length > 0) {
+      console.log('\n❌ FAILING ENDPOINTS:');
+      failures.forEach(([k, v]) => console.log(`  ${k}: ${v}`));
+    }
   });
 
   // ============================================================================

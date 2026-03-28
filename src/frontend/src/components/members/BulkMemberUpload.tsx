@@ -121,7 +121,7 @@ export default function BulkMemberUpload({ onComplete, churchId }: BulkMemberUpl
       formData.append('action', 'preview');
       if (churchId) formData.append('churchId', churchId);
 
-      const response = await fetch('/api/members/bulk-upload', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/members/bulk-upload`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('auth_token')}`
@@ -154,7 +154,7 @@ export default function BulkMemberUpload({ onComplete, churchId }: BulkMemberUpl
       formData.append('action', 'upload');
       if (churchId) formData.append('churchId', churchId);
 
-      const response = await fetch('/api/members/bulk-upload', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/members/bulk-upload`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('auth_token')}`

@@ -16,77 +16,23 @@ import {
 
 interface ActivityItem {
   id: string;
-  type: 'member' | 'group' | 'event' | 'communication' | 'care' | 'journey';
+  type: string;
   title: string;
   description: string;
   timestamp: string;
-  user: string;
-  icon: React.ComponentType<any>;
-  color: string;
+  user?: string;
+  actor?: { name: string; role: string };
 }
 
-const mockActivities: ActivityItem[] = [
-  {
-    id: '1',
-    type: 'member',
-    title: 'New Member Joined',
-    description: 'Sarah Johnson joined the church community',
-    timestamp: '2024-01-15T10:30:00Z',
-    user: 'System',
-    icon: Users,
-    color: 'bg-blue-500'
-  },
-  {
-    id: '2',
-    type: 'group',
-    title: 'Group Meeting Completed',
-    description: 'Young Adults Bible Study - 12 members attended',
-    timestamp: '2024-01-15T09:15:00Z',
-    user: 'John Smith',
-    icon: Users,
-    color: 'bg-green-500'
-  },
-  {
-    id: '3',
-    type: 'event',
-    title: 'Event Created',
-    description: 'Sunday Service - January 21st scheduled',
-    timestamp: '2024-01-15T08:45:00Z',
-    user: 'Pastor Mike',
-    icon: Calendar,
-    color: 'bg-purple-500'
-  },
-  {
-    id: '4',
-    type: 'communication',
-    title: 'Announcement Sent',
-    description: 'Weekly newsletter sent to 245 members',
-    timestamp: '2024-01-15T08:00:00Z',
-    user: 'Admin',
-    icon: MessageSquare,
-    color: 'bg-orange-500'
-  },
-  {
-    id: '5',
-    type: 'care',
-    title: 'Prayer Request Submitted',
-    description: 'New prayer request from Mary Wilson',
-    timestamp: '2024-01-14T16:30:00Z',
-    user: 'Mary Wilson',
-    icon: Heart,
-    color: 'bg-pink-500'
-  },
-  {
-    id: '6',
-    type: 'journey',
-    title: 'Journey Milestone Completed',
-    description: 'David completed "New Member Orientation" milestone',
-    timestamp: '2024-01-14T14:20:00Z',
-    user: 'David Brown',
-    icon: Target,
-    color: 'bg-indigo-500'
-  }
-];
+const typeConfig: Record<string, { icon: React.ComponentType<any>; color: string }> = {
+  member: { icon: Users, color: 'bg-blue-500' },
+  group: { icon: Users, color: 'bg-green-500' },
+  event: { icon: Calendar, color: 'bg-purple-500' },
+  communication: { icon: MessageSquare, color: 'bg-orange-500' },
+  care: { icon: Heart, color: 'bg-pink-500' },
+  journey: { icon: Target, color: 'bg-indigo-500' },
+  deacon_assigned: { icon: Users, color: 'bg-teal-500' },
+};
 
 export default function ActivityPage() {
   const [activities, setActivities] = useState<ActivityItem[]>([]);
@@ -208,12 +154,14 @@ export default function ActivityPage() {
               <div className="flow-root">
                 <ul className="divide-y divide-neutral-200">
                   {filteredActivities.map((activity) => {
-                    const IconComponent = activity.icon;
+                    const config = typeConfig[activity.type] || { icon: Clock, color: 'bg-gray-500' };
+                    const IconComponent = config.icon;
+                    const displayUser = activity.user || activity.actor?.name || 'System';
                     return (
                       <li key={activity.id} className="p-6">
                         <div className="relative flex space-x-3">
                           <div>
-                            <span className={`${activity.color} h-8 w-8 rounded-full flex items-center justify-center ring-8 ring-white`}>
+                            <span className={`${config.color} h-8 w-8 rounded-full flex items-center justify-center ring-8 ring-white`}>
                               <IconComponent className="h-4 w-4 text-white" />
                             </span>
                           </div>
@@ -229,7 +177,7 @@ export default function ActivityPage() {
                                 <Clock className="h-3 w-3" />
                                 <span>{formatTimestamp(activity.timestamp)}</span>
                                 <span>•</span>
-                                <span>by {activity.user}</span>
+                                <span>by {displayUser}</span>
                               </div>
                             </div>
                           </div>

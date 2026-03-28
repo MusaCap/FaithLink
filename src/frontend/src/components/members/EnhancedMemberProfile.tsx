@@ -130,7 +130,7 @@ export default function EnhancedMemberProfile({
       const targetId = memberId || user?.id;
       if (!targetId) throw new Error('No member ID available');
 
-      const response = await fetch(`/api/members/${targetId}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/members/${targetId}`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('auth_token')}`
         }
@@ -153,7 +153,7 @@ export default function EnhancedMemberProfile({
     
     setLoading(true);
     try {
-      const response = await fetch(`/api/members/${profile.id}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/members/${profile.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

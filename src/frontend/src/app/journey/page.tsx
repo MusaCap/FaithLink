@@ -44,7 +44,7 @@ export default function JourneyPage() {
 
     setLoading(true);
     try {
-      const response = await fetch(`/api/journeys/member-journeys?memberId=${user.id}&limit=20`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/journeys/member-journeys?memberId=${user.id}&limit=20`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
           'Content-Type': 'application/json'

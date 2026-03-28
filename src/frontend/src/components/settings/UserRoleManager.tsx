@@ -85,9 +85,9 @@ export default function UserRoleManager() {
 
   const handleAddUser = async () => {
     try {
-      const response = await fetch('/api/settings/users', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/settings/users`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('auth_token')}`, 'Content-Type': 'application/json' },
         body: JSON.stringify(newUser)
       });
       if (response.ok) {
@@ -102,9 +102,9 @@ export default function UserRoleManager() {
 
   const handleUpdateUser = async (user: User) => {
     try {
-      const response = await fetch(`/api/settings/users/${user.id}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/settings/users/${user.id}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('auth_token')}`, 'Content-Type': 'application/json' },
         body: JSON.stringify(user)
       });
       if (response.ok) {
@@ -119,8 +119,9 @@ export default function UserRoleManager() {
   const handleDeleteUser = async (userId: string) => {
     if (confirm('Are you sure you want to delete this user?')) {
       try {
-        const response = await fetch(`/api/settings/users/${userId}`, {
-          method: 'DELETE'
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/settings/users/${userId}`, {
+          method: 'DELETE',
+          headers: { 'Authorization': `Bearer ${localStorage.getItem('auth_token')}` }
         });
         if (response.ok) {
           await fetchUsers();
