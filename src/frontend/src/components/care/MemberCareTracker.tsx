@@ -41,6 +41,15 @@ const MemberCareTracker: React.FC = () => {
   const [filterCareType, setFilterCareType] = useState('all');
   const [filterStatus, setFilterStatus] = useState('all');
   const [activeView, setActiveView] = useState('records');
+  const [submitting, setSubmitting] = useState(false);
+  const [newCareRecord, setNewCareRecord] = useState({
+    memberName: '', memberEmail: '', memberPhone: '',
+    careType: 'visit' as CareRecord['careType'],
+    subject: '', notes: '', careProvider: '',
+    careDate: new Date().toISOString().split('T')[0],
+    nextFollowUp: '', priority: 'normal' as CareRecord['priority'],
+    status: 'scheduled' as CareRecord['status'], tags: ''
+  });
 
   useEffect(() => {
     fetchCareData();
@@ -78,81 +87,58 @@ const MemberCareTracker: React.FC = () => {
     }
   };
 
-  // Mock data for demonstration
-  const mockCareRecords: CareRecord[] = [
-    {
-      id: '1',
-      memberId: '1',
-      memberName: 'Sarah Johnson',
-      memberEmail: 'sarah@email.com',
-      memberPhone: '(555) 123-4567',
-      careType: 'hospital',
-      subject: 'Surgery Recovery Visit',
-      notes: 'Visited Sarah after her knee surgery. She is recovering well and appreciates the church support. Needs help with groceries for next 2 weeks.',
-      careProvider: 'Pastor Smith',
-      careDate: '2025-01-14T14:00:00Z',
-      nextFollowUp: '2025-01-21T10:00:00Z',
-      priority: 'high',
-      status: 'completed',
-      tags: ['surgery', 'recovery', 'elderly']
-    },
-    {
-      id: '2',
-      memberId: '2',
-      memberName: 'Michael Chen',
-      memberEmail: 'michael@email.com',
-      memberPhone: '(555) 987-6543',
-      careType: 'counseling',
-      subject: 'Marriage Counseling Session',
-      notes: 'Third session with Michael and Lisa. Making good progress on communication. Scheduled next appointment.',
-      careProvider: 'Pastor David',
-      careDate: '2025-01-13T16:00:00Z',
-      nextFollowUp: '2025-01-20T16:00:00Z',
-      priority: 'normal',
-      status: 'completed',
-      tags: ['marriage', 'counseling']
-    },
-    {
-      id: '3',
-      memberId: '3',
-      memberName: 'Emily Rodriguez',
-      memberEmail: 'emily@email.com',
-      memberPhone: '(555) 456-7890',
-      careType: 'call',
-      subject: 'Job Loss Support Call',
-      notes: 'Called Emily to check on her after recent job loss. Connected her with job search resources and financial assistance program.',
-      careProvider: 'Care Team Leader',
-      careDate: '2025-01-12T10:30:00Z',
-      priority: 'high',
-      status: 'completed',
-      tags: ['job-loss', 'financial-help']
+  const handleCreateCareRecord = async () => {
+    if (!newCareRecord.memberName || !newCareRecord.subject) {
+      alert('Member name and subject are required');
+      return;
     }
-  ];
-
-  const mockMembersNeedingCare: Member[] = [
-    {
-      id: '4',
-      name: 'Robert Wilson',
-      email: 'robert@email.com',
-      phone: '(555) 111-2222',
-      address: '123 Oak St, City, State',
-      lastContact: '2024-12-15T00:00:00Z',
-      careNeeds: ['elderly', 'homebound'],
-      emergencyContact: 'Jane Wilson (555) 111-2223'
-    },
-    {
-      id: '5',
-      name: 'Maria Santos',
-      email: 'maria@email.com',
-      phone: '(555) 333-4444',
-      address: '456 Pine Ave, City, State',
-      lastContact: '2025-01-05T00:00:00Z',
-      careNeeds: ['new-member', 'follow-up'],
-      emergencyContact: 'Carlos Santos (555) 333-4445'
+    setSubmitting(true);
+    try {
+      const payload = {
+        ...newCareRecord,
+        tags: newCareRecord.tags ? newCareRecord.tags.split(',').map(t => t.trim()).filter(Boolean) : [],
+        careDate: new Date(newCareRecord.careDate).toISOString(),
+        nextFollowUp: newCareRecord.nextFollowUp ? new Date(newCareRecord.nextFollowUp).toISOString() : undefined
+      };
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/care/records`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+      });
+      if (!response.ok) throw new Error('Failed to create care record');
+      await fetchCareData();
+      setShowNewCareForm(false);
+      setNewCareRecord({
+        memberName: '', memberEmail: '', memberPhone: '',
+        careType: 'visit', subject: '', notes: '', careProvider: '',
+        careDate: new Date().toISOString().split('T')[0],
+        nextFollowUp: '', priority: 'normal', status: 'scheduled', tags: ''
+      });
+    } catch (error) {
+      console.error('Error creating care record:', error);
+      alert('Failed to create care record. Please try again.');
+    } finally {
+      setSubmitting(false);
     }
-  ];
+  };
 
-  // Use real data from API
+  const handleScheduleCare = async (member: Member) => {
+    setNewCareRecord(prev => ({
+      ...prev,
+      memberName: member.name,
+      memberEmail: member.email,
+      memberPhone: member.phone,
+      subject: `Follow-up care for ${member.name}`,
+      careType: 'visit',
+      priority: 'high'
+    }));
+    setSelectedMember(null);
+    setShowNewCareForm(true);
+  };
+
   const displayCareRecords = careRecords;
   const displayMembers = members;
 
@@ -399,7 +385,7 @@ const MemberCareTracker: React.FC = () => {
                           </p>
                         </div>
                         <button
-                          onClick={() => setSelectedMember(member)}
+                          onClick={() => handleScheduleCare(member)}
                           className="ml-4 bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm"
                         >
                           Schedule Care
@@ -409,6 +395,122 @@ const MemberCareTracker: React.FC = () => {
                   ))}
                 </div>
               )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* New Care Record Modal */}
+      {showNewCareForm && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between p-6 border-b border-gray-200">
+              <h2 className="text-xl font-semibold text-gray-900">New Care Record</h2>
+              <button onClick={() => setShowNewCareForm(false)} className="text-gray-400 hover:text-gray-600 text-xl">&times;</button>
+            </div>
+            <div className="p-6 space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Member Name *</label>
+                  <input type="text" value={newCareRecord.memberName}
+                    onChange={(e) => setNewCareRecord(prev => ({ ...prev, memberName: e.target.value }))}
+                    placeholder="Full name" className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                  <input type="email" value={newCareRecord.memberEmail}
+                    onChange={(e) => setNewCareRecord(prev => ({ ...prev, memberEmail: e.target.value }))}
+                    placeholder="member@email.com" className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
+                  <input type="tel" value={newCareRecord.memberPhone}
+                    onChange={(e) => setNewCareRecord(prev => ({ ...prev, memberPhone: e.target.value }))}
+                    placeholder="(555) 123-4567" className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Care Type</label>
+                  <select value={newCareRecord.careType}
+                    onChange={(e) => setNewCareRecord(prev => ({ ...prev, careType: e.target.value as CareRecord['careType'] }))}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    <option value="visit">Visit</option>
+                    <option value="call">Phone Call</option>
+                    <option value="email">Email</option>
+                    <option value="hospital">Hospital</option>
+                    <option value="counseling">Counseling</option>
+                    <option value="follow-up">Follow-up</option>
+                  </select>
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Subject *</label>
+                <input type="text" value={newCareRecord.subject}
+                  onChange={(e) => setNewCareRecord(prev => ({ ...prev, subject: e.target.value }))}
+                  placeholder="Brief subject for this care record" className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Notes</label>
+                <textarea value={newCareRecord.notes}
+                  onChange={(e) => setNewCareRecord(prev => ({ ...prev, notes: e.target.value }))}
+                  placeholder="Details about the care interaction..." rows={3}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none" />
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Care Provider</label>
+                  <input type="text" value={newCareRecord.careProvider}
+                    onChange={(e) => setNewCareRecord(prev => ({ ...prev, careProvider: e.target.value }))}
+                    placeholder="Pastor / Care team member" className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Priority</label>
+                  <select value={newCareRecord.priority}
+                    onChange={(e) => setNewCareRecord(prev => ({ ...prev, priority: e.target.value as CareRecord['priority'] }))}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    <option value="low">Low</option>
+                    <option value="normal">Normal</option>
+                    <option value="high">High</option>
+                    <option value="urgent">Urgent</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Care Date</label>
+                  <input type="date" value={newCareRecord.careDate}
+                    onChange={(e) => setNewCareRecord(prev => ({ ...prev, careDate: e.target.value }))}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Next Follow-up</label>
+                  <input type="date" value={newCareRecord.nextFollowUp}
+                    onChange={(e) => setNewCareRecord(prev => ({ ...prev, nextFollowUp: e.target.value }))}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
+                  <select value={newCareRecord.status}
+                    onChange={(e) => setNewCareRecord(prev => ({ ...prev, status: e.target.value as CareRecord['status'] }))}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    <option value="scheduled">Scheduled</option>
+                    <option value="in-progress">In Progress</option>
+                    <option value="completed">Completed</option>
+                    <option value="cancelled">Cancelled</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Tags (comma-separated)</label>
+                  <input type="text" value={newCareRecord.tags}
+                    onChange={(e) => setNewCareRecord(prev => ({ ...prev, tags: e.target.value }))}
+                    placeholder="e.g. elderly, hospital, follow-up" className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
+                </div>
+              </div>
+              <div className="flex justify-end space-x-3 pt-4 border-t border-gray-200">
+                <button onClick={() => setShowNewCareForm(false)}
+                  className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50">Cancel</button>
+                <button onClick={handleCreateCareRecord} disabled={submitting}
+                  className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 disabled:opacity-50">
+                  {submitting ? 'Saving...' : 'Save Care Record'}
+                </button>
+              </div>
             </div>
           </div>
         </div>
