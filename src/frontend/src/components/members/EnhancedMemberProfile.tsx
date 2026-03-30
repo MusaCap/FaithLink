@@ -6,6 +6,8 @@ import {
   Edit2, Save, X, Plus, Trash2, Crown, Heart, Star 
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
+import FamilyConnections from './FamilyConnections';
+import PrivacySettings from './PrivacySettings';
 
 interface MemberProfile {
   id: string;
@@ -206,7 +208,9 @@ export default function EnhancedMemberProfile({
     { id: 'groups', name: 'Groups & Ministry', icon: Users },
     { id: 'contact', name: 'Contact & Address', icon: MapPin },
     { id: 'pastoral', name: 'Pastoral Care', icon: Heart },
-    { id: 'giving', name: 'Giving', icon: Star }
+    { id: 'giving', name: 'Giving', icon: Star },
+    { id: 'family', name: 'Family', icon: Users },
+    { id: 'privacy', name: 'Privacy', icon: Shield }
   ];
 
   if (loading && !profile) {
@@ -393,6 +397,14 @@ export default function EnhancedMemberProfile({
               editing={editing} 
               onUpdate={updateProfile}
             />
+          )}
+
+          {activeTab === 'family' && profile && (
+            <FamilyConnections memberId={profile.id} />
+          )}
+
+          {activeTab === 'privacy' && profile && (
+            <PrivacySettings memberId={profile.id} />
           )}
         </div>
       </div>

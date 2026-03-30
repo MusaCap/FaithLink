@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import InAppMessaging from '../../components/communications/InAppMessaging';
 import { 
   Mail, 
   Send, 
@@ -458,6 +459,11 @@ export default function CommunicationsPage() {
               </div>
             </div>
           )}
+
+          {/* In-App Messaging Section */}
+          <div className="mt-8">
+            <InAppMessaging />
+          </div>
         </div>
 
         {/* Announcement Creation Modal */}
@@ -601,6 +607,7 @@ export default function CommunicationsPage() {
             </div>
           </div>
         )}
+
       </DashboardLayout>
     </ProtectedRoute>
   );

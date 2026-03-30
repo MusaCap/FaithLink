@@ -19,6 +19,10 @@ export interface Member {
   joinDate: Date;
   tags: string[];
   notes?: string;
+  gender?: string;
+  maritalStatus?: string;
+  spiritualStatus?: string;
+  interests?: string[];
   deaconId?: string; // Assigned deacon for pastoral care
   assignedDeacon?: {
     id: string;
@@ -80,6 +84,10 @@ export interface MemberCreateRequest {
   membershipStatus: Member['membershipStatus'];
   tags?: string[];
   notes?: string;
+  gender?: string;
+  maritalStatus?: string;
+  spiritualStatus?: string;
+  interests?: string[];
   deaconId?: string; // Assigned deacon for pastoral care
   emergencyContact?: Member['emergencyContact'];
   preferences?: Member['preferences'];

@@ -6,6 +6,7 @@ import AttendanceAnalytics from '../../components/reports/AttendanceAnalytics';
 import MemberEngagementMetrics from '../../components/reports/MemberEngagementMetrics';
 import GroupHealthDashboard from '../../components/reports/GroupHealthDashboard';
 import ExportButton from '../../components/reports/ExportButton';
+import CustomReportBuilder from '../../components/reports/CustomReportBuilder';
 
 interface DashboardStats {
   totalMembers: number;
@@ -162,6 +163,17 @@ export default function ReportsPage() {
             >
               <Users className="w-4 h-4 inline mr-2" />
               Group Health
+            </button>
+            <button
+              onClick={() => setActiveTab('custom')}
+              className={`py-2 px-1 border-b-2 font-medium text-sm ${
+                activeTab === 'custom'
+                  ? 'border-blue-500 text-blue-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              }`}
+            >
+              <Filter className="w-4 h-4 inline mr-2" />
+              Custom Report
             </button>
           </nav>
         </div>
@@ -360,6 +372,10 @@ export default function ReportsPage() {
       {/* Groups Tab */}
       {activeTab === 'groups' && (
         <GroupHealthDashboard dateRange={dateRange} />
+      )}
+
+      {activeTab === 'custom' && (
+        <CustomReportBuilder />
       )}
     </div>
   );

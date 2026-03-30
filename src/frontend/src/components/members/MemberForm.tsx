@@ -45,6 +45,10 @@ export default function MemberForm({ member, onSave, onCancel }: MemberFormProps
     joinDate: new Date(),
     tags: [],
     notes: '',
+    gender: '',
+    maritalStatus: '',
+    spiritualStatus: '',
+    interests: [],
     deaconId: '', // Assigned deacon for pastoral care
     emergencyContact: {
       name: '',
@@ -97,6 +101,10 @@ export default function MemberForm({ member, onSave, onCancel }: MemberFormProps
         joinDate: member.joinDate || new Date(),
         tags: member.tags || [],
         notes: member.notes || '',
+        gender: (member as any).gender || '',
+        maritalStatus: (member as any).maritalStatus || '',
+        spiritualStatus: (member as any).spiritualStatus || '',
+        interests: (member as any).interests || [],
         deaconId: member.deaconId || '',
         emergencyContact: {
           name: member.emergencyContact?.name || '',
@@ -228,6 +236,10 @@ export default function MemberForm({ member, onSave, onCancel }: MemberFormProps
           membershipStatus: formData.membershipStatus,
           tags: formData.tags,
           notes: formData.notes,
+          gender: (formData as any).gender || undefined,
+          maritalStatus: (formData as any).maritalStatus || undefined,
+          spiritualStatus: (formData as any).spiritualStatus || undefined,
+          interests: (formData as any).interests || [],
           deaconId: formData.deaconId,
           emergencyContact: formData.emergencyContact,
           preferences: formData.preferences
@@ -451,6 +463,61 @@ export default function MemberForm({ member, onSave, onCancel }: MemberFormProps
                 <option value="active">Active</option>
                 <option value="inactive">Inactive</option>
                 <option value="visitor">Visitor</option>
+              </select>
+            </div>
+
+            {/* Gender */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Gender
+              </label>
+              <select
+                value={(formData as any).gender || ''}
+                onChange={(e) => handleInputChange('gender', e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              >
+                <option value="">Select gender</option>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+                <option value="other">Other</option>
+                <option value="prefer_not_to_say">Prefer not to say</option>
+              </select>
+            </div>
+
+            {/* Marital Status */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Marital Status
+              </label>
+              <select
+                value={(formData as any).maritalStatus || ''}
+                onChange={(e) => handleInputChange('maritalStatus', e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              >
+                <option value="">Select status</option>
+                <option value="single">Single</option>
+                <option value="married">Married</option>
+                <option value="divorced">Divorced</option>
+                <option value="widowed">Widowed</option>
+              </select>
+            </div>
+
+            {/* Spiritual Status */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Spiritual Status
+              </label>
+              <select
+                value={(formData as any).spiritualStatus || ''}
+                onChange={(e) => handleInputChange('spiritualStatus', e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              >
+                <option value="">Select status</option>
+                <option value="new_believer">New Believer</option>
+                <option value="growing">Growing</option>
+                <option value="mature">Mature</option>
+                <option value="seeking">Seeking</option>
+                <option value="leader">Leader</option>
               </select>
             </div>
 

@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { Settings, Users, Globe, Shield, Bell, Database, Save, RefreshCw } from 'lucide-react';
 import UserRoleManager from '../../components/settings/UserRoleManager';
 import SystemPreferences from '../../components/settings/SystemPreferences';
+import AuditTrail from '../../components/admin/AuditTrail';
 
 interface ChurchSettings {
   name: string;
@@ -128,6 +129,17 @@ export default function SettingsPage() {
               <Database className="w-4 h-4 inline mr-2" />
               System
             </button>
+            <button
+              onClick={() => setActiveTab('audit')}
+              className={`py-2 px-1 border-b-2 font-medium text-sm ${
+                activeTab === 'audit'
+                  ? 'border-blue-500 text-blue-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              }`}
+            >
+              <Shield className="w-4 h-4 inline mr-2" />
+              Audit Trail
+            </button>
           </nav>
         </div>
       </div>
@@ -246,6 +258,7 @@ export default function SettingsPage() {
 
       {activeTab === 'users' && <UserRoleManager />}
       {activeTab === 'system' && <SystemPreferences />}
+      {activeTab === 'audit' && <AuditTrail />}
     </div>
   );
 }

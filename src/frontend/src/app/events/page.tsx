@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { Calendar, Clock, MapPin, Users, Plus, Search, ChevronLeft, ChevronRight, X } from 'lucide-react';
 import DashboardLayout from '../../components/layout/DashboardLayout';
 import ProtectedRoute from '../../components/auth/ProtectedRoute';
+import WeeklyCalendar from '../../components/events/WeeklyCalendar';
 
 interface Event {
   id: string;
@@ -23,7 +24,7 @@ export default function ChurchCalendarPage() {
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
-  const [activeView, setActiveView] = useState<'calendar' | 'list'>('calendar');
+  const [activeView, setActiveView] = useState<'calendar' | 'list' | 'weekly'>('calendar');
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
@@ -211,6 +212,12 @@ export default function ChurchCalendarPage() {
                 >
                   List
                 </button>
+                <button
+                  onClick={() => setActiveView('weekly')}
+                  className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${activeView === 'weekly' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-600 hover:text-gray-800'}`}
+                >
+                  Weekly
+                </button>
               </div>
               <button
                 onClick={() => setShowCreateForm(true)}
@@ -275,6 +282,11 @@ export default function ChurchCalendarPage() {
                 </div>
               )}
             </div>
+          )}
+
+          {/* Weekly View */}
+          {activeView === 'weekly' && (
+            <WeeklyCalendar />
           )}
 
           {/* List View */}
