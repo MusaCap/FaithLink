@@ -28,6 +28,7 @@ dist/
 .DS_Store
 Thumbs.db
 *.sqlite
+*.db
 
 # Coverage
 coverage/
