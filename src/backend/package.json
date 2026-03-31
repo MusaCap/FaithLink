@@ -5,7 +5,8 @@
   "main": "src/server-prisma.ts",
   "scripts": {
     "dev": "npx ts-node src/server-prisma.ts",
-    "build": "npx prisma generate && npx prisma db push --skip-generate",
+    "postinstall": "npx prisma generate || true",
+    "build": "npx prisma generate && (npx prisma migrate deploy || npx prisma db push --skip-generate) && (npx prisma db seed || true)",
     "start": "node src/server-basic.js",
     "db:generate": "prisma generate",
     "db:push": "prisma db push",

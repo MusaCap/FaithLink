@@ -16,7 +16,7 @@ services:
     env: node
     region: oregon
     plan: free
-    buildCommand: npm install && npx prisma generate && npx prisma db push --skip-generate && npx prisma db seed
+    buildCommand: chmod +x render-build.sh && ./render-build.sh
     startCommand: node src/server-basic.js
     rootDir: src/backend
     healthCheckPath: /health
